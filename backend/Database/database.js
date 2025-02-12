@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
-mongoose.connect('mongodb+srv://mayankroy106106:m36YQRTJt9n2NeLb@cluster0.0wjlj.mongodb.net/DevConnect');
+require('dotenv').config();
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const AdminSchema = new mongoose.Schema({
     username:String,

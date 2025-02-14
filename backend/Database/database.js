@@ -13,24 +13,7 @@ const ConnectDB = async() =>{
     }
 }
 
-const AdminSchema = new mongoose.Schema({
-    username:String,
-    password:String,
-    AvatarImage:String
-});
-const UserSchema = new mongoose.Schema({
-    username:String,
-    password:String,
-    AvatarImage:String
-});
 
-const Admin = mongoose.model('Admin',AdminSchema);
-const User = mongoose.model('User',UserSchema);
 
-// module.exports = {
-//     Admin,
-//     User
-    
-// }
 
-export default ConnectDB;
+export  {ConnectDB};

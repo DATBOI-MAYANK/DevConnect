@@ -29,6 +29,7 @@ const UserSchema = new mongoose.Schema(
     },
     AvatarImage: {
       type: String,
+      required: true,
     },
     CoverImage: {
       type: String,
@@ -42,7 +43,7 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    this.password = bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10);
     next();
   }
 });
@@ -66,7 +67,7 @@ UserSchema.methods.generateAccessToken = function () {
   );
 };
 
-UserSchema.methods.generateAccessToken = function () {
+UserSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,

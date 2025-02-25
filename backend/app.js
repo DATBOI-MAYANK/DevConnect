@@ -9,9 +9,10 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ limit: "16kb" }));
 app.use(cookieParser());
 
+import userRouter from "./Routes/user.routes.js";
+import adminRouter from "./Routes/admin.routes.js";
 
-import userRouter from "./Routes/user.routes.js"
-
-app.use("/users", userRouter)
+app.use("/users", userRouter);
+app.use("/admin", adminRouter);
 
 export { app };

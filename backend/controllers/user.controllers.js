@@ -1,5 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import ApiError from "../utils/ApiError.js";
+import {ApiError} from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -7,7 +7,11 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
 
+  console.log("Request Body:", req.body);
+  console.log("Uploaded File:", req.files);
+
   const { username, password, email } = req.body;
+ 
 
   //Validation -- Not empty
 
@@ -20,7 +24,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // check if user already exits: username,email
 
-  const existedUser = User.findOne({
+  const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
 
@@ -30,8 +34,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // check for images: check for avatar
 
-  const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverLocalPath = req.files?.cover[0]?.path;
+  const avatarLocalPath = req.files?.avatar?.[0]?.path;
+  const coverLocalPath = req.files?.cover?.[0]?.path;
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar File is required!");
@@ -50,8 +54,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const user = await User.create({
     username: username.toLowerCase(),
-    avatar: avatar.url,
-    coverImage: coverImage?.url || "",
+    AvatarImage: avatar.url,
+    CoverImage: coverImage?.url || "",
     email,
     password,
   });

@@ -20,7 +20,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
 
   // check if user already exits: username,email
 
-  const existedAdmin = Admin.findOne({
+  const existedAdmin = await Admin.findOne({
     $or: [{ username }, { email }],
   });
 
@@ -30,8 +30,8 @@ const registerAdmin = asyncHandler(async (req, res) => {
 
   // check for images: check for avatar
 
-  const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverLocalPath = req.files?.cover[0]?.path;
+  const avatarLocalPath = req.files?.avatar?.[0]?.path;
+  const coverLocalPath = req.files?.cover?.[0]?.path;
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar File is required!");
@@ -50,7 +50,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
 
   const admin = await Admin.create({
     username: username.toLowerCase(),
-    avatar: avatar.url,
+    AvatarImage: avatar.url,
     coverImage: coverImage?.url || "",
     email,
     password,

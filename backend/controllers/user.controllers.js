@@ -1,8 +1,9 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import {ApiError} from "../utils/ApiError.js";
+import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { generateAccessAndRefreshToken } from "../utils/Access&RefreshToken.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
@@ -11,7 +12,6 @@ const registerUser = asyncHandler(async (req, res) => {
   console.log("Uploaded File:", req.files);
 
   const { username, password, email } = req.body;
- 
 
   //Validation -- Not empty
 
@@ -82,4 +82,29 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "User registered successfully"));
 });
 
-export { registerUser };
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email && !password) {
+    throw new ApiError(400, "All Fields are required. !!");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new ApiError(404, "User does not exist. !");
+  }
+
+  const isPasswordValid = await user.isPasswordCorrect(password);
+
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Passoword incorrect. !");
+  }
+
+  const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
+
+  const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
+
+});
+
+export { registerUser, loginUser };

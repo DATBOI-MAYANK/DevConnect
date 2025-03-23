@@ -7,13 +7,21 @@ function Navbar() {
         <h1 className="text-4xl font-bold ">DevConnect</h1>
         <div className="flex items-center justify-center mt-20">
           <ul className="text-4xl ">
-            <li className="m-4 hover:cursor-pointer">Home</li>
-            <li className="m-4 hover:cursor-pointer">Explore</li>
-            <li className="m-4 hover:cursor-pointer">Notification</li>
-            <li className="m-4 hover:cursor-pointer">More...</li>
+            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#343A40] rounded-4xl  w-36">
+              Home
+            </li>
+            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#343A40] rounded-4xl  w-44">
+              Explore
+            </li>
+            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#343A40] rounded-4xl  w-64">
+              Notification
+            </li>
+            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#343A40] rounded-4xl  w-40">
+              More...
+            </li>
           </ul>
         </div>
-        <button className="text-4xl text-black font-bold px-15 py-2  mt-12 ml-7 border-2 rounded-4xl hover:cursor-pointer bg-[#1d9bf0]">
+        <button className="text-4xl text-black font-bold px-15 py-2  mt-12 ml-7 border-2 rounded-4xl hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]">
           Post
         </button>
       </div>

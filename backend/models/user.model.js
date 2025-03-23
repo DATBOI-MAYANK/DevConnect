@@ -1,7 +1,7 @@
 import "dotenv/config";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -44,12 +44,17 @@ const UserSchema = new mongoose.Schema(
 UserSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
-    next();
   }
+  next();
 });
 
 UserSchema.methods.isPasswordCorrect = async function (password) {
-  return await bcrypt.compare(password, this.password);
+  // console.log( "hashed",this.password, "\n normal" , password);
+  
+  const result =  await bcrypt.compare(password, this.password);
+
+  return result
+
 };
 
 UserSchema.methods.generateAccessToken = function () {

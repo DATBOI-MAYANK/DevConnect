@@ -8,11 +8,9 @@ import { generateAccessAndRefreshToken } from "../utils/Access&RefreshToken.js";
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
 
-  console.log("Request Body:", req.body);
-  console.log("Uploaded File:", req.files);
-
   const { username, password, email } = req.body;
-
+  // console.log(username, password, email);
+  
   //Validation -- Not empty
 
   if ([username, email, password].some((fields) => fields.trim() === "")) {
@@ -51,7 +49,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // create user object -- create entry in db
-
+  console.log("Password before saving:", password);
   const user = await User.create({
     username: username.toLowerCase(),
     AvatarImage: avatar.url,
@@ -59,7 +57,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
   });
-
+  console.log("User created:", user);
   // remove password, refreshToken fiels from response
 
   const createdUser = await User.findById(user._id).select(
@@ -84,7 +82,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
+  // console.log(email , password);
+  
   if (!email && !password) {
     throw new ApiError(400, "All Fields are required. !!");
   }
@@ -96,9 +95,10 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const isPasswordValid = await user.isPasswordCorrect(password);
-
+  // console.log("password----" , isPasswordValid);
+  
   if (!isPasswordValid) {
-    throw new ApiError(401, "Passoword incorrect. !");
+    throw new ApiError(401, "Password incorrect. !");
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
@@ -148,9 +148,9 @@ const logoutUser = asyncHandler(async (req, res) => {
   };
 
   return res
-  .clearCookie("accessToken", options)
-  .clearCookie("refershToken", options)
-  .json(new ApiResponse(200,{},"User Logged out"))
+    .clearCookie("accessToken", options)
+    .clearCookie("refershToken", options)
+    .json(new ApiResponse(200, {}, "User Logged out"));
 });
 
 export { registerUser, loginUser, logoutUser };

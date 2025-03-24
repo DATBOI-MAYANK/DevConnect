@@ -7,16 +7,16 @@ function Navbar() {
         <h1 className="text-4xl font-bold ">DevConnect</h1>
         <div className="flex items-center justify-center mt-20">
           <ul className="text-4xl ">
-            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#343A40] rounded-4xl  w-36">
+            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#212529] rounded-4xl  w-36">
               Home
             </li>
-            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#343A40] rounded-4xl  w-44">
+            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#212529] rounded-4xl  w-44">
               Explore
             </li>
-            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#343A40] rounded-4xl  w-64">
+            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#212529] rounded-4xl  w-64">
               Notification
             </li>
-            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#343A40] rounded-4xl  w-40">
+            <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#212529] rounded-4xl  w-40">
               More...
             </li>
           </ul>

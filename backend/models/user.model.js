@@ -1,7 +1,7 @@
 import "dotenv/config";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -16,9 +16,7 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
+      
     },
     email: {
       type: String,
@@ -42,19 +40,23 @@ const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
+  try {
+    // console.log("Password modified:", this.isModified("password"));
+    if (this.isModified("password")) {
+      // console.log("Before hashing:", this.password);
+      this.password = await bcrypt.hash(this.password, 10);
+      // console.log("After hashing:", this.password);
+    }
+    next();
+  } catch (error) {
+    next(error);
   }
-  next();
 });
 
 UserSchema.methods.isPasswordCorrect = async function (password) {
-  // console.log( "hashed",this.password, "\n normal" , password);
-  
-  const result =  await bcrypt.compare(password, this.password);
+  const result = await bcrypt.compare(password, this.password);
 
-  return result
-
+  return result;
 };
 
 UserSchema.methods.generateAccessToken = function () {
@@ -68,7 +70,9 @@ UserSchema.methods.generateAccessToken = function () {
     process.env.ACCESS_TOKEN_SECRET,
     {
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-    }
+    },
+    // console.log("Access Token Secret:", process.env.ACCESS_TOKEN_SECRET)
+
   );
 };
 
@@ -81,7 +85,9 @@ UserSchema.methods.generateRefreshToken = function () {
     process.env.REFRESH_TOKEN_SECRET,
     {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-    }
+    },
+    // console.log("Refresh Token Secret:", process.env.REFRESH_TOKEN_SECRET)
+
   );
 };
 

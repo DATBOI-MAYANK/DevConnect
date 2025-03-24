@@ -3,14 +3,39 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { generateAccessAndRefreshToken } from "../utils/Access&RefreshToken.js";
+
+const generateAccessAndRefereshTokens = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    console.log("User found:", user);
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    // console.log("Access Token:", accessToken);
+    // console.log("Refresh Token:", refreshToken);
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+    // console.log("User after saving refreshToken:", user);
+    return { accessToken, refreshToken };
+  } catch (error) {
+    console.error("Error generating tokens:", error);
+    throw new ApiError(
+      500,
+      "Something went wrong while generating referesh and access token"
+    );
+  }
+};
 
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
 
   const { username, password, email } = req.body;
   // console.log(username, password, email);
-  
+
   //Validation -- Not empty
 
   if ([username, email, password].some((fields) => fields.trim() === "")) {
@@ -49,7 +74,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // create user object -- create entry in db
-  console.log("Password before saving:", password);
   const user = await User.create({
     username: username.toLowerCase(),
     AvatarImage: avatar.url,
@@ -57,7 +81,6 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
   });
-  console.log("User created:", user);
   // remove password, refreshToken fiels from response
 
   const createdUser = await User.findById(user._id).select(
@@ -83,7 +106,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   // console.log(email , password);
-  
+
   if (!email && !password) {
     throw new ApiError(400, "All Fields are required. !!");
   }
@@ -96,14 +119,12 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const isPasswordValid = await user.isPasswordCorrect(password);
   // console.log("password----" , isPasswordValid);
-  
+
   if (!isPasswordValid) {
     throw new ApiError(401, "Password incorrect. !");
   }
-
-  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-    user._id
-  );
+  
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
 
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken"
@@ -116,17 +137,18 @@ const loginUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("Access Token", accessToken, options)
-    .cookie("Refresh Token", refreshToken, options)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(
-      200,
-      {
-        user: accessToken,
-        loggedInUser,
-        refreshToken,
-      },
-      "User logged in succesfully."
+        new ApiResponse(
+            200, 
+            {
+                user: loggedInUser, accessToken, refreshToken
+            },
+            "User logged In Successfully"
+        )
     );
+  
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
@@ -148,8 +170,8 @@ const logoutUser = asyncHandler(async (req, res) => {
   };
 
   return res
-    .clearCookie("accessToken", options)
-    .clearCookie("refershToken", options)
+    .clearCookie("access_token", options)
+    .clearCookie("refersh_token", options)
     .json(new ApiResponse(200, {}, "User Logged out"));
 });
 

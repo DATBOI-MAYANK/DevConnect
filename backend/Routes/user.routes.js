@@ -10,7 +10,7 @@ import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/register").post(
+router.route("/api/v1/register").post(
   upload.fields([
     {
       name: "avatar",
@@ -24,9 +24,9 @@ router.route("/register").post(
   registerUser
 );
 
-router.route("/login").post(loginUser);
+router.route("/api/v1/login").post(loginUser);
 
-router.route("/logout").post(verifyJwt, logoutUser);
-router.route("/refresh-Token").post(refreshAccessToken);
+router.route("/api/v1/logout").post(verifyJwt, logoutUser);
+router.route("/api/v1/refresh-Token").post(refreshAccessToken);
 
 export default router;

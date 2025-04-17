@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
@@ -8,7 +9,9 @@ function Navbar() {
         <div className="flex items-center justify-center mt-20">
           <ul className="text-4xl ">
             <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#212529] rounded-4xl  w-36">
-              Home
+              <Link to = "/home"> 
+              Home</Link>
+              
             </li>
             <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-[#212529] rounded-4xl  w-44">
               Explore
@@ -23,6 +26,12 @@ function Navbar() {
         </div>
         <button className="text-4xl text-black font-bold px-15 py-2  mt-12 ml-7 border-2 rounded-4xl hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]">
           Post
+        </button>
+        <button className="text-4xl text-black font-bold px-15 py-2  mt-2 ml-7 border-2 rounded-4xl hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]">
+          <Link to='/login'>
+          Login
+          </Link>
+          
         </button>
       </div>
       <div className="bg-green-400 main"></div>

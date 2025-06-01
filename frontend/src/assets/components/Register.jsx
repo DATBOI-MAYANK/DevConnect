@@ -1,18 +1,20 @@
-import React from "react";
+import axios from "axios";
 import { useState } from "react";
 import ClickSpark from "./ClickSpark";
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [avatarImage , setAvatarImage] = useState(null);
+  const [avatarImage, setAvatarImage] = useState("");
+  const [coverImage, setCoverImage] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
+      console.log("avatarFile----", avatarImage)
       const res = await axios.post(
         "http://localhost:8000/users/api/v1/register",
-        {username, email, password },
+        { username, email, password , avatarImage },
         { withCredentials: true }
       );
 
@@ -22,14 +24,26 @@ const Register = () => {
       console.error(err);
     }
   };
-  const handleImageChange = async (e) => {
+  // const handleAvatarImageChange = async (e) => {
+  //   try {
+  //     const avatarFile = e.target.files[0];
+  //     console.log("avatarfile---", avatarFile)
+  //     if (avatarFile && avatarFile.type.startsWith("image/")){
+  //       setAvatarImage(avatarFile);
+  //     }
+  //   } catch (error) {
+  //     alert("Please upload a valid image file.");
+  //   }
+  // };
+  const handleCoverImageChange = async (e) => {
     try {
-      const avatarFile = e.target.files[0];
-      if(avatarFile && avatarFile.type.startsWith("image/")) setAvatarImage(avatarFile)
+      const coverFile = e.target.files[0];
+      if (coverFile && coverFile.type.startsWith("image/"))
+        setCoverImage(coverFile);
     } catch (error) {
       alert("Please upload a valid image file.");
     }
-  }
+  };
   return (
     <ClickSpark>
       <div className="flex  justify-center">
@@ -74,9 +88,19 @@ const Register = () => {
           <input
             className="w-80 h-9 bg-white rounded-xs mx-4 mb-4 p-2"
             type="file"
+            // accept="image/*"
             value={avatarImage}
+            // onChange={handleAvatarImageChange}
+            onChange={(e) => setAvatarImage(e.target.value)}
+          />
+          <label htmlFor="coverImage" className="text-white ml-4">
+            Cover Image
+          </label>
+          <input
+            className="w-80 h-9 bg-white rounded-xs mx-4 mb-4 p-2"
+            type="file"
             accept="image/*"
-            onChange={ handleImageChange}
+            onChange={handleCoverImageChange}
           />
           <button
             className="text-4xl text-black font-bold   mt-2  border-1 rounded-md hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]"

@@ -2,34 +2,41 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
-import {RouterProvider, createBrowserRouter} from 'react-router-dom'
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./Layout.jsx";
 import LoginPage from "./assets/components/LogIn.jsx";
-import SignUp from "./assets/components/SignUp.jsx";
+import Register from "./assets/components/Register.jsx";
+import NotFound from "./assets/components/NotFound.jsx";
+import ErrorBoundary from "./assets/components/ErrorBoundary.jsx";
 const router = createBrowserRouter([
   {
-    "path" : "/",
-    "element": <Layout/>,
-    "children":[
+    path: "/",
+    element: <Layout />,
+    children: [
       {
-        "path":"",
-        "element": <App/>
-      }
-      ,{
-        "path":"login",
-        "element": <LoginPage/>
+        path: "",
+        element: <App />,
       },
       {
-        "path":"signup",
-        "element": <SignUp/>
-      }
-    ]
-
-  }
-])
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
+        path: "register",
+        element: <Register />,
+      },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
+    ],
+  },
+]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router = {router} />
+    <ErrorBoundary>
+      <RouterProvider router={router} />
+    </ErrorBoundary>
   </StrictMode>
 );

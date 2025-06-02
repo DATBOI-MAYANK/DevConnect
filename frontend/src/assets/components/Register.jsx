@@ -1,12 +1,15 @@
 import axios from "axios";
 import { useState } from "react";
 import ClickSpark from "./ClickSpark";
+import { useNavigate } from "react-router-dom";
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [avatarImage, setAvatarImage] = useState("");
   const [coverImage, setCoverImage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -18,8 +21,11 @@ const Register = () => {
       formData.append("avatarImage", avatarImage);
       formData.append("coverImage", coverImage);
 
-      console.log("avatarFile----", avatarImage);
-      console.log("form--", formData);
+      // Log each field in the formData
+      // for (let pair of formData.entries()) {
+      //   console.log(pair[0] + ":", pair[1]);
+      // }
+
       const res = await axios.post(
         "http://localhost:8000/users/api/v1/register",
         formData,
@@ -30,10 +36,14 @@ const Register = () => {
           },
         }
       );
-
-      alert("Register successful");
+      const message =
+        res.response?.data?.message || res.message || "Register successful";
+      alert(message); // make this into a  modal
+      navigate("/");
     } catch (err) {
-      alert("Register failed");
+      const message =
+        err.response?.data?.message || err.message || "Register failed";
+      alert(message); // make this into a  modal
       console.error(err);
     }
   };
@@ -48,15 +58,15 @@ const Register = () => {
   //     alert("Please upload a valid image file.");
   //   }
   // };
-  const handleCoverImageChange = async (e) => {
-    try {
-      const coverFile = e.target.files[0];
-      if (coverFile && coverFile.type.startsWith("image/"))
-        setCoverImage(coverFile);
-    } catch (error) {
-      alert("Please upload a valid image file.");
-    }
-  };
+  // const handleCoverImageChange = async (e) => {
+  //   try {
+  //     const coverFile = e.target.files[0];
+  //     if (coverFile && coverFile.type.startsWith("image/"))
+  //       setCoverImage(coverFile);
+  //   } catch (error) {
+  //     alert("Please upload a valid image file.");
+  //   }
+  // };
   return (
     <ClickSpark>
       <div className="flex  justify-center">
@@ -74,6 +84,7 @@ const Register = () => {
             value={username}
             placeholder="username"
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
           <label htmlFor="email" className="text-white ml-4 mt-2">
             Email
@@ -94,6 +105,7 @@ const Register = () => {
             value={password}
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <label htmlFor="avatarImage" className="text-white ml-4">
             Avatar Image
@@ -104,6 +116,7 @@ const Register = () => {
             accept="image/*"
             // onChange={handleAvatarImageChange}
             onChange={(e) => setAvatarImage(e.target.files[0])}
+            required
           />
           <label htmlFor="coverImage" className="text-white ml-4">
             Cover Image
@@ -112,7 +125,7 @@ const Register = () => {
             className="w-80 h-9 bg-white rounded-xs mx-4 mb-4 p-2"
             type="file"
             accept="image/*"
-            onChange={handleCoverImageChange}
+            onChange={(e) => setCoverImage(e.target.files[0])}
           />
           <button
             className="text-4xl text-black font-bold   mt-2  border-1 rounded-md hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]"

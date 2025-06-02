@@ -13,7 +13,7 @@ const router = Router();
 router.route("/api/v1/register").post(
   upload.fields([
     {
-      name: "avatar",
+      name: "avatarImage",
       maxCount: 1,
     },
     {

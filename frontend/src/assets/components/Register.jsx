@@ -11,11 +11,24 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      console.log("avatarFile----", avatarImage)
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("avatarImage", avatarImage);
+      formData.append("coverImage", coverImage);
+
+      console.log("avatarFile----", avatarImage);
+      console.log("form--", formData);
       const res = await axios.post(
         "http://localhost:8000/users/api/v1/register",
-        { username, email, password , avatarImage },
-        { withCredentials: true }
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
       alert("Register successful");
@@ -88,10 +101,9 @@ const Register = () => {
           <input
             className="w-80 h-9 bg-white rounded-xs mx-4 mb-4 p-2"
             type="file"
-            // accept="image/*"
-            value={avatarImage}
+            accept="image/*"
             // onChange={handleAvatarImageChange}
-            onChange={(e) => setAvatarImage(e.target.value)}
+            onChange={(e) => setAvatarImage(e.target.files[0])}
           />
           <label htmlFor="coverImage" className="text-white ml-4">
             Cover Image

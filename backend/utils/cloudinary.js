@@ -12,14 +12,22 @@ cloudinary.config({
 
 const uploadOnCloudinary = async (localFilePath)=>{
     try {
-        if(!localFilePath) return "Could not access the file"
+        console.log("Cludinary----", localFilePath);
+        
+        if(!localFilePath) return "Could not access the file";
+
         const response = await cloudinary.uploader.upload(localFilePath,{
             resource_type: "auto"
         })
+
+        console.log("Response----", response);
+        
         return response
     } catch (error) {
+        console.log("Cloudinary Error",error);
         fs.unlinkSync(localFilePath)
         return null
+        
     }
 }
 

@@ -44,7 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All Fields are required !!");
   }
   if (!email.trim().toLowerCase().endsWith("@gmail.com")) {
-    throw ApiError(400, "Ivalid Email");
+    throw new ApiError(400, "Ivalid Email");
   }
 
   // check if user already exits: username,email

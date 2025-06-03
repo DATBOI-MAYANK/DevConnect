@@ -8,6 +8,11 @@ import LoginPage from "./assets/components/LogIn.jsx";
 import Register from "./assets/components/Register.jsx";
 import NotFound from "./assets/components/NotFound.jsx";
 import ErrorBoundary from "./assets/components/ErrorBoundary.jsx";
+import Modal from "react-modal";
+
+
+Modal.setAppElement('#root');
+
 const router = createBrowserRouter([
   {
     path: "/",

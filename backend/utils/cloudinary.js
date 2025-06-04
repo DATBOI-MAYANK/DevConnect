@@ -15,12 +15,12 @@ const uploadOnCloudinary = async (localFilePath) => {
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto"
         });
-        fs.unlinkSync(localFilePath); // <-- Delete after upload
+        fs.unlinkSync(localFilePath); 
         return response;
     } catch (error) {
         console.log("Cloudinary Error", error);
         if (localFilePath && fs.existsSync(localFilePath)) {
-            fs.unlinkSync(localFilePath); // Clean up on error too
+            fs.unlinkSync(localFilePath); 
         }
         return null;
     }

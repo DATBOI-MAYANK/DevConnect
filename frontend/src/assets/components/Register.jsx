@@ -35,9 +35,14 @@ const Register = () => {
           },
         }
       );
-      const message =
-        res.response?.data?.message || res.message || "Register successful";
+      // console.log("User==>", res.data);
+
+      const message = res.data?.message || "Register successful";
+
       setIsRegister(true);
+      localStorage.setItem("user", JSON.stringify(res.data));
+      localStorage.setItem("IsLoggedIn", "true");
+
       setModalMessage(message);
       setIsOpen(true);
     } catch (err) {
@@ -125,7 +130,7 @@ const Register = () => {
             marginRight: "-50%",
             transform: "translate(-50%, -50%)",
             backgroundColor: "#171717",
-            color: "white"
+            color: "white",
           },
         }}
         contentLabel="Register Modal"
@@ -137,6 +142,8 @@ const Register = () => {
             setIsOpen(false);
             if (isRegister == true) {
               navigate("/");
+
+              window.location.reload();
             }
           }}
         >

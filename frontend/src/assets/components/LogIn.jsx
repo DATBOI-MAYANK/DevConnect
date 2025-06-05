@@ -21,10 +21,13 @@ const LoginPage = () => {
         { email, password },
         { withCredentials: true }
       );
+      console.log("User====", res.data.data.user)
       const message = res.data?.message || "Login successful";
       setIsLogin(true);
-      localStorage.setItem("IsLoggedIn", "true");
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("user", JSON.stringify(res.data.data.user));
+      // Trigger a custom event
+      window.dispatchEvent(new Event("userChanged"));
       setModalMessage(message);
       setIsOpen(true);
     } catch (err) {
@@ -102,7 +105,7 @@ const LoginPage = () => {
             setIsOpen(false);
             if (isLogin == true) {
               navigate("/");
-              window.location.reload();
+              // window.location.reload();
             }
           }}
         >

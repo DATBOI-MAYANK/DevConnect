@@ -41,7 +41,10 @@ const Register = () => {
 
       setIsRegister(true);
       localStorage.setItem("user", JSON.stringify(res.data));
-      localStorage.setItem("IsLoggedIn", "true");
+      localStorage.setItem("isLoggedIn", "true");
+
+      // Trigger a custom event
+      window.dispatchEvent(new Event("userChanged"));
 
       setModalMessage(message);
       setIsOpen(true);

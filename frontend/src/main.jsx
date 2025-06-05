@@ -9,6 +9,7 @@ import Register from "./assets/components/Register.jsx";
 import NotFound from "./assets/components/NotFound.jsx";
 import ErrorBoundary from "./assets/components/ErrorBoundary.jsx";
 import Modal from "react-modal";
+import Dashboard from "./assets/components/Dashboard.jsx";
 
 
 Modal.setAppElement('#root');
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "register",
         element: <Register />,
+      },
+      {
+        path: "dashboard",
+        element: <Dashboard />
       },
       {
         path: "*",

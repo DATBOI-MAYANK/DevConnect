@@ -3,8 +3,24 @@ import { Link } from "react-router-dom";
 import Logo from "../Logo/Logo-removebg.png";
 
 function Navbar() {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user") || "null"));
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+      setUser(JSON.parse(localStorage.getItem("user") || "null"));
+    };
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("userChanged", handleStorage); // Listen for custom event
+
+    handleStorage();
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("userChanged", handleStorage);
+    };
+  }, []);
 
   return (
     <>
@@ -34,15 +50,13 @@ function Navbar() {
           Post
         </button>
         {isLoggedIn && user ? (
-          <div className="flex items-center mt-4 ml-2 px-6 py-2 border-1 rounded-md bg-[#212529]">
-            {/* Example profile, replace with real user info */}
+          <div className="flex items-center mt-7 ml-2 px-6 py-2 border-1 rounded-md bg-[#212529]">
             <img
-              src={user.AvatarImage} // Replace with user.avatar if you store it
+              src={user.AvatarImage}
               alt="Profile"
               className="h-10 w-10 rounded-full mr-2"
             />
-            <span className="text-xl font-bold">{user.username}</span>
-            <span className="text-xl font-bold">Profile</span>
+            <div className="text-xl font-bold"><Link to="/dashboard">{user.username}</Link></div>
           </div>
         ) : (
           <button className=" text-4xl text-black font-bold  mt-4 ml-2  px-20 py-2 border-1 rounded-md shadow-[4px_4px_0px_0px_white] hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]">

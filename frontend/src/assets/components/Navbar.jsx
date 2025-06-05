@@ -3,8 +3,12 @@ import { Link } from "react-router-dom";
 import Logo from "../Logo/Logo-removebg.png";
 
 function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user") || "null"));
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user") || "null")
+  );
 
   useEffect(() => {
     const handleStorage = () => {
@@ -54,27 +58,17 @@ function Navbar() {
             <img
               src={user.AvatarImage}
               alt="Profile"
-              className="h-10 w-10 rounded-full mr-2"
+              className="h-10 w-10 rounded-full  mr-2"
             />
-            <div className="text-xl font-bold"><Link to="/dashboard">{user.username}</Link></div>
+            <div className="text-xl font-bold">
+              <Link to="/dashboard">{user.username}</Link>
+            </div>
           </div>
         ) : (
           <button className=" text-4xl text-black font-bold  mt-4 ml-2  px-20 py-2 border-1 rounded-md shadow-[4px_4px_0px_0px_white] hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]">
             <Link to="/login">Login</Link>
           </button>
         )}
-      </div>
-      <div className="bg-green-400 main"></div>
-      <div className="filler text-white  ">
-        <div>
-          <h2 className="text-4xl font-bold m-2 ">Featured Devs</h2>
-          <div className="flex flex-col text-2xl my-10 mx-5 ">
-            <span className="p-2">Developer</span>
-            <span className="p-2">Developer</span>
-            <span className="p-2">Developer</span>
-            <span className="p-2">Developer</span>
-          </div>
-        </div>
       </div>
     </>
   );

@@ -21,7 +21,7 @@ const LoginPage = () => {
         { email, password },
         { withCredentials: true }
       );
-      console.log("User====", res.data.data.user)
+      console.log("User====", res.data.data.user);
       const message = res.data?.message || "Login successful";
       setIsLogin(true);
       localStorage.setItem("isLoggedIn", "true");

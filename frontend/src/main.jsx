@@ -11,8 +11,7 @@ import ErrorBoundary from "./assets/components/ErrorBoundary.jsx";
 import Modal from "react-modal";
 import Dashboard from "./assets/components/Dashboard.jsx";
 
-
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 const router = createBrowserRouter([
   {
@@ -33,7 +32,7 @@ const router = createBrowserRouter([
       },
       {
         path: "dashboard",
-        element: <Dashboard />
+        element: <Dashboard />,
       },
       {
         path: "*",

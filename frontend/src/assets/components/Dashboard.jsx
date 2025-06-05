@@ -1,9 +1,17 @@
-import React from 'react'
+import React from "react";
+import Navbar from "./Navbar";
 
 function Dashboard() {
   return (
-    <div className=' top-52 text-4xl text-white justify-center'>Dashboard</div>
-  )
+    <div className="h-screen w-full">
+      <div className="grid grid-flow-row grid-cols-[300px_auto] h-full ">
+        <Navbar />
+        <div className="Dashboard bg-yellow-600   ">
+            
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default Dashboard
+export default Dashboard;

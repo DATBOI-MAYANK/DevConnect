@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import store from "./app/store.js";
+import { Provider } from "react-redux";
 import Layout from "./Layout.jsx";
 import LoginPage from "./assets/components/LogIn.jsx";
 import Register from "./assets/components/Register.jsx";
@@ -44,8 +46,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ErrorBoundary>
-      <RouterProvider router={router} />
-    </ErrorBoundary>
+    <Provider store={store}>
+      <ErrorBoundary>
+        <RouterProvider router={router} />
+      </ErrorBoundary>
+    </Provider>
   </StrictMode>
 );

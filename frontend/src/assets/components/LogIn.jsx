@@ -4,6 +4,8 @@ import { useState } from "react";
 import ClickSpark from "./ClickSpark";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setLogin } from "../../features/IsLoggedIn/loginSlice";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -12,6 +14,7 @@ const LoginPage = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,7 +24,7 @@ const LoginPage = () => {
         { email, password },
         { withCredentials: true }
       );
-      console.log("User====", res.data.data.user);
+      // console.log("User====", res.data.data.user);
       const message = res.data?.message || "Login successful";
       setIsLogin(true);
       localStorage.setItem("isLoggedIn", "true");
@@ -104,6 +107,7 @@ const LoginPage = () => {
           onClick={() => {
             setIsOpen(false);
             if (isLogin == true) {
+              dispatch(setLogin(true))
               navigate("/");
               // window.location.reload();
             }

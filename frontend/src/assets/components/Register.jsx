@@ -3,6 +3,9 @@ import { useState } from "react";
 import ClickSpark from "./ClickSpark";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
+import { useDispatch } from "react-redux";
+import { setLogin } from "../../features/IsLoggedIn/loginSlice";
+
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -14,6 +17,7 @@ const Register = () => {
   const [isRegister, setIsRegister] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -35,16 +39,16 @@ const Register = () => {
           },
         }
       );
-      // console.log("User==>", res.data);
 
       const message = res.data?.message || "Register successful";
-
       setIsRegister(true);
-      localStorage.setItem("user", JSON.stringify(res.data));
+
+      // Store only the user object
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("isLoggedIn", "true");
 
-      // Trigger a custom event
-      window.dispatchEvent(new Event("userChanged"));
+      // Update Redux login state
+      dispatch(setLogin(true));
 
       setModalMessage(message);
       setIsOpen(true);
@@ -143,10 +147,8 @@ const Register = () => {
           className=" bg-white text-[#171717] text-xl font-bold px-2 py-1 m-2 ml-30 rounded-md "
           onClick={() => {
             setIsOpen(false);
-            if (isRegister == true) {
+            if (isRegister === true) {
               navigate("/");
-
-              window.location.reload();
             }
           }}
         >

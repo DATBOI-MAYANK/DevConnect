@@ -35,12 +35,16 @@ const generateAccessAndRefereshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
 
-  const { username, password, email } = req.body;
+  const { username, password, email, GithubUsername } = req.body;
   // console.log(username, password, email);
 
   //Validation -- Not empty
 
-  if ([username, email, password].some((fields) => fields.trim() === "")) {
+  if (
+    [username, email, password, GithubUsername].some(
+      (fields) => fields.trim() === ""
+    )
+  ) {
     throw new ApiError(400, "All Fields are required !!");
   }
   if (!email.trim().toLowerCase().endsWith("@gmail.com")) {
@@ -60,7 +64,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // check for images: check for avatar
   // console.log("Avatar==>",req.files?.avatarImage?.[0]?.path )
   const avatarLocalPath = req.files?.avatarImage?.[0]?.path;
-  const coverLocalPath = req.files?.cover?.[0]?.path;
+  const coverLocalPath = req.files?.coverImage?.[0]?.path;
   // console.log("avatarpath---" , avatarLocalPath)
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar File is required!");
@@ -83,6 +87,7 @@ const registerUser = asyncHandler(async (req, res) => {
     CoverImage: coverImage?.url || "",
     email,
     password,
+    GithubUsername,
   });
   // remove password, refreshToken fiels from response
 

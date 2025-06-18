@@ -16,7 +16,6 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      
     },
     email: {
       type: String,
@@ -31,6 +30,10 @@ const UserSchema = new mongoose.Schema(
     },
     CoverImage: {
       type: String,
+    },
+    GithubUsername: {
+      type: String,
+      unique: true,
     },
     refreshToken: {
       type: String,
@@ -70,9 +73,8 @@ UserSchema.methods.generateAccessToken = function () {
     process.env.ACCESS_TOKEN_SECRET,
     {
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-    },
+    }
     // console.log("Access Token Secret:", process.env.ACCESS_TOKEN_SECRET)
-
   );
 };
 
@@ -85,9 +87,8 @@ UserSchema.methods.generateRefreshToken = function () {
     process.env.REFRESH_TOKEN_SECRET,
     {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-    },
+    }
     // console.log("Refresh Token Secret:", process.env.REFRESH_TOKEN_SECRET)
-
   );
 };
 

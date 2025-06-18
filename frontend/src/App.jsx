@@ -2,10 +2,11 @@ import { useState } from "react";
 import "./index.css";
 import Navbar from "./assets/components/Navbar";
 import ClickSpark from "./assets/components/ClickSpark";
+import ErrorBoundary from "./assets/components/ErrorBoundary";
 
 function App() {
   return (
-    <>
+    <ErrorBoundary>
       <ClickSpark
         sparkColor="#fff"
         sparkSize={10}
@@ -31,7 +32,7 @@ function App() {
           </div>
         </div>
       </ClickSpark>
-    </>
+    </ErrorBoundary>
   );
 }
 

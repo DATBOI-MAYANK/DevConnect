@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { logout } from "../../features/IsLoggedIn/loginSlice";
 import Logo from "../Logo/Logo-removebg.png";
+import ErrorBoundary from "./ErrorBoundary";
 
 function Navbar() {
   const isLoggedIn = useSelector((state) => state.login.value);
@@ -17,7 +18,7 @@ function Navbar() {
   }, [isLoggedIn]);
 
   return (
-    <>
+    <ErrorBoundary>
       <div className="p-3 navbar text-white border-r-1 border-[#2F3336]">
         <div className="flex">
           <img src={Logo} alt="logo image" className="h-15 w-15" />
@@ -60,7 +61,7 @@ function Navbar() {
           </button>
         )}
       </div>
-    </>
+    </ErrorBoundary>
   );
 }
 

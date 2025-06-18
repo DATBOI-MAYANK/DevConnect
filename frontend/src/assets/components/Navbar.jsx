@@ -18,12 +18,12 @@ function Navbar() {
 
   return (
     <>
-      <div className="p-3 navbar text-white">
+      <div className="p-3 navbar text-white border-r-1 border-[#2F3336]">
         <div className="flex">
           <img src={Logo} alt="logo image" className="h-15 w-15" />
           <h1 className="text-4xl font-bold pt-3"> DevConnect</h1>
         </div>
-        <div className="flex items-center justify-center mt-20">
+        <div className="flex items-center justify-center mt-20 ">
           <ul className="text-4xl">
             <li className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-white hover:text-black rounded-md transition-colors duration-400 ease-in-out w-36">
               <Link to="/">Home</Link>
@@ -43,13 +43,13 @@ function Navbar() {
           Post
         </button>
         {isLoggedIn && user ? (
-          <div className="flex items-center mt-7 ml-2 px-6 py-2 border-1 rounded-md bg-[#212529]">
+          <div className="flex items-center mt-7 ml-2 px-6 py-2 border-1 rounded-md bg-black">
             <img
               src={user.AvatarImage}
               alt="Profile"
               className="h-10 w-10 rounded-full mr-2"
             />
-            <div className="text-xl font-bold">
+            <div className="text-xl ml-5 font-bold">
               <Link to="/dashboard">{user.username}</Link>
             </div>
             {/* <button onClick={() => dispatch(logout())}>Logout</button> */}

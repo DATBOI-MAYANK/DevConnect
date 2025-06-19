@@ -30,7 +30,7 @@ function Dashboard() {
           </div>
           <div className="Info absolute top-2/5 flex flex-col  text-white ">
             <span className="ml-5 text-2xl font-bold">{user.username}</span>
-            <span className="m-5 text-xl font-bold">{user.Bio}</span>
+            <span className="m-5 text-xl font-light">{user.Bio}</span>
           </div>
         </div>
       </div>

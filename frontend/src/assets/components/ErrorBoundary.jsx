@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -22,6 +23,9 @@ export default class ErrorBoundary extends React.Component {
           <p className="text-lg mt-2">
             Try refreshing or go back to the home page.
           </p>
+          <button className="m-4 px-5 py-2 hover:cursor-pointer hover:bg-white hover:text-black rounded-md transition-colors duration-400 ease-in-out w-36">
+            <Link to="/">Home</Link>
+          </button>
         </div>
       );
     }

@@ -35,7 +35,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
 
-  const { username, password, email, GithubUsername } = req.body;
+  const { username, password, email, GithubUsername ,Bio} = req.body;
   // console.log(username, password, email);
 
   //Validation -- Not empty
@@ -88,6 +88,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     GithubUsername,
+    Bio,
   });
   // remove password, refreshToken fiels from response
 

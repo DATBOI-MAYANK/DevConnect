@@ -48,7 +48,7 @@ function Navbar() {
             <img
               src={user.AvatarImage}
               alt="Profile"
-              className="h-10 w-10 rounded-full mr-2"
+              className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
             />
             <div className="text-xl ml-5 font-bold">
               <Link to="/dashboard">{user.username}</Link>

@@ -35,6 +35,9 @@ const UserSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    Bio: {
+      type: String,
+    },
     refreshToken: {
       type: String,
     },

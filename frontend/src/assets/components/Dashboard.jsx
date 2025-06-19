@@ -28,6 +28,10 @@ function Dashboard() {
               className="rounded-full w-33 h-33 object-cover "
             />
           </div>
+          <div className="Info absolute top-2/5 flex flex-col  text-white ">
+            <span className="ml-5 text-2xl font-bold">{user.username}</span>
+            <span className="m-5 text-xl font-bold">{user.Bio}</span>
+          </div>
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@ const Register = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [isRegister, setIsRegister] = useState(false);
   const [GithubUsername, setGithubUsername] = useState("");
+  const [Bio, setBio] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const Register = () => {
       formData.append("avatarImage", avatarImage);
       formData.append("coverImage", coverImage);
       formData.append("GithubUsername", GithubUsername);
+      formData.append("Bio", Bio);
 
       const res = await axios.post(
         "http://localhost:8000/users/api/v1/register",
@@ -42,11 +44,21 @@ const Register = () => {
           },
         }
       );
+      // console.log("Response", res.data);
       const message = res.data?.message || "Register successful";
       setIsRegister(true);
-
+      // console.log("message", message);
       // Store only the user object
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // localStorage.setItem("user", JSON.stringify(res.data.data.user));
+      const user = res.data?.data;
+      // console.log("User to store:", user); // Should log the user object
+
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
+        // console.log("User stored in localStorage!");
+      } else {
+        console.error("User object not found in response:", res.data);
+      }
       localStorage.setItem("isLoggedIn", "true");
 
       // Update Redux login state
@@ -135,7 +147,9 @@ const Register = () => {
             </label>
             <textarea
               name="Bio"
+              value={Bio}
               className="w-80 h-9 bg-white rounded-xs mx-4 mb-4 p-2"
+              onChange={(e) => setBio(e.target.value)}
               id=""
             ></textarea>
             <button

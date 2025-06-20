@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../features/IsLoggedIn/loginSlice";
 import Logo from "../Logo/Logo-removebg.png";
 import ErrorBoundary from "./ErrorBoundary";
@@ -11,7 +11,7 @@ function Navbar() {
     JSON.parse(localStorage.getItem("user") || "null")
   );
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   useEffect(() => {
     // Update user info whenever login state changes
     setUser(JSON.parse(localStorage.getItem("user") || "null"));
@@ -53,7 +53,7 @@ function Navbar() {
             <div className="text-xl ml-5 font-bold">
               <Link to="/dashboard">{user.username}</Link>
             </div>
-            {/* <button onClick={() => dispatch(logout())}>Logout</button> */}
+            <button className="ml-7 bg-white text-black p-1 rounded-md hover:bg-[#1d9bf0]" onClick={() => dispatch(logout() , navigate("/") )}>Logout</button>
           </div>
         ) : (
           <button className="text-4xl text-black font-bold mt-4 ml-2 px-20 py-2 border-1 rounded-md shadow-[4px_4px_0px_0px_white] hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]">

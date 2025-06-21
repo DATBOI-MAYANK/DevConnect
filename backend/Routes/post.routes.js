@@ -7,7 +7,7 @@ import {
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 
-const router = router();
+const router = Router();
 
 router.route("/api/v1/post").post(
   verifyJwt,
@@ -23,3 +23,6 @@ router.route("/api/v1/post").post(
   ]),
   CreatePost
 );
+
+
+export default router;

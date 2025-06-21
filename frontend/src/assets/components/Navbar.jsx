@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../features/IsLoggedIn/loginSlice";
 import Logo from "../Logo/Logo-removebg.png";
 import ErrorBoundary from "./ErrorBoundary";
-import Modal from "react-modal";
+import PostModal from "./PostModel.jsx";
 
 function Navbar() {
   const isLoggedIn = useSelector((state) => state.login.value);
@@ -43,54 +43,13 @@ function Navbar() {
           </ul>
         </div>
         <>
-          {/* <button
+          <button
             className="text-4xl text-black font-bold mt-2 ml-4 px-20 py-2 border-1 rounded-md shadow-[4px_4px_0px_0px_white] hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]"
             onClick={() => setIsPostModalOpen(true)}
           >
             Post
-          </button> */}
-          <Modal
-            isOpen={isPostModalOpen}
-            onRequestClose={() => setIsPostModalOpen(false)}
-            style={{
-              content: {
-                top: "50%",
-                left: "50%",
-                right: "auto",
-                bottom: "auto",
-                marginRight: "-50%",
-                transform: "translate(-50%, -50%)",
-                backgroundColor: "#171717",
-                color: "white",
-              },
-            }}
-            contentLabel="Create Post Modal"
-          >
-            <h2 className="text-2xl mb-4">Create a Post</h2>
-            {/* Your post form here */}
-            <form>
-              <textarea
-                className="w-full h-24 p-2 mb-4 rounded"
-                placeholder="What's happening?"
-              />
-              {/* Add file inputs for images/videos, GitHub repo input, etc. */}
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  className=" text-black px-4 py-2 border-1 rounded-md shadow-[4px_4px_0px_0px_white] hover:cursor-pointer bg-red-700 hover:bg-red-600"
-                  onClick={() => setIsPostModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className=" text-black px-4 py-2 border-1 rounded-md shadow-[4px_4px_0px_0px_white] hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]"
-                >
-                  Post
-                </button>
-              </div>
-            </form>
-          </Modal>
+          </button>
+          <PostModal isOpen={isPostModalOpen} onRequestClose={() => setIsPostModalOpen(false)} />
         </>
         {isLoggedIn && user ? (
           <div className="flex items-center mt-7 ml-2 px-6 py-2 border-1 rounded-md bg-black">

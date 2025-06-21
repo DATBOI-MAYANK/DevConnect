@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 
-export default function PostModal({ isOpen, onRequestClose }) {
+export default function CreatePostModal({ isOpen, onRequestClose }) {
   const [text, setText] = useState("");
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
   const [githubRepo, setGithubRepo] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(
-      JSON.parse(localStorage.getItem("user") || "null")
-    );
+    JSON.parse(localStorage.getItem("user") || "null")
+  );
 
   const handleImageChange = (e) => {
     setImages([...e.target.files]);
@@ -30,14 +30,10 @@ export default function PostModal({ isOpen, onRequestClose }) {
       images.forEach((img) => formData.append("images", img));
       videos.forEach((vid) => formData.append("videos", vid));
 
-      await axios.post(
-        "http://localhost:8000/users/api/v1/post", 
-        formData,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      await axios.post("http://localhost:8000/users/api/v1/post", formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setText("");
       setImages([]);
       setVideos([]);
@@ -98,7 +94,9 @@ export default function PostModal({ isOpen, onRequestClose }) {
         <label className="block mb-2">GitHub Repo Link</label>
         <input
           type="url"
-          placeholder={`https://github.com/${user?.githubUsername || "username"}/repo`}
+          placeholder={`https://github.com/${
+            user?.githubUsername || "username"
+          }/repo`}
           value={githubRepo}
           onChange={(e) => setGithubRepo(e.target.value)}
           className="w-full p-2 mb-4 rounded text-white bg-gray-800"

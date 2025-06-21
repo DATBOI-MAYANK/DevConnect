@@ -2,7 +2,11 @@ import mongoose from "mongoose";
 
 const PostSchema = new mongoose.Schema(
   {
-    author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     text: { type: String, trim: true, default: "" },
     images: [{ type: String }], // Array of image URLs
     videos: [{ type: String }], // Array of video URLs

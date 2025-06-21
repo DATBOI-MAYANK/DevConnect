@@ -24,5 +24,4 @@ router.route("/api/v1/post").post(
   CreatePost
 );
 
-
 export default router;

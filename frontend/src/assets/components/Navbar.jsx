@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../features/IsLoggedIn/loginSlice";
 import Logo from "../Logo/Logo-removebg.png";
 import ErrorBoundary from "./ErrorBoundary";
-import PostModal from "./PostModel.jsx";
+import CreatePostModal from "./CreatePostModel.jsx";
 
 function Navbar() {
   const isLoggedIn = useSelector((state) => state.login.value);
@@ -49,7 +49,10 @@ function Navbar() {
           >
             Post
           </button>
-          <PostModal isOpen={isPostModalOpen} onRequestClose={() => setIsPostModalOpen(false)} />
+          <CreatePostModal
+            isOpen={isPostModalOpen}
+            onRequestClose={() => setIsPostModalOpen(false)}
+          />
         </>
         {isLoggedIn && user ? (
           <div className="flex items-center mt-7 ml-2 px-6 py-2 border-1 rounded-md bg-black">

@@ -47,6 +47,17 @@ const CreatePost = asyncHandler(async (req, res) => {
   }
 });
 
+const GetPosts = asyncHandler(async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .populate("author", "username AvatarImage")
+      .sort({ createdAt: -1 });
+      res.json(new ApiResponse(200 , posts))
+  } catch (error) {
+    throw new ApiError(500 , "Could not find/fetch  Posts"  )
+  }
+});
+
 const UpdatePost = asyncHandler(async (req, res) => {
   try {
     const { text, githubRepo } = req.body;
@@ -111,4 +122,4 @@ const DeletePost = asyncHandler(async (req, res) => {
   }
 });
 
-export { CreatePost, UpdatePost, DeletePost };
+export { CreatePost, UpdatePost, DeletePost , GetPosts };

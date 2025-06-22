@@ -1,10 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
-import ClickSpark from "../components/ClickSpark.jsx";
+import axios from "axios";
+import ClickSpark from "../components/ClickSpark";
 function Dashboard() {
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user") || "null")
   );
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/users/api/v1/get-posts", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res);
+        setPosts(res.data.data);
+      })
+      .catch((err) => {
+        console.error("Failed To Fetch Posts:", err);
+      });
+  }, [user]);
 
   return (
     <ClickSpark>
@@ -33,6 +49,21 @@ function Dashboard() {
               <span className="ml-5 text-2xl font-bold">{user.username}</span>
               <span className="m-5 text-xl font-light">{user.Bio}</span>
             </div>
+            <div className="Buttons absolute top-7/12 ">
+              <button className="text-white font-bold  px-20 py-2 border-1 text-3xl">
+                Post
+              </button>
+              <button className="text-white font-bold   px-20 py-2 border-1 text-3xl">
+                Media
+              </button>
+              <button className="text-white font-bold   px-9 py-2 border-1 text-3xl">
+                Github Repo
+              </button>
+              <button className="text-white font-bold   px-10 py-2 border-1 text-3xl">
+                Coming Soon...
+              </button>
+            </div>
+            
           </div>
         </div>
       </div>

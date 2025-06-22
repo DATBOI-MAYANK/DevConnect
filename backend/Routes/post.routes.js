@@ -3,13 +3,14 @@ import {
   CreatePost,
   UpdatePost,
   DeletePost,
+  GetPosts
 } from "../controllers/post.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/api/v1/post").post(
+router.route("/api/v1/create-post").post(
   verifyJwt,
   upload.fields([
     {
@@ -23,5 +24,7 @@ router.route("/api/v1/post").post(
   ]),
   CreatePost
 );
+
+router.route("/api/v1/get-posts").get(verifyJwt, GetPosts)
 
 export default router;

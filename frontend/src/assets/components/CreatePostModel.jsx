@@ -30,7 +30,7 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
       images.forEach((img) => formData.append("images", img));
       videos.forEach((vid) => formData.append("videos", vid));
 
-      await axios.post("http://localhost:8000/users/api/v1/post", formData, {
+      await axios.post("http://localhost:8000/users/api/v1/create-post", formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });

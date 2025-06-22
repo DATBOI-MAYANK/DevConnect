@@ -20,14 +20,14 @@ function MainFeed() {
 
   return (
     <ClickSpark>
-      <div className="Data h-20 absolute  w-full p-4 rounded  ">
+      <div className="Data h-20 absolute  w-full py-4 rounded  ">
         {posts.length == 0 ? (
           <div className="text-white">No Posts Found </div>
         ) : (
           posts.map((post) => (
             <div
               key={post._id}
-              className="mb-4 p-2 bg-black text-white rounded shadow"
+              className="mb-4 p-3 bg-black text-white   border-b-1 border-[#2F3336]"
             >
               <div className="flex mb-2">
                 <img
@@ -38,7 +38,7 @@ function MainFeed() {
                 <strong>{post.author?.username || "Unknown"}</strong>
               </div>
 
-              <div className="text-xl ml-10">{post.text}</div>
+              <div className="text-xl ml-10 ">{post.text}</div>
               {post.images && post.images.length > 0 && (
                 <div className="flex gap-2 mt-2">
                   {post.images.map((img, indx) => (

@@ -25,6 +25,6 @@ router.route("/api/v1/create-post").post(
   CreatePost
 );
 
-router.route("/api/v1/get-posts").get(verifyJwt, GetPosts)
+router.route("/api/v1/get-posts").get( GetPosts)
 
 export default router;

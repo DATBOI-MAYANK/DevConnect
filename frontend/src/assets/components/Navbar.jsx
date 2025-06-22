@@ -21,7 +21,8 @@ function Navbar() {
 
   return (
     <ErrorBoundary>
-      <div className="p-3 navbar text-white border-r-1 border-[#2F3336]">
+      <>
+      <div className="navbar fixed left-0 top-0 h-screen w-[300px] p-3 text-white border-r-1 border-[#2F3336] ">
         <div className="flex">
           <img src={Logo} alt="logo image" className="h-15 w-15" />
           <h1 className="text-4xl font-bold pt-3"> DevConnect</h1>
@@ -77,6 +78,7 @@ function Navbar() {
           </button>
         )}
       </div>
+      </>
     </ErrorBoundary>
   );
 }

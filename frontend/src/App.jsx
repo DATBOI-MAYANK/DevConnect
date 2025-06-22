@@ -16,11 +16,11 @@ function App() {
         duration={400}
       >
         <div className="bg-black h-screen w-full">
-          <div className="grid grid-flow-row grid-cols-[300px_auto_350px] h-full  ">
+          <div className="  grid grid-flow-row grid-cols-[300px_auto_350px] h-full ">
             <Navbar />
             <MainFeed />
-            <div className="filler text-white  ">
-              <div>
+            <div className="filler text-white border-l-1 border-[#2F3336]    ">
+              <div >
                 <h2 className="text-4xl font-bold m-2 ">Featured Devs</h2>
                 <div className="flex flex-col text-2xl my-10 mx-5 ">
                   <span className="p-2">Developer</span>

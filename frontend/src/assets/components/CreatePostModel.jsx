@@ -30,10 +30,14 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
       images.forEach((img) => formData.append("images", img));
       videos.forEach((vid) => formData.append("videos", vid));
 
-      await axios.post("http://localhost:8000/users/api/v1/create-post", formData, {
-        withCredentials: true,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await axios.post(
+        "http://localhost:8000/users/api/v1/create-post",
+        formData,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
       setText("");
       setImages([]);
       setVideos([]);
@@ -41,6 +45,10 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
       onRequestClose();
     } catch (err) {
       alert("Failed to create post");
+      // if (err.response && err.response.status === 401) {
+      //   dispatch(logout());
+      //   navigate("/login");
+      // } Uncommit after all endpoints are cleared!!
     } finally {
       setLoading(false);
     }
@@ -94,9 +102,7 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
         <label className="block mb-2">GitHub Repo Link</label>
         <input
           type="url"
-          placeholder={`https://github.com/${
-            user?.githubUsername || "username"
-          }/repo`}
+          placeholder={`https://github.com/username/repo`}
           value={githubRepo}
           onChange={(e) => setGithubRepo(e.target.value)}
           className="w-full p-2 mb-4 rounded text-white bg-gray-800"

@@ -16,7 +16,7 @@ function App() {
         duration={400}
       >
         <div className="bg-black h-screen w-full">
-          <div className="  grid grid-flow-row grid-cols-[300px_auto_350px] h-full ">
+          <div className="  grid grid-flow-row grid-cols-[auto_350px] ml-[300px] h-full ">
             <Navbar />
             <MainFeed />
             <div className="filler text-white border-l-1 border-[#2F3336]    ">

@@ -52,9 +52,9 @@ const GetPosts = asyncHandler(async (req, res) => {
     const posts = await Post.find()
       .populate("author", "username AvatarImage")
       .sort({ createdAt: -1 });
-      res.json(new ApiResponse(200 , posts))
+    res.json(new ApiResponse(200, posts));
   } catch (error) {
-    throw new ApiError(500 , "Could not find/fetch  Posts"  )
+    throw new ApiError(500, "Could not find/fetch  Posts");
   }
 });
 
@@ -122,4 +122,27 @@ const DeletePost = asyncHandler(async (req, res) => {
   }
 });
 
-export { CreatePost, UpdatePost, DeletePost , GetPosts };
+const LikePost = asyncHandler(async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  const userId = req.user._id;
+  if (!post.likes.includes(userId)) {
+    post.likes.push(userId);
+  } else {
+    post.likes = post.likes.filter((id) => id.toString() !== userId.toString());
+  }
+  await post.save();
+  res.json({ success: true, likes: post.likes.length });
+});
+
+const CommentPost = asyncHandler(async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  post.comments.push({
+    user: req.user._id,
+    text: req.body.text,
+    createdAt: new Date(),
+  });
+  await post.save();
+  res.json({ success: true, comments: post.comments });
+});
+
+export { CreatePost, UpdatePost, DeletePost, GetPosts,LikePost, CommentPost  };

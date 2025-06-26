@@ -69,7 +69,10 @@ function Dashboard() {
               >
                 Github Repo
               </button>
-              <button className="text-white font-bold   px-16 py-2 border-1 text-2xl hover:cursor-pointer" onClick={() => setActiveTab("Soon")}>
+              <button
+                className="text-white font-bold   px-16 py-2 border-1 text-2xl hover:cursor-pointer"
+                onClick={() => setActiveTab("Soon")}
+              >
                 Coming Soon...
               </button>
             </div>
@@ -79,7 +82,10 @@ function Dashboard() {
                   <div className="text-white">No Posts Found</div>
                 ) : (
                   userPosts.map((post) => (
-                    <div key={post._id} className="mb-4 p-3 bg-black text-white border-b-1 border-[#2F3336]">
+                    <div
+                      key={post._id}
+                      className="mb-4 p-3 bg-black text-white border-b-1 border-[#2F3336]"
+                    >
                       <div className="flex mb-2">
                         <img
                           src={post.author?.AvatarImage}
@@ -148,9 +154,13 @@ function Dashboard() {
                               alt="Profile"
                               className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
                             />
-                            <strong className="text-white">{post.author?.username || "Unknown"}</strong>
+                            <strong className="text-white">
+                              {post.author?.username || "Unknown"}
+                            </strong>
                           </div>
-                          <div className="text-xl text-white ml-10">{post.text}</div>
+                          <div className="text-xl text-white ml-10">
+                            {post.text}
+                          </div>
                           <a
                             href={post.githubRepo}
                             target="_blank"

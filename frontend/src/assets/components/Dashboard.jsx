@@ -33,7 +33,7 @@ function Dashboard() {
               <img
                 src={user.CoverImage}
                 alt="CoverImage"
-                className="w-full h-1/4 object-none "
+                className="w-full h-1/4 object-cover "
               ></img>
             ) : (
               <div className="Cover_Image w-full h-1/4 bg-black border-b-2 border-[#2F3336]"></div>

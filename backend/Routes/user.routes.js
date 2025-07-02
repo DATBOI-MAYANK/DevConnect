@@ -25,6 +25,12 @@ router.route("/api/v1/register").post(
 );
 
 router.route("/api/v1/login").post(loginUser);
+router.route("/api/v1/me").get(verifyJwt, (req, res) => {
+  res.status(200).json({
+    success: true,
+    user: req.user,
+  });
+});
 
 router.route("/api/v1/logout").post(verifyJwt, logoutUser);
 router.route("/api/v1/refresh-Token").post(refreshAccessToken);

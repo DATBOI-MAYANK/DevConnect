@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import axios from "axios";
+import axios from "../api/axiosSetup.js";
 
 export default function CreatePostModal({ isOpen, onRequestClose }) {
   const [text, setText] = useState("");

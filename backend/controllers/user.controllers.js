@@ -27,7 +27,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
     console.error("Error generating tokens:", error);
     throw new ApiError(
       500,
-      "Something went wrong while generating referesh and access token"
+      "Something went wrong while generating refresh and access token"
     );
   }
 };
@@ -35,7 +35,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
 
-  const { username, password, email, GithubUsername ,Bio} = req.body;
+  const { username, password, email, GithubUsername, Bio } = req.body;
   // console.log(username, password, email);
 
   //Validation -- Not empty

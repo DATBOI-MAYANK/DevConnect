@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
-import axios from "axios";
-import ClickSpark from "../components/ClickSpark";
+import axios from "../api/axiosSetup.js";
+import ClickSpark from "../components/ClickSpark.jsx";
 function Dashboard() {
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user") || "null")
@@ -95,6 +95,7 @@ function Dashboard() {
                         <strong>{post.author?.username || "Unknown"}</strong>
                       </div>
                       <div className="text-xl ml-10">{post.text}</div>
+                      
                       {post.images && post.images.length > 0 && (
                         <div className="flex gap-2 mt-2">
                           {post.images.map((img) => (
@@ -119,6 +120,11 @@ function Dashboard() {
                           </a>
                         </div>
                       )}
+                      <div className="like ">
+                        <button className=" text-black font-bold  border-1 rounded-md shadow-[4px_4px_0px_0px_white] hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]">
+                          💖 Like 
+                        </button>
+                      </div>
                     </div>
                   ))
                 )

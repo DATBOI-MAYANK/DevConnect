@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import axios from "./assets/api/axiosSetup"; // adjust path if needed
+import axios from "axios"; // adjust path if needed
 import { logout } from "./features/IsLoggedIn/loginSlice";
 import { useLocation } from "react-router-dom";
 

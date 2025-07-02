@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
-import axios from "../api/axiosSetup.js";
+import axios from "axios";
 import ClickSpark from "../components/ClickSpark.jsx";
 function Dashboard() {
   const [user, setUser] = useState(

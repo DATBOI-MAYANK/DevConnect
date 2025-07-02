@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../api/axiosSetup.js";
+import axios from "axios";
 import ClickSpark from "../components/ClickSpark";
 function MainFeed() {
   const [posts, setPosts] = useState([]);

@@ -1,4 +1,4 @@
-import axios from "../api/axiosSetup.js";
+import axios from "axios";
 import { useState } from "react";
 import ClickSpark from "./ClickSpark";
 import { useNavigate } from "react-router-dom";

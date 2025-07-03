@@ -1,5 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import Post from "../models/post.model.js";
+import  Post  from "../models/post.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
@@ -122,27 +122,50 @@ const DeletePost = asyncHandler(async (req, res) => {
   }
 });
 
-const LikePost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id);
-  const userId = req.user._id;
-  if (!post.likes.includes(userId)) {
-    post.likes.push(userId);
-  } else {
-    post.likes = post.likes.filter((id) => id.toString() !== userId.toString());
+const toggleLike = asyncHandler(async (req, res, next) => {
+  try {
+    const postId = req.params.id;
+    const userId = req.user._id;
+
+    const post = await Post.findById(postId);
+    if (!post) throw new ApiError(404, "Post not found");
+
+    const liked = post.likes.includes(userId);
+
+    if (liked) {
+      // Unlike
+      post.likes = post.likes.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+    } else {
+      // Like
+      post.likes.push(userId);
+    }
+
+    await post.save();
+
+    // Optionally, populate author for frontend
+    const updatedPost = await Post.findById(postId)
+      .populate("author", "username AvatarImage")
+      .populate("likes", "username");
+
+    return res.status(200).json(
+      new ApiResponse(200, { updatedPost }, liked ? "Unliked" : "Liked")
+    );
+  } catch (error) {
+    next(error);
   }
-  await post.save();
-  res.json({ success: true, likes: post.likes.length });
 });
 
-const CommentPost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id);
-  post.comments.push({
-    user: req.user._id,
-    text: req.body.text,
-    createdAt: new Date(),
-  });
-  await post.save();
-  res.json({ success: true, comments: post.comments });
-});
+// const CommentPost = asyncHandler(async (req, res) => {
+//   const post = await Post.findById(req.params.id);
+//   post.comments.push({
+//     user: req.user._id,
+//     text: req.body.text,
+//     createdAt: new Date(),
+//   });
+//   await post.save();
+//   res.json({ success: true, comments: post.comments });
+// });
 
-export { CreatePost, UpdatePost, DeletePost, GetPosts,LikePost, CommentPost  };
+export { CreatePost, UpdatePost, DeletePost, GetPosts, toggleLike };

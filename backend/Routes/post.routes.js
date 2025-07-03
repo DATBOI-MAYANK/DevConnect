@@ -4,8 +4,7 @@ import {
   UpdatePost,
   DeletePost,
   GetPosts,
-  LikePost,
-  CommentPost
+  toggleLike,
 } from "../controllers/post.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -29,8 +28,7 @@ router.route("/api/v1/create-post").post(
 
 router.route("/api/v1/get-posts").get( GetPosts)
 
-// PATCH /users/api/v1/post/:id/like
-// router.patch("/api/v1/post/:id/like", verifyJwt, LikePost);
+router.post("/api/v1/posts/:id/like", verifyJwt, toggleLike);
 
 // // POST /users/api/v1/post/:id/comment
 // router.post("/api/v1/post/:id/comment", verifyJwt,CommentPost );

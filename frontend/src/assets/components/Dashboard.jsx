@@ -1,27 +1,21 @@
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Navbar from "./Navbar";
-import axios from "axios";
 import ClickSpark from "../components/ClickSpark.jsx";
+import LikeButton from "./LikeButton.jsx";
+import { fetchPosts } from "../../features/PostSlice/postSlice"; // You need to implement this thunk
+
 function Dashboard() {
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user") || "null")
-  );
-  const [posts, setPosts] = useState([]);
+  const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
+  const dispatch = useDispatch();
+  const posts = useSelector((state) => state.posts.list);
+
   const [activeTab, setActiveTab] = useState("");
   const userPosts = posts.filter((post) => post.author?._id === user?._id);
+
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/users/api/v1/get-posts", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log(res);
-        setPosts(res.data.data);
-      })
-      .catch((err) => {
-        console.error("Failed To Fetch Posts:", err);
-      });
-  }, [user]);
+    dispatch(fetchPosts());
+  }, [dispatch]);
 
   return (
     <ClickSpark>
@@ -95,7 +89,7 @@ function Dashboard() {
                         <strong>{post.author?.username || "Unknown"}</strong>
                       </div>
                       <div className="text-xl ml-10">{post.text}</div>
-                      
+
                       {post.images && post.images.length > 0 && (
                         <div className="flex gap-2 mt-2">
                           {post.images.map((img) => (
@@ -120,11 +114,7 @@ function Dashboard() {
                           </a>
                         </div>
                       )}
-                      <div className="like ">
-                        <button className=" text-black font-bold  border-1 rounded-md shadow-[4px_4px_0px_0px_white] hover:cursor-pointer bg-[#1d9bf0] hover:bg-[#48CAE4]">
-                          💖 Like 
-                        </button>
-                      </div>
+                      <LikeButton postId={post._id} userId={user._id} />
                     </div>
                   ))
                 )

@@ -21,8 +21,8 @@ function LikeButton({ postId, userId }) {
   };
 
   return (
-    <button onClick={handleLike}>
-      {likedByUser ? "💖 Unlike" : "🤍 Like"} ({likesCount})
+    <button onClick={handleLike} className="ml-9 mt-2" >
+      {likedByUser ? "💖 " : "🤍 "} {likesCount}
     </button>
   );
 }

@@ -1,5 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import  Post  from "../models/post.model.js";
+import Post from "../models/post.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
@@ -7,31 +7,46 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const CreatePost = asyncHandler(async (req, res) => {
   try {
     const { text, githubRepo } = req.body;
-    const files = req.files || {};
+    const media = req.files.media || {};
     let imageUrls = [];
     let videoUrls = [];
 
+    console.log("Media \n ", media);
     // Upload images to Cloudinary
-    if (files.images) {
-      const images = Array.isArray(files.images)
-        ? files.images
-        : [files.images];
-      for (const file of images) {
-        const url = await uploadOnCloudinary(file.path, "image");
-        imageUrls.push(url);
+    if (media) {
+      const items = Array.isArray(media) ? media : [media];
+      console.log("Items \n", items);
+      for (const medias of items) {
+        // const isImage = medias.mimetype.startsWith("image/");
+        const isVideo = medias.mimetype.startsWith("video/");
+        console.log("isVideo \n", isVideo);
+        //  const uploadResult = await uploadOnCloudinary(medias.path);
+        //  console.log("Result" , uploadResult);
+        //  if(!uploadResult) continue;
+        //  const url = uploadResult.secure_url;
+        const url = await uploadOnCloudinary(medias.path);
+          console.log("URLResult" , url);
+        if (isVideo) {
+          videoUrls.push(url);
+          console.log("videourl \n", url);
+        } else {
+          imageUrls.push(url);
+          console.log("image url \n", url);
+        }
+        // const type = isImage ? "image" : "video";
       }
     }
 
     // Upload videos to Cloudinary
-    if (files.videos) {
-      const videos = Array.isArray(files.videos)
-        ? files.videos
-        : [files.videos];
-      for (const file of videos) {
-        const url = await uploadOnCloudinary(file.path, "video");
-        videoUrls.push(url);
-      }
-    }
+    // if (files.videos) {
+    //   const videos = Array.isArray(files.videos)
+    //     ? files.videos
+    //     : [files.videos];
+    //   for (const file of videos) {
+    //     const url = await uploadOnCloudinary(file.path);
+    //     videoUrls.push(url);
+    //   }
+    // }
 
     const post = await Post.create({
       author: req.user._id,
@@ -149,9 +164,9 @@ const toggleLike = asyncHandler(async (req, res, next) => {
       .populate("author", "username AvatarImage")
       .populate("likes", "username");
 
-    return res.status(200).json(
-      new ApiResponse(200, { updatedPost }, liked ? "Unliked" : "Liked")
-    );
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { updatedPost }, liked ? "Unliked" : "Liked"));
   } catch (error) {
     next(error);
   }

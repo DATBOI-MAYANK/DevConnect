@@ -15,13 +15,9 @@ router.route("/api/v1/create-post").post(
   verifyJwt,
   upload.fields([
     {
-      name: "images",
-      maxCount: 4,
-    },
-    {
-      name: "videos",
-      maxCount: 2,
-    },
+      name: "media",
+      maxCount: 6,
+    }
   ]),
   CreatePost
 );

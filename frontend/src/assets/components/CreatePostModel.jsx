@@ -4,20 +4,24 @@ import axios from "axios";
 
 export default function CreatePostModal({ isOpen, onRequestClose }) {
   const [text, setText] = useState("");
-  const [images, setImages] = useState([]);
-  const [videos, setVideos] = useState([]);
+  // const [images, setImages] = useState([]);
+  // const [videos, setVideos] = useState([]);
+  const [files , setFiles] = useState([]);
   const [githubRepo, setGithubRepo] = useState("");
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user") || "null")
-  );
+  const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
 
-  const handleImageChange = (e) => {
-    setImages([...e.target.files]);
-  };
+  // const handleImageChange = (e) => {
+  //   setImages([...e.target.files]);
+  // };
 
-  const handleVideoChange = (e) => {
-    setVideos([...e.target.files]);
+  // const handleVideoChange = (e) => {
+  //   setVideos([...e.target.files]);
+  // };
+  const handleFilesChange = (e) => {
+    if(e.target.files){
+      setFiles(prev => [...prev, ...Array.from(e.target.files)])
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -27,9 +31,9 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
       const formData = new FormData();
       formData.append("text", text);
       formData.append("githubRepo", githubRepo);
-      images.forEach((img) => formData.append("images", img));
-      videos.forEach((vid) => formData.append("videos", vid));
-
+      // images.forEach((img) => formData.append("images", img));
+      // videos.forEach((vid) => formData.append("videos", vid));
+      files.forEach((file) => formData.append("media", file))
       await axios.post(
         "http://localhost:8000/users/api/v1/create-post",
         formData,
@@ -39,8 +43,9 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
         }
       );
       setText("");
-      setImages([]);
-      setVideos([]);
+      // setImages([]);
+      // setVideos([]);
+      setFiles([]);
       setGithubRepo("");
       onRequestClose();
     } catch (err) {
@@ -81,23 +86,24 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
           onChange={(e) => setText(e.target.value)}
         />
 
-        <label className="block mb-2">Upload Images</label>
+        <label className="block mb-2">Upload Images/Videos </label>
         <input
           type="file"
-          accept="image/*"
+          name="media"
+          accept="image/*, video/*"
           multiple
-          onChange={handleImageChange}
+          onChange={handleFilesChange}
           className="mb-4 text-white bg-gray-800 rounded p-2  "
         />
 
-        <label className="block mb-2">Upload Videos</label>
+        {/* <label className="block mb-2">Upload Videos</label>
         <input
           type="file"
           accept="video/*"
           multiple
           onChange={handleVideoChange}
           className="mb-4 text-white bg-gray-800 rounded p-2  "
-        />
+        /> */}
 
         <label className="block mb-2">GitHub Repo Link</label>
         <input

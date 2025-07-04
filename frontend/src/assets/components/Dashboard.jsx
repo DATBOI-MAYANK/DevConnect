@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Navbar from "./Navbar";
 import ClickSpark from "../components/ClickSpark.jsx";
 import LikeButton from "./LikeButton.jsx";
-import { fetchPosts } from "../../features/PostSlice/postSlice"; // You need to implement this thunk
+import { fetchPosts } from "../../features/PostSlice/postSlice";
 
 function Dashboard() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
@@ -91,13 +91,42 @@ function Dashboard() {
                       <div className="text-xl ml-10">{post.text}</div>
 
                       {post.images && post.images.length > 0 && (
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex gap-2 ml-10 mt-2">
                           {post.images.map((img) => (
                             <img
                               src={img}
                               key={img}
                               alt="post"
-                              className="w-24 h-24 object-cover rounded"
+                              className="media-img"
+                              onLoad={(e) => {
+                                const el = e.target;
+                                el.classList.remove("landscape", "portrait");
+                                el.classList.add(
+                                  el.naturalWidth > el.naturalHeight
+                                    ? "landscape"
+                                    : "portrait"
+                                );
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                      {post.videos && post.videos.length > 0 && (
+                        <div className="flex gap-2 mt-2">
+                          {post.videos.map((vid) => (
+                            <video
+                              src={vid}
+                              key={vid}
+                              controls
+                              className="media-video"
+                              onLoadedMetadata={(e) => {
+                                const el = e.target;
+                                el.classList.add(
+                                  el.videoWidth > el.videoHeight
+                                    ? "landscape"
+                                    : "portrait"
+                                );
+                              }}
                             />
                           ))}
                         </div>
@@ -122,16 +151,74 @@ function Dashboard() {
                 userPosts.length === 0 ? (
                   <div className="text-white text-4xl">No Posts Found</div>
                 ) : (
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="mb-4 p-3 bg-black text-white border-b-1 border-[#2F3336]">
                     {userPosts
-                      .flatMap((post) => post.images || [])
-                      .map((img, idx) => (
-                        <img
-                          src={img}
-                          key={img + idx}
-                          alt="post"
-                          className="w-24 h-24 object-cover rounded"
-                        />
+                      .filter(
+                        (post) =>
+                          (post.images && post.images.length > 0) ||
+                          (post.videos && post.videos.length > 0)
+                      )
+                      .map((post) => (
+                        <div key={post._id}>
+                          <div className="flex mb-2">
+                            <img
+                              src={post.author?.AvatarImage}
+                              alt="Profile"
+                              className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
+                            />
+                            <strong className="text-white">
+                              {post.author?.username || "Unknown"}
+                            </strong>
+                          </div>
+                          <div className="text-xl text-white ml-10">
+                            {post.text}
+                          </div>
+                          {post.images && post.images.length > 0 && (
+                            <div className="flex gap-2 ml-10  mt-2">
+                              {post.images.map((img) => (
+                                <img
+                                  src={img}
+                                  key={img}
+                                  alt="post"
+                                  className="media-img"
+                                  onLoad={(e) => {
+                                    const el = e.target;
+                                    el.classList.remove(
+                                      "landscape",
+                                      "portrait"
+                                    );
+                                    el.classList.add(
+                                      el.naturalWidth > el.naturalHeight
+                                        ? "landscape"
+                                        : "portrait"
+                                    );
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          )}
+                          {post.videos && post.videos.length > 0 && (
+                            <div className="flex gap-2 mt-2">
+                              {post.videos.map((vid) => (
+                                <video
+                                  src={vid}
+                                  key={vid}
+                                  controls
+                                  className="media-video"
+                                  onLoadedMetadata={(e) => {
+                                    const el = e.target;
+                                    el.classList.add(
+                                      el.videoWidth > el.videoHeight
+                                        ? "landscape"
+                                        : "portrait"
+                                    );
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          )}
+                          <LikeButton postId={post._id} userId={user._id} />
+                        </div>
                       ))}
                   </div>
                 )

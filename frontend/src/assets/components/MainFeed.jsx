@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ClickSpark from "../components/ClickSpark";
+import LikeButton from "./LikeButton";
 function MainFeed() {
   const [posts, setPosts] = useState([]);
 
@@ -40,13 +41,41 @@ function MainFeed() {
 
               <div className="text-xl ml-10 ">{post.text}</div>
               {post.images && post.images.length > 0 && (
-                <div className="flex gap-2 mt-2">
-                  {post.images.map((img, indx) => (
+                <div className="flex gap-2 ml-10  mt-2">
+                  {post.images.map((img) => (
                     <img
                       src={img}
-                      key={indx}
+                      key={img}
                       alt="post"
-                      className="w-24 h-24 object-cover rounded"
+                      className="media-img"
+                      onLoad={(e) => {
+                        const el = e.target;
+                        el.classList.add(
+                          el.naturalWidth > el.naturalHeight
+                            ? "landscape"
+                            : "portrait"
+                        );
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+              {post.videos && post.videos.length > 0 && (
+                <div className="flex gap-2 mt-2">
+                  {post.videos.map((vid) => (
+                    <video
+                      src={vid}
+                      key={vid}
+                      controls
+                      className="media-video"
+                      onLoadedMetadata={(e) => {
+                        const el = e.target;
+                        el.classList.add(
+                          el.videoWidth > el.videoHeight
+                            ? "landscape"
+                            : "portrait"
+                        );
+                      }}
                     />
                   ))}
                 </div>
@@ -63,6 +92,7 @@ function MainFeed() {
                   </a>
                 </div>
               )}
+              <LikeButton postId={post._id} userId={user._id} />
             </div>
           ))
         )}

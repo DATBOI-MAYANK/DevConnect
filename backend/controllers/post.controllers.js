@@ -6,56 +6,35 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const CreatePost = asyncHandler(async (req, res) => {
   try {
-    const { text, githubRepo } = req.body;
-    const media = req.files.media || {};
+    const { text, githubRepoName } = req.body;
+    const media = req.files && req.files.media;
     let imageUrls = [];
     let videoUrls = [];
 
-    console.log("Media \n ", media);
-    // Upload images to Cloudinary
     if (media) {
       const items = Array.isArray(media) ? media : [media];
-      console.log("Items \n", items);
-      for (const medias of items) {
-        // const isImage = medias.mimetype.startsWith("image/");
-        const isVideo = medias.mimetype.startsWith("video/");
-        console.log("isVideo \n", isVideo);
-        //  const uploadResult = await uploadOnCloudinary(medias.path);
-        //  console.log("Result" , uploadResult);
-        //  if(!uploadResult) continue;
-        //  const url = uploadResult.secure_url;
-        const url = await uploadOnCloudinary(medias.path);
-          console.log("URLResult" , url);
-        if (isVideo) {
-          videoUrls.push(url);
-          console.log("videourl \n", url);
-        } else {
-          imageUrls.push(url);
-          console.log("image url \n", url);
+      if (items.length > 0) {
+        for (const medias of items) {
+          if (!medias.mimetype || !medias.path) continue; 
+          const isVideo = medias.mimetype.startsWith("video/");
+          const url = await uploadOnCloudinary(medias.path);
+          if (isVideo) {
+            videoUrls.push(url);
+          } else {
+            imageUrls.push(url);
+          }
         }
-        // const type = isImage ? "image" : "video";
       }
     }
-
-    // Upload videos to Cloudinary
-    // if (files.videos) {
-    //   const videos = Array.isArray(files.videos)
-    //     ? files.videos
-    //     : [files.videos];
-    //   for (const file of videos) {
-    //     const url = await uploadOnCloudinary(file.path);
-    //     videoUrls.push(url);
-    //   }
-    // }
 
     const post = await Post.create({
       author: req.user._id,
       text,
       images: imageUrls,
       videos: videoUrls,
-      githubRepo: githubRepo || "",
+      githubRepoName: githubRepoName || "",
     });
-
+    
     res.status(201).json(new ApiResponse(201, post, "Post Created"));
   } catch (err) {
     throw new ApiError(500, "Something went wrong while creating post.");
@@ -75,29 +54,29 @@ const GetPosts = asyncHandler(async (req, res) => {
 
 const UpdatePost = asyncHandler(async (req, res) => {
   try {
-    const { text, githubRepo } = req.body;
-    const files = req.files || {};
+    const { text, githubRepoName } = req.body;
+    const media = req.files.media || {};
     let imageUrls = [];
     let videoUrls = [];
 
     // Upload new images to Cloudinary
-    if (files.images) {
-      const images = Array.isArray(files.images)
-        ? files.images
-        : [files.images];
-      for (const file of images) {
-        const url = await uploadOnCloudinary(file.path, "image");
+    if (media.images) {
+      const images = Array.isArray(media.images)
+        ? media.images
+        : [media.images];
+      for (const medias of images) {
+        const url = await uploadOnCloudinary(medias.path, "image");
         imageUrls.push(url);
       }
     }
 
     // Upload new videos to Cloudinary
-    if (files.videos) {
-      const videos = Array.isArray(files.videos)
-        ? files.videos
-        : [files.videos];
-      for (const file of videos) {
-        const url = await uploadOnCloudinary(file.path, "video");
+    if (media.videos) {
+      const videos = Array.isArray(media.videos)
+        ? media.videos
+        : [media.videos];
+      for (const medias of videos) {
+        const url = await uploadOnCloudinary(medias.path, "video");
         videoUrls.push(url);
       }
     }
@@ -105,7 +84,7 @@ const UpdatePost = asyncHandler(async (req, res) => {
     // Update the post (replace old media with new if provided)
     const updateFields = {
       text,
-      githubRepo,
+      githubRepoName,
     };
     if (imageUrls.length > 0) updateFields.images = imageUrls;
     if (videoUrls.length > 0) updateFields.videos = videoUrls;

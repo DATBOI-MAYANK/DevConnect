@@ -1,26 +1,18 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 
 export default function CreatePostModal({ isOpen, onRequestClose }) {
   const [text, setText] = useState("");
-  // const [images, setImages] = useState([]);
-  // const [videos, setVideos] = useState([]);
-  const [files , setFiles] = useState([]);
-  const [githubRepo, setGithubRepo] = useState("");
+  const [files, setFiles] = useState([]);
+  const [githubRepoName, setGithubRepoName] = useState("");
   const [loading, setLoading] = useState(false);
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
 
-  // const handleImageChange = (e) => {
-  //   setImages([...e.target.files]);
-  // };
-
-  // const handleVideoChange = (e) => {
-  //   setVideos([...e.target.files]);
-  // };
+ 
   const handleFilesChange = (e) => {
-    if(e.target.files){
-      setFiles(prev => [...prev, ...Array.from(e.target.files)])
+    if (e.target.files) {
+      setFiles((prev) => [...prev, ...Array.from(e.target.files)]);
     }
   };
 
@@ -30,10 +22,8 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
     try {
       const formData = new FormData();
       formData.append("text", text);
-      formData.append("githubRepo", githubRepo);
-      // images.forEach((img) => formData.append("images", img));
-      // videos.forEach((vid) => formData.append("videos", vid));
-      files.forEach((file) => formData.append("media", file))
+      formData.append("githubRepoName", githubRepoName);
+      files.forEach((file) => formData.append("media", file));
       await axios.post(
         "http://localhost:8000/users/api/v1/create-post",
         formData,
@@ -43,17 +33,11 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
         }
       );
       setText("");
-      // setImages([]);
-      // setVideos([]);
       setFiles([]);
-      setGithubRepo("");
+      setGithubRepoName("");
       onRequestClose();
     } catch (err) {
       alert("Failed to create post");
-      // if (err.response && err.response.status === 401) {
-      //   dispatch(logout());
-      //   navigate("/login");
-      // } Uncommit after all endpoints are cleared!!
     } finally {
       setLoading(false);
     }
@@ -96,21 +80,12 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
           className="mb-4 text-white bg-gray-800 rounded p-2  "
         />
 
-        {/* <label className="block mb-2">Upload Videos</label>
+        <label className="block mb-2">GitHub Repository </label>
         <input
-          type="file"
-          accept="video/*"
-          multiple
-          onChange={handleVideoChange}
-          className="mb-4 text-white bg-gray-800 rounded p-2  "
-        /> */}
-
-        <label className="block mb-2">GitHub Repo Link</label>
-        <input
-          type="url"
-          placeholder={`https://github.com/username/repo`}
-          value={githubRepo}
-          onChange={(e) => setGithubRepo(e.target.value)}
+          type="text"
+          placeholder={`Please Enter the repository name `}
+          value={githubRepoName}
+          onChange={(e) => setGithubRepoName(e.target.value)}
           className="w-full p-2 mb-4 rounded text-white bg-gray-800"
         />
 

@@ -10,7 +10,7 @@ const PostSchema = new mongoose.Schema(
     text: { type: String, trim: true, default: "" },
     images: [{ type: String }], // Array of image URLs
     videos: [{ type: String }], // Array of video URLs
-    githubRepo: { type: String, trim: true, default: "" },
+    githubRepoName: { type: String, trim: true, default: "" },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     comments: [
       {

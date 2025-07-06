@@ -59,20 +59,6 @@ function MainFeed() {
       });
   }, []);
 
-  // useEffect(() => {
-  //   async function fetchRepo() {
-  //     try {
-  //       const res = axios.get(
-  //         `https://api.github.com/users/${user.GithubUsername}/repos`
-  //       );
-  //       console.log(res.data);
-  //     } catch (error) {
-  //       console.error("GitHub API error:", err);
-  //     }
-  //   }
-  //   if (user?.GithubUsername) fetchRepo();
-  // }, [user?.GithubUsername]);
-
   return (
     <ClickSpark>
       <div className="Data h-20 absolute  w-full py-4 rounded  ">
@@ -80,9 +66,9 @@ function MainFeed() {
           <div className="text-white">No Posts Found </div>
         ) : (
           posts.map((post) => {
-            // const repoInfo = repoDetails.find(
-            //   (r) => r.name === post.githubRepoName
-            // );
+            const repoInfo = repoDetails.find(
+              (r) => r.name === post.githubRepoName
+            );
             return (
               <div
                 key={post._id}
@@ -155,16 +141,21 @@ function MainFeed() {
                     <span>⭐ {repoInfo.stargazers_count}</span>
                   </div>
                 )} */}
-                {repoDetails.map((repo) => (
-                  <div key={repo.id} className="repo-card border border-[#2F3336] p-2 rounded-lg  ml-10 m-5">
-                   <div className="flex mb-2">
-                     <img
-                      src={repo.owner.avatar_url}
-                      alt={`${repo.owner.login} avatar`}
-                      className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
-                    />
-                     <strong className="mt-2" >{ repo.owner.login|| "Unknown"}</strong>
-                   </div>
+                {/* { repoDetails && repoDetails.map((repo) => (
+                  <div
+                    key={repo.id}
+                    className="repo-card border border-[#2F3336] p-2 rounded-lg  ml-10 m-5"
+                  >
+                    <div className="flex mb-2">
+                      <img
+                        src={repo.owner.avatar_url}
+                        alt={`${repo.owner.login} avatar`}
+                        className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
+                      />
+                      <strong className="mt-2">
+                        {repo.owner.login || "Unknown"}
+                      </strong>
+                    </div>
                     <a
                       href={repo.html_url}
                       target="_blank"
@@ -174,20 +165,46 @@ function MainFeed() {
                       {repo.name}
                     </a>
                     <div className=" p-2 border-1 border-[#2F3336] rounded-lg  mb-2">
-                        <label  className="block underline ">Description</label>
-                        <p>
-                          {repo.description}
-                        </p>
+                      <label className="block underline ">Language</label>
+                      <p>{repo.language}</p>
                     </div>
                     <div className=" p-2 border-1 border-[#2F3336] rounded-lg  mb-2">
-                        <label  className="block underline ">Language</label>
-                        <p>
-                          {repo.language}
-                        </p>
+                      <label className="block underline ">Description</label>
+                      <p>{repo.description}</p>
+                      <p className="my-2"> ⭐ {repo.stargazers_count}</p>
                     </div>
-                    {/* Add description, stars, etc. */}
+                    Add description, stars, etc.
                   </div>
-                ))}
+                ))} */}
+                {repoInfo && (
+                  <div className="repo-card border border-[#2F3336] p-2 rounded-lg  ml-10 m-5">
+                    <div className="flex mb-2">
+                      <img
+                        src={repoInfo.owner.avatar_url}
+                        alt={`${repoInfo.owner.login} avatar`}
+                        className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
+                      />
+                      <strong className="mt-2">{repoInfo.owner.login}</strong>
+                    </div>
+                    <a
+                      href={repoInfo.html_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block font-bold text-2xl my-5  "
+                    >
+                      <strong>{repoInfo.name}</strong>
+                    </a>
+                   <div className="my-2">
+                     <label className=" underline ">Description</label>
+                    <p className="pt-2">{repoInfo.description}</p>
+                    <span className="my-2">⭐ {repoInfo.stargazers_count}</span>
+                   </div>
+                    <div className="my-2">
+                      <label className="block underline my-1 ">Language</label>
+                      <p>{repoInfo.language}</p>
+                    </div>
+                  </div>
+                )}
 
                 <LikeButton postId={post._id} userId={user._id} />
               </div>

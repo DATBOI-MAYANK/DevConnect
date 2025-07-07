@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ClickSpark from "../components/ClickSpark.jsx";
 import LikeButton from "./LikeButton.jsx";
+import CommentBox from "./CommentBox.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPosts } from "../../features/PostSlice/postSlice.js";
 
 function MainFeed() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
-  const [posts, setPosts] = useState([]);
+  const posts = useSelector((state) => state.posts.list);
+  const dispatch = useDispatch();
   const [repoDetails, setRepoDetails] = useState([]);
- 
+
   useEffect(() => {
     const postRepoName = posts
       .filter((post) => post.githubRepoName)
@@ -33,18 +37,9 @@ function MainFeed() {
   }, [user?.GithubUsername, posts]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/users/api/v1/get-posts", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log(res);
-        setPosts(res.data.data);
-      })
-      .catch((err) => {
-        console.error("Failed To Fetch Posts:", err);
-      });
-  }, []);
+    dispatch(fetchPosts());
+  }, [dispatch]);
+  
 
   return (
     <ClickSpark>
@@ -129,11 +124,13 @@ function MainFeed() {
                     >
                       <strong>{repoInfo.name}</strong>
                     </a>
-                   <div className="my-2">
-                     <label className=" underline ">Description</label>
-                    <p className="pt-2">{repoInfo.description}</p>
-                    <span className="my-2">⭐ {repoInfo.stargazers_count}</span>
-                   </div>
+                    <div className="my-2">
+                      <label className=" underline ">Description</label>
+                      <p className="pt-2">{repoInfo.description}</p>
+                      <span className="my-2">
+                        ⭐ {repoInfo.stargazers_count}
+                      </span>
+                    </div>
                     <div className="my-2">
                       <label className="block underline my-1 ">Language</label>
                       <p>{repoInfo.language}</p>
@@ -141,7 +138,10 @@ function MainFeed() {
                   </div>
                 )}
 
-                <LikeButton postId={post._id} userId={user._id} />
+                <div className="flex ml-3">
+                  <LikeButton postId={post._id} userId={user._id} />
+                  <CommentBox postId={post._id} />
+                </div>
               </div>
             );
           })

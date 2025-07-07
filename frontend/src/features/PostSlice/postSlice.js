@@ -14,6 +14,14 @@ export const toggleLike = createAsyncThunk(
   }
 );
 
+export const addComment = createAsyncThunk(
+  "posts/addComment",
+  async ({ postId, text }) => {
+    const res = await api.post(`posts/${postId}/addComment`, { text });
+    return res.data.data.updatedPost;
+  }
+);
+
 const postSlice = createSlice({
   name: "posts",
   initialState: { list: [], status: "idle" },
@@ -24,6 +32,11 @@ const postSlice = createSlice({
         state.list = action.payload;
       })
       .addCase(toggleLike.fulfilled, (state, action) => {
+        const updated = action.payload;
+        const index = state.list.findIndex((p) => p._id === updated._id);
+        if (index !== -1) state.list[index] = updated;
+      })
+      .addCase(addComment.fulfilled, (state, action) => {
         const updated = action.payload;
         const index = state.list.findIndex((p) => p._id === updated._id);
         if (index !== -1) state.list[index] = updated;

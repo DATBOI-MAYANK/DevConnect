@@ -1,6 +1,7 @@
 import React from "react";
+import {Heart} from "lucide-react"
 import { useDispatch, useSelector } from "react-redux";
-import { toggleLike } from "../../features/PostSlice/postSlice";
+import { toggleLike } from "../../features/PostSlice/postSlice.js";
 
 function LikeButton({ postId, userId }) {
   const dispatch = useDispatch();
@@ -19,10 +20,9 @@ function LikeButton({ postId, userId }) {
   const handleLike = () => {
     dispatch(toggleLike({ postId }));
   };
-
   return (
-    <button onClick={handleLike} className="ml-9 mt-2" >
-      {likedByUser ? "💖 " : "🤍 "} {likesCount}
+    <button onClick={handleLike} className="mx-9 mt-2 flex "  >
+      {likedByUser ? <Heart fill="red" color="red" /> : <Heart/>} {likesCount > 0 ? <p className="ml-1 " >{likesCount}</p>: null} 
     </button>
   );
 }

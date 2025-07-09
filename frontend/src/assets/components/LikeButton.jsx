@@ -21,8 +21,8 @@ function LikeButton({ postId, userId }) {
     dispatch(toggleLike({ postId }));
   };
   return (
-    <button onClick={handleLike} className="mx-9 mt-2 flex "  >
-      {likedByUser ? <Heart fill="red" color="red" /> : <Heart/>} {likesCount > 0 ? <p className="ml-1 " >{likesCount}</p>: null} 
+    <button onClick={handleLike} className="mx-9 mt-2 flex hover:cursor-pointer gap-1 "  >
+      {likedByUser ? <Heart fill="red" color="red" /> : <Heart/>} {likesCount > 0 ? < >{likesCount}</>: null} 
     </button>
   );
 }

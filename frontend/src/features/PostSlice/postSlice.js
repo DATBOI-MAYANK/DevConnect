@@ -18,6 +18,9 @@ export const addComment = createAsyncThunk(
   "posts/addComment",
   async ({ postId, text }) => {
     const res = await api.post(`posts/${postId}/addComment`, { text });
+    if (!res.data?.data?.updatedPost) {
+      throw new Error("Invalid response from addComment API");
+    }
     return res.data.data.updatedPost;
   }
 );

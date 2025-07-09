@@ -5,12 +5,14 @@ import LikeButton from "./LikeButton.jsx";
 import CommentBox from "./CommentBox.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../../features/PostSlice/postSlice.js";
+import CommentList from "./CommentList.jsx";
 
 function MainFeed() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
   const posts = useSelector((state) => state.posts.list);
   const dispatch = useDispatch();
   const [repoDetails, setRepoDetails] = useState([]);
+  const [showComments, setShowComments] = useState(false);
 
   useEffect(() => {
     const postRepoName = posts
@@ -39,7 +41,6 @@ function MainFeed() {
   useEffect(() => {
     dispatch(fetchPosts());
   }, [dispatch]);
-  
 
   return (
     <ClickSpark>
@@ -141,6 +142,14 @@ function MainFeed() {
                 <div className="flex ml-3">
                   <LikeButton postId={post._id} userId={user._id} />
                   <CommentBox postId={post._id} />
+
+                  <button className="ml-10 font-bold mt-2 hover:cursor-pointer" onClick={() => setShowComments(!showComments)}>
+                    {showComments ? "Hide" : "Show"} Comments
+                  </button>
+                 
+                </div>
+                <div>
+                  {showComments &&  <CommentList comments={post.comments || [] } />}
                 </div>
               </div>
             );

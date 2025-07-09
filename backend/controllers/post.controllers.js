@@ -15,7 +15,7 @@ const CreatePost = asyncHandler(async (req, res) => {
       const items = Array.isArray(media) ? media : [media];
       if (items.length > 0) {
         for (const medias of items) {
-          if (!medias.mimetype || !medias.path) continue; 
+          if (!medias.mimetype || !medias.path) continue;
           const isVideo = medias.mimetype.startsWith("video/");
           const url = await uploadOnCloudinary(medias.path);
           if (isVideo) {
@@ -34,7 +34,7 @@ const CreatePost = asyncHandler(async (req, res) => {
       videos: videoUrls,
       githubRepoName: githubRepoName || "",
     });
-    
+
     res.status(201).json(new ApiResponse(201, post, "Post Created"));
   } catch (err) {
     throw new ApiError(500, "Something went wrong while creating post.");
@@ -45,6 +45,7 @@ const GetPosts = asyncHandler(async (req, res) => {
   try {
     const posts = await Post.find()
       .populate("author", "username AvatarImage")
+      .populate("comments.user", "username AvatarImage")
       .sort({ createdAt: -1 });
     res.json(new ApiResponse(200, posts));
   } catch (error) {
@@ -151,15 +152,33 @@ const toggleLike = asyncHandler(async (req, res, next) => {
   }
 });
 
-// const CommentPost = asyncHandler(async (req, res) => {
-//   const post = await Post.findById(req.params.id);
-//   post.comments.push({
-//     user: req.user._id,
-//     text: req.body.text,
-//     createdAt: new Date(),
-//   });
-//   await post.save();
-//   res.json({ success: true, comments: post.comments });
-// });
+const addComment = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { text } = req.body;
 
-export { CreatePost, UpdatePost, DeletePost, GetPosts, toggleLike };
+    if (!text || !text.trim()) {
+      throw new ApiError(400, "Comments cannot be empty.!!");
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      {
+        $push: {
+          comments: { user: req.user._id, text, createdAt: Date.now() },
+        },
+      },
+      { new: true }
+    )
+      .populate("author", "username AvatarImage")
+      .populate("comments.user", "username AvatarImage");
+    if (!updatedPost) throw new ApiError(404, "Post not Found");
+    res
+      .status(200)
+      .json(new ApiResponse(200, { updatedPost }, "Comment added"));
+  } catch (error) {
+    next(error);
+  }
+});
+
+export { CreatePost, UpdatePost, DeletePost, GetPosts, toggleLike, addComment };

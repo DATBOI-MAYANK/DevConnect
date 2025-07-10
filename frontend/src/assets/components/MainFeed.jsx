@@ -12,7 +12,7 @@ function MainFeed() {
   const posts = useSelector((state) => state.posts.list);
   const dispatch = useDispatch();
   const [repoDetails, setRepoDetails] = useState([]);
-  const [showComments, setShowComments] = useState(false);
+  const [showCommentsById, setShowCommentsById] = useState(false);
 
   useEffect(() => {
     const postRepoName = posts
@@ -88,7 +88,7 @@ function MainFeed() {
                   </div>
                 )}
                 {post.videos && post.videos.length > 0 && (
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex gap-2 ml-10  mt-2">
                     {post.videos.map((vid) => (
                       <video
                         src={vid}
@@ -143,13 +143,16 @@ function MainFeed() {
                   <LikeButton postId={post._id} userId={user._id} />
                   <CommentBox postId={post._id} />
 
-                  <button className="ml-10 font-bold mt-2 hover:cursor-pointer" onClick={() => setShowComments(!showComments)}>
-                    {showComments ? "Hide" : "Show"} Comments
+                  <button className="ml-10 font-bold mt-2 hover:cursor-pointer" onClick={() => {setShowCommentsById(prev => ({
+                    ...prev,
+                    [post._id]: !prev[post._id],
+                  }))}}>
+                    {showCommentsById[post._id] ? "Hide" : "Show"} Comments
                   </button>
                  
                 </div>
                 <div>
-                  {showComments &&  <CommentList comments={post.comments || [] } />}
+                  {showCommentsById[post._id] &&  <CommentList comments={post.comments || [] } />}
                 </div>
               </div>
             );

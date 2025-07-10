@@ -6,6 +6,8 @@ import LikeButton from "./LikeButton.jsx";
 import { fetchPosts } from "../../features/PostSlice/postSlice";
 import axios from "axios";
 import ErrorBoundary from "./ErrorBoundary.jsx";
+import CommentList from "./CommentList.jsx";
+import CommentBox from "./CommentBox.jsx";
 
 function Dashboard() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
@@ -13,6 +15,7 @@ function Dashboard() {
   const posts = useSelector((state) => state.posts.list);
   const [repoDetails, setRepoDetails] = useState([]);
   const [activeTab, setActiveTab] = useState("");
+  const [showCommentsById, setShowCommentsById] = useState(false);
   const userPosts = posts.filter((post) => post.author?._id === user?._id);
 
   useEffect(() => {
@@ -207,7 +210,28 @@ function Dashboard() {
                               </div>
                             </div>
                           )}
-                          <LikeButton postId={post._id} userId={user._id} />
+                          <div className="flex ml-3">
+                            <LikeButton postId={post._id} userId={user._id} />
+                            <CommentBox postId={post._id} />
+
+                            <button
+                              className="ml-10 font-bold mt-2 hover:cursor-pointer"
+                              onClick={() => {
+                                setShowCommentsById((prev) => ({
+                                  ...prev,
+                                  [post._id]: !prev[post._id],
+                                }));
+                              }}
+                            >
+                              {showCommentsById[post._id] ? "Hide" : "Show"}{" "}
+                              Comments
+                            </button>
+                          </div>
+                          <div>
+                            {showCommentsById[post._id] && (
+                              <CommentList comments={post.comments || []} />
+                            )}
+                          </div>
                         </div>
                       );
                     })
@@ -216,7 +240,7 @@ function Dashboard() {
                   userPosts.length === 0 ? (
                     <div className="text-white text-4xl">No Posts Found</div>
                   ) : (
-                    <div className="mb-4 p-3 bg-black text-white border-b-1 border-[#2F3336]">
+                    <div >
                       {userPosts
                         .filter(
                           (post) =>
@@ -224,7 +248,7 @@ function Dashboard() {
                             (post.videos && post.videos.length > 0)
                         )
                         .map((post) => (
-                          <div key={post._id}>
+                          <div key={post._id} className="mb-4 p-3 bg-black text-white border-b-1 border-[#2F3336]">
                             <div className="flex mb-2">
                               <img
                                 src={post.author?.AvatarImage}
@@ -263,7 +287,7 @@ function Dashboard() {
                               </div>
                             )}
                             {post.videos && post.videos.length > 0 && (
-                              <div className="flex gap-2 mt-2">
+                              <div className="flex gap-2 ml-10 mt-2">
                                 {post.videos.map((vid) => (
                                   <video
                                     src={vid}
@@ -282,7 +306,28 @@ function Dashboard() {
                                 ))}
                               </div>
                             )}
-                            <LikeButton postId={post._id} userId={user._id} />
+                            <div className="flex ml-3">
+                              <LikeButton postId={post._id} userId={user._id} />
+                              <CommentBox postId={post._id} />
+
+                              <button
+                                className="ml-10 font-bold mt-2 hover:cursor-pointer"
+                                onClick={() => {
+                                  setShowCommentsById((prev) => ({
+                                    ...prev,
+                                    [post._id]: !prev[post._id],
+                                  }));
+                                }}
+                              >
+                                {showCommentsById[post._id] ? "Hide" : "Show"}{" "}
+                                Comments
+                              </button>
+                            </div>
+                            <div>
+                              {showCommentsById[post._id] && (
+                                <CommentList comments={post.comments || []} />
+                              )}
+                            </div>
                           </div>
                         ))}
                     </div>
@@ -300,7 +345,7 @@ function Dashboard() {
                           );
 
                           return (
-                            <div key={post._id} className="p-3 text-white">
+                            <div key={post._id} className="p-3 text-white border-b-1 border-[#2F3336]">
                               <div className="flex mb-2">
                                 <img
                                   src={post.author?.AvatarImage}
@@ -353,7 +398,30 @@ function Dashboard() {
                                   </div>
                                 </div>
                               )}
-                              <LikeButton postId={post._id} userId={user._id} />
+                              <div className="flex ml-3">
+                                <LikeButton
+                                  postId={post._id}
+                                  userId={user._id}
+                                />
+                                <CommentBox postId={post._id} />
+                                <button
+                                  className="ml-10 font-bold mt-2 hover:cursor-pointer"
+                                  onClick={() => {
+                                    setShowCommentsById((prev) => ({
+                                      ...prev,
+                                      [post._id]: !prev[post._id],
+                                    }));
+                                  }}
+                                >
+                                  {showCommentsById[post._id] ? "Hide" : "Show"}{" "}
+                                  Comments
+                                </button>
+                              </div>
+                              <div>
+                                {showCommentsById[post._id] && (
+                                  <CommentList comments={post.comments || []} />
+                                )}
+                              </div>
                             </div>
                           );
                         })}

@@ -174,39 +174,47 @@ function Dashboard() {
                             </div>
                           )}
                           {repoInfo && (
-                            <div className="repo-card border border-[#2F3336] p-2 rounded-lg  ml-10 m-5">
-                              <div className="flex mb-2">
-                                <img
-                                  src={repoInfo.owner.avatar_url}
-                                  alt={`${repoInfo.owner.login} avatar`}
-                                  className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
-                                />
-                                <strong className="mt-2">
-                                  {repoInfo.owner.login}
-                                </strong>
+                            <div className="repo-card w-auto border  border-[#2F3336] p-2 rounded-lg  ml-10 m-5">
+                              <div className="flex justify-between">
+                                <div className="flex mb-2 w-70">
+                                  <img
+                                    src={repoInfo.owner.avatar_url}
+                                    alt={`${repoInfo.owner.login} avatar`}
+                                    className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
+                                  />
+                                  <strong className="mt-2 font-bold text-xl">
+                                    {repoInfo.owner.login}
+                                  </strong>
+                                </div>
+                                <div className="flex mb-2 ">
+                                  <button className="p-2">Copy</button>
+                                  <button  className="p-2">Fork</button>
+                                </div>
                               </div>
                               <a
                                 href={repoInfo.html_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block font-bold text-2xl my-5  "
+                                className="block ml-11 font-bold text-3xl my-5  "
                               >
                                 <strong>{repoInfo.name}</strong>
                               </a>
-                              <div className="my-2">
-                                <label className=" underline ">
-                                  Description
-                                </label>
-                                <p className="pt-2">{repoInfo.description}</p>
-                                <span className="my-2">
-                                  ⭐ {repoInfo.stargazers_count}
-                                </span>
-                              </div>
-                              <div className="my-2">
-                                <label className="block underline my-1 ">
-                                  Language
-                                </label>
-                                <p>{repoInfo.language}</p>
+                              <div className="">
+                                <div className="my-2 border-1 border-[#2F3336] w-70 ml-11 p-2 rounded-lg">
+                                  <label className=" font-bold text-lg ">
+                                    Description
+                                  </label>
+                                  <p className="pt-2">{repoInfo.description}</p>
+                                  <span className="my-2">
+                                    ⭐ {repoInfo.stargazers_count}
+                                  </span>
+                                </div>
+                                <div className="my-2 border-1 border-[#2F3336] w-50 ml-11 p-2 rounded-lg">
+                                  <label className="block font-bold text-lg  my-1 ">
+                                    Language
+                                  </label>
+                                  <p>{repoInfo.language}</p>
+                                </div>
                               </div>
                             </div>
                           )}
@@ -240,7 +248,7 @@ function Dashboard() {
                   userPosts.length === 0 ? (
                     <div className="text-white text-4xl">No Posts Found</div>
                   ) : (
-                    <div >
+                    <div>
                       {userPosts
                         .filter(
                           (post) =>
@@ -248,7 +256,10 @@ function Dashboard() {
                             (post.videos && post.videos.length > 0)
                         )
                         .map((post) => (
-                          <div key={post._id} className="mb-4 p-3 bg-black text-white border-b-1 border-[#2F3336]">
+                          <div
+                            key={post._id}
+                            className="mb-4 p-3 bg-black text-white border-b-1 border-[#2F3336]"
+                          >
                             <div className="flex mb-2">
                               <img
                                 src={post.author?.AvatarImage}
@@ -345,7 +356,10 @@ function Dashboard() {
                           );
 
                           return (
-                            <div key={post._id} className="p-3 text-white border-b-1 border-[#2F3336]">
+                            <div
+                              key={post._id}
+                              className="p-3 text-white border-b-1 border-[#2F3336]"
+                            >
                               <div className="flex mb-2">
                                 <img
                                   src={post.author?.AvatarImage}

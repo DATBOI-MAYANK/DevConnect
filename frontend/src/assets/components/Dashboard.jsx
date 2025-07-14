@@ -35,7 +35,7 @@ function Dashboard() {
         const repoDetails = results.map((r) => r.data);
         // console.log("Result", results);
         // console.log("Promise", promises);
-        // console.log("RepoDetails", repoDetails);
+        console.log("RepoDetails", repoDetails);
         setRepoDetails(repoDetails);
       } catch (err) {
         console.error("Error fetching repos:", err);
@@ -174,7 +174,7 @@ function Dashboard() {
                             </div>
                           )}
                           {repoInfo && (
-                            <div className="repo-card w-auto border  border-[#2F3336] p-2 rounded-lg  ml-10 m-5">
+                            <div className="repo-card w-auto border  border-[#2F3336] p-2 rounded-lg max-w-fit ml-10 m-5">
                               <div className="flex justify-between">
                                 <div className="flex mb-2 w-70">
                                   <img
@@ -187,8 +187,23 @@ function Dashboard() {
                                   </strong>
                                 </div>
                                 <div className="flex mb-2 ">
-                                  <button className="p-2">Copy</button>
-                                  <button  className="p-2">Fork</button>
+                                  <a
+                                    href={repoInfo.clone_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="  "
+                                  >
+                                    <button className="p-2">Copy</button>
+                                  </a>
+
+                                  <a
+                                    href={repoInfo.fork_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="  "
+                                  >
+                                    <button className="p-2">Fork</button>
+                                  </a>
                                 </div>
                               </div>
                               <a

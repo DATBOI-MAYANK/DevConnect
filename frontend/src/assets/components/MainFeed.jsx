@@ -122,22 +122,14 @@ function MainFeed() {
                       </div>
                       <div className="flex mb-2 ">
                         <a
-                          href={repoInfo.clone_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="  "
                         >
-                          <button className="p-2">Copy</button>
+                          <button className="p-2 hover:cursor-pointer " onClick={()=>{navigator.clipboard.writeText(repoInfo.clone_url) , alert("Clone link Copied. !! ")}}>Copy</button>
                         </a>
 
-                        <a
-                          href={repoInfo.fork_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="  "
-                        >
-                          <button className="p-2">Fork</button>
-                        </a>
+                        
                       </div>
                     </div>
                     <a

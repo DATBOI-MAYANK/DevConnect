@@ -130,13 +130,13 @@ function Dashboard() {
                           <div className="text-xl ml-10">{post.text}</div>
 
                           {post.images && post.images.length > 0 && (
-                            <div className="flex gap-2 ml-10 mt-2">
+                            <div className="grid grid-flow-col grid-rows-2  h-  ml-10 mt-2">
                               {post.images.map((img) => (
                                 <img
                                   src={img}
                                   key={img}
                                   alt="post"
-                                  className="media-img"
+                                  className=" media-img "
                                   onLoad={(e) => {
                                     const el = e.target;
                                     el.classList.remove(
@@ -188,21 +188,21 @@ function Dashboard() {
                                 </div>
                                 <div className="flex mb-2 ">
                                   <a
-                                    href={repoInfo.clone_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="  "
                                   >
-                                    <button className="p-2">Copy</button>
-                                  </a>
-
-                                  <a
-                                    href={repoInfo.fork_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="  "
-                                  >
-                                    <button className="p-2">Fork</button>
+                                    <button
+                                      className="p-2 hover:cursor-pointer "
+                                      onClick={() => {
+                                        navigator.clipboard.writeText(
+                                          repoInfo.clone_url
+                                        ),
+                                          alert("Clone link Copied. !! ");
+                                      }}
+                                    >
+                                      Copy
+                                    </button>
                                   </a>
                                 </div>
                               </div>
@@ -215,14 +215,11 @@ function Dashboard() {
                                 <strong>{repoInfo.name}</strong>
                               </a>
                               <div className="">
-                                <div className="my-2 border-1 border-[#2F3336] w-70 ml-11 p-2 rounded-lg">
+                                <div className="my-2 border-1 border-[#2F3336] max-w-2/5 ml-11 p-2 rounded-lg">
                                   <label className=" font-bold text-lg ">
                                     Description
                                   </label>
                                   <p className="pt-2">{repoInfo.description}</p>
-                                  <span className="my-2">
-                                    ⭐ {repoInfo.stargazers_count}
-                                  </span>
                                 </div>
                                 <div className="my-2 border-1 border-[#2F3336] w-50 ml-11 p-2 rounded-lg">
                                   <label className="block font-bold text-lg  my-1 ">

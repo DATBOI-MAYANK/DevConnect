@@ -9,10 +9,10 @@
 body{
   background-color: black;
 }
-/* .media-img, .media-video { transition: width 0.2s, height 0.2s; } */
+
 .media-img { object-fit: cover; border-radius: 0.5rem; }
 .media-video { object-fit: cover; border-radius: 0.5rem; }
-.media-img.landscape { width: 480px; height: 220px; }
-.media-img.portrait  { width: 290px; height: 500px; }
+.media-img.landscape { width: 480px; height: 220px; margin: 0; padding: 0;}
+.media-img.portrait  { width: 290px; height: 500px; margin: 0;}
 .media-video.landscape { width: 480px; height: 220px; }
 .media-video.portrait  { width: 290px; height: 500px; }

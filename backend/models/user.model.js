@@ -48,9 +48,13 @@ const UserSchema = new mongoose.Schema(
 UserSchema.pre("save", async function (next) {
   try {
     // console.log("Password modified:", this.isModified("password"));
+    const normalizePassword = (password) =>{
+      return password.normalize('NFKC')
+    }
     if (this.isModified("password")) {
       // console.log("Before hashing:", this.password);
-      this.password = await bcrypt.hash(this.password, 10);
+      const normalized = normalizePassword(this.password);
+      this.password = await bcrypt.hash(normalized, 10);
       // console.log("After hashing:", this.password);
     }
     next();

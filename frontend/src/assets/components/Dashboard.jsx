@@ -9,6 +9,7 @@ import ErrorBoundary from "./ErrorBoundary.jsx";
 import CommentList from "./CommentList.jsx";
 import CommentBox from "./CommentBox.jsx";
 
+
 function Dashboard() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
   const dispatch = useDispatch();
@@ -130,7 +131,7 @@ function Dashboard() {
                           <div className="text-xl ml-10">{post.text}</div>
 
                           {post.images && post.images.length > 0 && (
-                            <div className="grid grid-flow-col grid-rows-2  h-  ml-10 mt-2">
+                            <div className="grid-container">
                               {post.images.map((img) => (
                                 <img
                                   src={img}
@@ -260,7 +261,7 @@ function Dashboard() {
                   userPosts.length === 0 ? (
                     <div className="text-white text-4xl">No Posts Found</div>
                   ) : (
-                    <div>
+                    <div className="">
                       {userPosts
                         .filter(
                           (post) =>
@@ -286,7 +287,7 @@ function Dashboard() {
                               {post.text}
                             </div>
                             {post.images && post.images.length > 0 && (
-                              <div className="flex gap-2 ml-10  mt-2">
+                              <div className="grid-container ml-10  mt-2">
                                 {post.images.map((img) => (
                                   <img
                                     src={img}
@@ -310,7 +311,7 @@ function Dashboard() {
                               </div>
                             )}
                             {post.videos && post.videos.length > 0 && (
-                              <div className="flex gap-2 ml-10 mt-2">
+                              <div className="grid-container ml-10 mt-2">
                                 {post.videos.map((vid) => (
                                   <video
                                     src={vid}

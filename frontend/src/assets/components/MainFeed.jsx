@@ -126,10 +126,16 @@ function MainFeed() {
                           rel="noopener noreferrer"
                           className="  "
                         >
-                          <button className="p-2 hover:cursor-pointer " onClick={()=>{navigator.clipboard.writeText(repoInfo.clone_url) , alert("Clone link Copied. !! ")}}>Copy</button>
+                          <button
+                            className="p-2 hover:cursor-pointer "
+                            onClick={() => {
+                              navigator.clipboard.writeText(repoInfo.clone_url),
+                                alert("Clone link Copied. !! ");
+                            }}
+                          >
+                            Copy
+                          </button>
                         </a>
-
-                        
                       </div>
                     </div>
                     <a

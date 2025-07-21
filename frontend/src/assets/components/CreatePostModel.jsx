@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 
@@ -9,7 +9,6 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
   const [loading, setLoading] = useState(false);
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
 
- 
   const handleFilesChange = (e) => {
     if (e.target.files) {
       setFiles((prev) => [...prev, ...Array.from(e.target.files)]);
@@ -23,15 +22,19 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
       const formData = new FormData();
       formData.append("text", text);
       formData.append("githubRepoName", githubRepoName);
-      files.forEach((file) => formData.append("media", file));
-      await axios.post(
-        "http://localhost:8000/users/api/v1/create-post",
-        formData,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      if (files.length > 4) {
+        return alert("You can't upload more than 4 files. ");
+      } else {
+        files.forEach((file) => formData.append("media", file));
+        await axios.post(
+          "http://localhost:8000/users/api/v1/create-post",
+          formData,
+          {
+            withCredentials: true,
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+      }
       setText("");
       setFiles([]);
       setGithubRepoName("");

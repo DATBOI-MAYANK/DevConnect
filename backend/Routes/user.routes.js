@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getFeaturedDevs,
   loginUser,
   logoutUser,
   refreshAccessToken,
@@ -31,6 +32,7 @@ router.route("/api/v1/me").get(verifyJwt, (req, res) => {
     user: req.user,
   });
 });
+router.route("api/v1/featured").get(getFeaturedDevs);
 
 router.route("/api/v1/logout").post(verifyJwt, logoutUser);
 router.route("/api/v1/refresh-Token").post(refreshAccessToken);

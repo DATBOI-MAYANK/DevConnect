@@ -37,8 +37,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const { username, password, email, GithubUsername, Bio } = req.body;
   // console.log(username, password, email);
-  
-  
+
   //Validation -- Not empty
   if (
     [username, email, password, GithubUsername].some(
@@ -53,22 +52,27 @@ const registerUser = asyncHandler(async (req, res) => {
   // Password Edgecases
   const maxBytes = 72;
   const passwordByteLength = Buffer.from(password).length;
-  const commonPasswords = new Set(["pass" , "password" , "12345", "qwerty"])
+  const commonPasswords = new Set(["pass", "password", "12345", "qwerty"]);
 
-  if( typeof password !== "string" || password.trim().length === 0){
-    throw new ApiError (400, "Password must contain non-whitespace characters");
+  if (typeof password !== "string" || password.trim().length === 0) {
+    throw new ApiError(400, "Password must contain non-whitespace characters");
   }
-  if(passwordByteLength > maxBytes){
-    throw new ApiError(400,"Password exceeds safe length limits");
+  if (passwordByteLength > maxBytes) {
+    throw new ApiError(400, "Password exceeds safe length limits");
   }
-  if(commonPasswords.has(password,toLowerCase())){
+  if (commonPasswords.has(password, toLowerCase())) {
     throw new ApiError(400, "Password is too common");
   }
-  if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || password.length < 8) {
-    throw new ApiError(400, "Password must contain uppercase and lowercase letters and must be at least 8 characters long.");
-}
-
-
+  if (
+    !/[A-Z]/.test(password) ||
+    !/[a-z]/.test(password) ||
+    password.length < 8
+  ) {
+    throw new ApiError(
+      400,
+      "Password must contain uppercase and lowercase letters and must be at least 8 characters long."
+    );
+  }
 
   // check if user already exits: username,email
 
@@ -254,4 +258,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+const getFeaturedDevs = asyncHandler(async (req, res) => {
+  try {
+    const featured = await User.aggregate([{ $sample: { size: 4 } }]); // get random 4 devs
+    return res.json(new ApiResponse(200, featured));
+  } catch (error) {
+    throw new ApiError(400, "Could not fetch devs.");
+  }
+});
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken, getFeaturedDevs };

@@ -68,15 +68,16 @@ function MainFeed() {
 
                 <div className="text-xl ml-10 ">{post.text}</div>
                 {post.images && post.images.length > 0 && (
-                  <div className="flex gap-2 ml-10  mt-2">
+                  <div className="grid-container ml-10 ">
                     {post.images.map((img) => (
                       <img
                         src={img}
                         key={img}
                         alt="post"
-                        className="media-img"
+                        className=" media-img "
                         onLoad={(e) => {
                           const el = e.target;
+                          el.classList.remove("landscape", "portrait");
                           el.classList.add(
                             el.naturalWidth > el.naturalHeight
                               ? "landscape"
@@ -88,7 +89,7 @@ function MainFeed() {
                   </div>
                 )}
                 {post.videos && post.videos.length > 0 && (
-                  <div className="flex gap-2 ml-10  mt-2">
+                  <div className="flex gap-2 mt-2 ml-10">
                     {post.videos.map((vid) => (
                       <video
                         src={vid}

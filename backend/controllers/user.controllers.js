@@ -60,7 +60,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (passwordByteLength > maxBytes) {
     throw new ApiError(400, "Password exceeds safe length limits");
   }
-  if (commonPasswords.has(password, toLowerCase())) {
+  if (commonPasswords.has(password.toLowerCase())) {
     throw new ApiError(400, "Password is too common");
   }
   if (
@@ -106,13 +106,19 @@ const registerUser = asyncHandler(async (req, res) => {
   // create user object -- create entry in db
   const user = await User.create({
     username: username,
-    AvatarImage: avatar.url,
-    CoverImage: coverImage?.url || "",
+    AvatarImage: avatar,
+    CoverImage: coverImage || "",
     email,
     password,
     GithubUsername,
     Bio,
   });
+
+  //Generate Tokens
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
+    user._id
+  );
+
   // remove password, refreshToken fiels from response
 
   const createdUser = await User.findById(user._id).select(
@@ -127,11 +133,16 @@ const registerUser = asyncHandler(async (req, res) => {
       "Something went wrong while registering the user  "
     );
   }
-
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
   // return res
 
   return res
     .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(new ApiResponse(200, createdUser, "User registered successfully"));
 });
 
@@ -267,4 +278,10 @@ const getFeaturedDevs = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken, getFeaturedDevs };
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  getFeaturedDevs,
+};

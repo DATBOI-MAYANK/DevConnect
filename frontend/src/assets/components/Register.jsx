@@ -33,7 +33,7 @@ const Register = () => {
       formData.append("coverImage", coverImage);
       formData.append("GithubUsername", GithubUsername);
       formData.append("Bio", Bio);
-
+      console.log("Avatar", avatarImage)
       const res = await axios.post(
         "http://localhost:8000/users/api/v1/register",
         formData,
@@ -47,11 +47,9 @@ const Register = () => {
       // console.log("Response", res.data);
       const message = res.data?.message || "Register successful";
       setIsRegister(true);
-      // console.log("message", message);
-      // Store only the user object
-      // localStorage.setItem("user", JSON.stringify(res.data.data.user));
+      
       const user = res.data?.data;
-      // console.log("User to store:", user); // Should log the user object
+      
 
       if (user) {
         localStorage.setItem("user", JSON.stringify(user));

@@ -156,7 +156,7 @@ const addComment = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const { text } = req.body;
-
+    const { username , AvatarImage} = req.user;
     if (!text || !text.trim()) {
       throw new ApiError(400, "Comments cannot be empty.!!");
     }
@@ -165,7 +165,7 @@ const addComment = asyncHandler(async (req, res, next) => {
       id,
       {
         $push: {
-          comments: { user: req.user._id, text, createdAt: Date.now() },
+          comments: { user: req.user._id, text, username , AvatarImage , createdAt: Date.now() },
         },
       },
       { new: true }

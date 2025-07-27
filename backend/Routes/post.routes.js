@@ -27,5 +27,6 @@ router.route("/api/v1/get-posts").get( GetPosts)
 
 router.post("/api/v1/posts/:id/like", verifyJwt, toggleLike);
 router.post("/api/v1/posts/:id/addComment", verifyJwt, addComment);
+router.post("/api/v1/posts/:id/deletePost", verifyJwt, DeletePost);
 
 export default router;

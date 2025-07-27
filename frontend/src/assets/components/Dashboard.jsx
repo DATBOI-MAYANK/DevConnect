@@ -8,6 +8,7 @@ import axios from "axios";
 import ErrorBoundary from "./ErrorBoundary.jsx";
 import CommentList from "./CommentList.jsx";
 import CommentBox from "./CommentBox.jsx";
+import { Trash2 } from "lucide-react";
 
 function Dashboard() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
@@ -35,7 +36,7 @@ function Dashboard() {
         const repoDetails = results.map((r) => r.data);
         // console.log("Result", results);
         // console.log("Promise", promises);
-        console.log("RepoDetails", repoDetails);
+        // console.log("RepoDetails", repoDetails);
         setRepoDetails(repoDetails);
       } catch (err) {
         console.error("Error fetching repos:", err);
@@ -126,9 +127,11 @@ function Dashboard() {
                             <strong>
                               {post.author?.username || "Unknown"}
                             </strong>
+                            <Trash2
+                              className={`ml-220  hover:cursor-pointer hover:text-red-600 ` }
+                            />
                           </div>
                           <div className="text-xl ml-10">{post.text}</div>
-
                           {post.images && post.images.length > 0 && (
                             <div className="grid-container ml-10 ">
                               {post.images.map((img) => (

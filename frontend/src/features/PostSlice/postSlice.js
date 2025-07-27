@@ -25,6 +25,17 @@ export const addComment = createAsyncThunk(
   }
 );
 
+export const deletePost = createAsyncThunk(
+  "posts/deletePost",
+  async ({ postId }) => {
+    const res = await api.post(`posts/${postId}/deletePost`);
+    if (!res.data?.data?.updatedPost) {
+      throw new Error("Invalid response from addComment API");
+    }
+    return res.data.data.updatedPost;
+  }
+);
+
 const postSlice = createSlice({
   name: "posts",
   initialState: { list: [], status: "idle" },

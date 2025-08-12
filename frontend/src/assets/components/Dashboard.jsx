@@ -8,7 +8,7 @@ import axios from "axios";
 import ErrorBoundary from "./ErrorBoundary.jsx";
 import CommentList from "./CommentList.jsx";
 import CommentBox from "./CommentBox.jsx";
-import { Trash2 } from "lucide-react";
+import { Trash2, Copy, Eye, EyeOff } from "lucide-react";
 
 function Dashboard() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
@@ -29,8 +29,8 @@ function Dashboard() {
       try {
         const promises = postRepoName.map((name) =>
           axios.get(
-            `https://api.github.com/repos/${user.GithubUsername}/${name}`
-          )
+            `https://api.github.com/repos/${user.GithubUsername}/${name}`,
+          ),
         );
         const results = await Promise.all(promises);
         const repoDetails = results.map((r) => r.data);
@@ -44,7 +44,7 @@ function Dashboard() {
     }
 
     fetchSpecificRepos();
-  }, [user?.GithubUsername, posts]);
+  }, [user?.GithubUsername, posts, userPosts]);
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -53,408 +53,227 @@ function Dashboard() {
   return (
     <ErrorBoundary>
       <ClickSpark>
-        <div className="h-screen w-auto ml-[300px]">
-          <div className="grid grid-flow-row grid-cols-1 h-full ">
+        <div className="h-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 ml-[300px]">
+          <div className="grid grid-flow-row grid-cols-1 h-full">
             <Navbar />
-            <div className="Dashboard relative bg-black  ">
-              {user.CoverImage ? (
-                <img
-                  src={user.CoverImage}
-                  alt="CoverImage"
-                  className="w-full h-1/4 object-cover "
-                ></img>
-              ) : (
-                <div className="Cover_Image w-full h-1/4 bg-black border-b-2 border-[#2F3336]"></div>
-              )}
+            <div className="Dashboard ">
+              <div className="relative">
+                {user.CoverImage ? (
+                  <img
+                    src={user.CoverImage}
+                    alt="CoverImage"
+                    className="w-full h-[40vh] object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-[40vh] bg-gradient-to-r from-blue-900/50 to-slate-800/50 border-b border-slate-700/50"></div>
+                )}
 
-              <div className=" absolute Avatar_Image flex justify-center items-center w-35 h-35 top-1/6 left-2 bg-conic/decreasing from-violet-700 via-lime-300 to-violet-700 rounded-full  ">
-                <img
-                  src={user.AvatarImage}
-                  alt="AvatarImage"
-                  className="rounded-full w-33 h-33 object-cover "
-                />
+                {/* Avatar */}
+                <div className="absolute bottom-0 left-6 translate-y-1/2">
+                  <img
+                    src={user.AvatarImage}
+                    alt="AvatarImage"
+                    className="rounded-full w-36 h-36 object-cover border-4 border-slate-900"
+                  />
+                </div>
               </div>
-              <div className="Info absolute top-2/5 flex flex-col  text-white ">
-                <span className="ml-5 text-2xl font-bold">{user.username}</span>
-                <span className="m-5 text-xl font-light">{user.Bio}</span>
+
+              {/* Profile Info */}
+              <div className="mt-20 px-6 text-white">
+                <h1 className="text-3xl font-bold">{user.username}</h1>
+                <p className="text-lg text-slate-300 leading-relaxed max-w-2xl mt-2">
+                  {user.Bio}
+                </p>
               </div>
-              <div className="Buttons absolute top-7/12 ">
-                <button
-                  className="text-white font-bold  px-20 py-2 border-1 text-2xl hover:cursor-pointer"
-                  onClick={() => setActiveTab("Post")}
-                >
-                  Post
-                </button>
-                <button
-                  className="text-white font-bold   px-20 py-2 border-1 text-2xl hover:cursor-pointer"
-                  onClick={() => setActiveTab("Media")}
-                >
-                  Media
-                </button>
-                <button
-                  className="text-white font-bold   px-16 py-2 border-1 text-2xl hover:cursor-pointer"
-                  onClick={() => setActiveTab("Github")}
-                >
-                  Github Repo
-                </button>
-                <button
-                  className="text-white font-bold   px-16 py-2 border-1 text-2xl hover:cursor-pointer"
-                  onClick={() => setActiveTab("Soon")}
-                >
-                  Coming Soon...
-                </button>
-              </div>
-              <div className="Data h-auto absolute top-4/6 w-full py-2 mb-2 rounded">
-                {activeTab === "Post" ? (
-                  userPosts.length === 0 ? (
-                    <div className="text-white">No Posts Found</div>
-                  ) : (
-                    userPosts.map((post) => {
-                      const repoInfo = repoDetails.find(
-                        (r) => r.name === post.githubRepoName
-                      );
-                      return (
-                        <div
-                          key={post._id}
-                          className="mb-4 p-3 bg-black text-white border-b-1 border-[#2F3336]"
-                        >
-                          <div className="flex mb-2">
-                            <img
-                              src={post.author?.AvatarImage}
-                              alt="Profile"
-                              className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
-                            />
-                            <strong>
-                              {post.author?.username || "Unknown"}
-                            </strong>
-                            <Trash2
-                              className={`ml-220  hover:cursor-pointer hover:text-red-600 ` }
-                            />
-                          </div>
-                          <div className="text-xl ml-10">{post.text}</div>
-                          {post.images && post.images.length > 0 && (
-                            <div className="grid-container ml-10 ">
-                              {post.images.map((img) => (
-                                <img
-                                  src={img}
-                                  key={img}
-                                  alt="post"
-                                  className=" media-img "
-                                  onLoad={(e) => {
-                                    const el = e.target;
-                                    el.classList.remove(
-                                      "landscape",
-                                      "portrait"
-                                    );
-                                    el.classList.add(
-                                      el.naturalWidth > el.naturalHeight
-                                        ? "landscape"
-                                        : "portrait"
-                                    );
-                                  }}
-                                />
-                              ))}
-                            </div>
-                          )}
-                          {post.videos && post.videos.length > 0 && (
-                            <div className="flex gap-2 mt-2 ml-10">
-                              {post.videos.map((vid) => (
-                                <video
-                                  src={vid}
-                                  key={vid}
-                                  controls
-                                  className="media-video"
-                                  onLoadedMetadata={(e) => {
-                                    const el = e.target;
-                                    el.classList.add(
-                                      el.videoWidth > el.videoHeight
-                                        ? "landscape"
-                                        : "portrait"
-                                    );
-                                  }}
-                                />
-                              ))}
-                            </div>
-                          )}
-                          {repoInfo && (
-                            <div className="repo-card w-auto border  border-[#2F3336] p-2 rounded-lg max-w-fit ml-10 m-5">
-                              <div className="flex justify-between">
-                                <div className="flex mb-2 w-70">
+
+              {/* Tabs */}
+
+              <div className="mt-8 px-6 border-b border-slate-700/50">
+                <div className="flex overflow-x-auto">
+                  {["Post", "Media", "Github", "Soon"].map((tab) => (
+                    <button
+                      key={tab}
+                      className={`text-white font-semibold px-6 py-4 text-lg transition-all duration-300 border-b-2 hover:text-blue-400 ${
+                        activeTab === tab
+                          ? "text-blue-400 border-blue-400"
+                          : "border-transparent hover:border-slate-600"
+                      }`}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      {tab === "Soon" ? "Coming Soon" : tab}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="Data h-auto absolute top-[80vh] w-[140vh] py-6 mb-2 mt-10 px-0">
+                  {activeTab === "Post" ? (
+                    userPosts.length === 0 ? (
+                      <div className="text-center py-16">
+                        <div className="text-slate-400 text-xl">
+                          No posts yet
+                        </div>
+                        <div className="text-slate-500 mt-2">
+                          Share something with the world!
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        {userPosts.map((post) => {
+                          const repoInfo = repoDetails.find(
+                            (r) => r.name === post.githubRepoName,
+                          );
+                          return (
+                            <article
+                              key={post._id}
+                              className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
+                            >
+                              <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center space-x-3">
                                   <img
-                                    src={repoInfo.owner.avatar_url}
-                                    alt={`${repoInfo.owner.login} avatar`}
-                                    className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
+                                    src={post.author?.AvatarImage}
+                                    alt="Profile"
+                                    className="h-12 w-12 rounded-full object-cover border-2 border-slate-600/50"
                                   />
-                                  <strong className="mt-2 font-bold text-xl">
-                                    {repoInfo.owner.login}
+                                  <strong className="text-white font-semibold">
+                                    {post.author?.username || "Unknown"}
                                   </strong>
                                 </div>
-                                <div className="flex mb-2 ">
-                                  <a
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="  "
-                                  >
-                                    <button
-                                      className="p-2 hover:cursor-pointer "
-                                      onClick={() => {
-                                        navigator.clipboard.writeText(
-                                          repoInfo.clone_url
-                                        ),
-                                          alert("Clone link Copied. !! ");
-                                      }}
-                                    >
-                                      Copy
-                                    </button>
-                                  </a>
-                                </div>
+                                <Trash2 className="w-5 h-5 text-slate-500 hover:text-red-400 cursor-pointer transition-colors duration-200" />
                               </div>
-                              <a
-                                href={repoInfo.html_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block ml-11 font-bold text-3xl my-5  "
-                              >
-                                <strong>{repoInfo.name}</strong>
-                              </a>
-                              <div className="">
-                                <div className="my-2 border-1 border-[#2F3336] max-w-2/5 ml-11 p-2 rounded-lg">
-                                  <label className=" font-bold text-lg ">
-                                    Description
-                                  </label>
-                                  <p className="pt-2">{repoInfo.description}</p>
-                                </div>
-                                <div className="my-2 border-1 border-[#2F3336] w-50 ml-11 p-2 rounded-lg">
-                                  <label className="block font-bold text-lg  my-1 ">
-                                    Language
-                                  </label>
-                                  <p>{repoInfo.language}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                          <div className="flex ml-3">
-                            <LikeButton postId={post._id} userId={user._id} />
-                            <CommentBox postId={post._id} />
 
-                            <button
-                              className="ml-10 font-bold mt-2 hover:cursor-pointer"
-                              onClick={() => {
-                                setShowCommentsById((prev) => ({
-                                  ...prev,
-                                  [post._id]: !prev[post._id],
-                                }));
-                              }}
-                            >
-                              {showCommentsById[post._id] ? "Hide" : "Show"}{" "}
-                              Comments
-                            </button>
-                          </div>
-                          <div>
-                            {showCommentsById[post._id] && (
-                              <CommentList comments={post.comments || []} />
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })
-                  )
-                ) : activeTab === "Media" ? (
-                  userPosts.length === 0 ? (
-                    <div className="text-white text-4xl">No Posts Found</div>
-                  ) : (
-                    <div className="">
-                      {userPosts
-                        .filter(
-                          (post) =>
-                            (post.images && post.images.length > 0) ||
-                            (post.videos && post.videos.length > 0)
-                        )
-                        .map((post) => (
-                          <div
-                            key={post._id}
-                            className="mb-4 p-3 bg-black text-white border-b-1 border-[#2F3336]"
-                          >
-                            <div className="flex mb-2">
-                              <img
-                                src={post.author?.AvatarImage}
-                                alt="Profile"
-                                className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
-                              />
-                              <strong className="text-white">
-                                {post.author?.username || "Unknown"}
-                              </strong>
-                            </div>
-                            <div className="text-xl text-white ml-10">
-                              {post.text}
-                            </div>
-                            {post.images && post.images.length > 0 && (
-                              <div className="grid-container ml-10  mt-2">
-                                {post.images.map((img) => (
-                                  <img
-                                    src={img}
-                                    key={img}
-                                    alt="post"
-                                    className="media-img"
-                                    onLoad={(e) => {
-                                      const el = e.target;
-                                      el.classList.remove(
-                                        "landscape",
-                                        "portrait"
-                                      );
-                                      el.classList.add(
-                                        el.naturalWidth > el.naturalHeight
-                                          ? "landscape"
-                                          : "portrait"
-                                      );
-                                    }}
-                                  />
-                                ))}
-                              </div>
-                            )}
-                            {post.videos && post.videos.length > 0 && (
-                              <div className="grid-container ml-10 mt-2">
-                                {post.videos.map((vid) => (
-                                  <video
-                                    src={vid}
-                                    key={vid}
-                                    controls
-                                    className="media-video"
-                                    onLoadedMetadata={(e) => {
-                                      const el = e.target;
-                                      el.classList.add(
-                                        el.videoWidth > el.videoHeight
-                                          ? "landscape"
-                                          : "portrait"
-                                      );
-                                    }}
-                                  />
-                                ))}
-                              </div>
-                            )}
-                            <div className="flex ml-3">
-                              <LikeButton postId={post._id} userId={user._id} />
-                              <CommentBox postId={post._id} />
-
-                              <button
-                                className="ml-10 font-bold mt-2 hover:cursor-pointer"
-                                onClick={() => {
-                                  setShowCommentsById((prev) => ({
-                                    ...prev,
-                                    [post._id]: !prev[post._id],
-                                  }));
-                                }}
-                              >
-                                {showCommentsById[post._id] ? "Hide" : "Show"}{" "}
-                                Comments
-                              </button>
-                            </div>
-                            <div>
-                              {showCommentsById[post._id] && (
-                                <CommentList comments={post.comments || []} />
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  )
-                ) : activeTab === "Github" ? (
-                  userPosts.length === 0 ? (
-                    <div className="text-white">No Posts Found</div>
-                  ) : (
-                    <div>
-                      {userPosts
-                        .filter((post) => post.githubRepoName)
-                        .map((post) => {
-                          const repoInfo = repoDetails.find(
-                            (r) => r.name === post.githubRepoName
-                          );
-
-                          return (
-                            <div
-                              key={post._id}
-                              className="p-3 text-white border-b-1 border-[#2F3336]"
-                            >
-                              <div className="flex mb-2">
-                                <img
-                                  src={post.author?.AvatarImage}
-                                  alt="Profile"
-                                  className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
-                                />
-                                <strong>
-                                  {post.author?.username || "Unknown"}
-                                </strong>
-                              </div>
-                              <div className="text-xl text-white ml-10">
+                              <div className="text-slate-100 text-lg leading-relaxed mb-4 ml-15">
                                 {post.text}
                               </div>
+
+                              {post.images && post.images.length > 0 && (
+                                <div
+                                  className="grid gap-3 mb-4 ml-15"
+                                  style={{
+                                    gridTemplateColumns:
+                                      post.images.length === 1
+                                        ? "1fr"
+                                        : "repeat(auto-fit, minmax(300px, 1fr))",
+                                  }}
+                                >
+                                  {post.images.map((img) => (
+                                    <img
+                                      src={img}
+                                      key={img}
+                                      alt="post"
+                                      className="rounded-xl object-cover max-h-96 w-full border border-slate-700/30"
+                                      onLoad={(e) => {
+                                        const el = e.target;
+                                        el.classList.remove(
+                                          "landscape",
+                                          "portrait",
+                                        );
+                                        el.classList.add(
+                                          el.naturalWidth > el.naturalHeight
+                                            ? "landscape"
+                                            : "portrait",
+                                        );
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                              )}
+
+                              {post.videos && post.videos.length > 0 && (
+                                <div
+                                  className="grid gap-3 mb-4 ml-15"
+                                  style={{
+                                    gridTemplateColumns:
+                                      post.videos.length === 1
+                                        ? "1fr"
+                                        : "repeat(auto-fit, minmax(300px, 1fr))",
+                                  }}
+                                >
+                                  {post.videos.map((vid) => (
+                                    <video
+                                      src={vid}
+                                      key={vid}
+                                      controls
+                                      className="rounded-xl max-h-96 w-full border border-slate-700/30"
+                                      onLoadedMetadata={(e) => {
+                                        const el = e.target;
+                                        el.classList.add(
+                                          el.videoWidth > el.videoHeight
+                                            ? "landscape"
+                                            : "portrait",
+                                        );
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                              )}
+
                               {repoInfo && (
-                                <div className="repo-card w-auto border  border-[#2F3336] p-2 rounded-lg max-w-fit ml-10 m-5">
-                                  <div className="flex justify-between">
-                                    <div className="flex mb-2 w-70">
+                                <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 ml-15">
+                                  <div className="flex justify-between items-center mb-4">
+                                    <div className="flex items-center space-x-3">
                                       <img
                                         src={repoInfo.owner.avatar_url}
                                         alt={`${repoInfo.owner.login} avatar`}
-                                        className="h-10 w-10 rounded-full mr-2 object-cover border-1 border-[#2F3336]"
+                                        className="h-10 w-10 rounded-full object-cover border border-slate-600/50"
                                       />
-                                      <strong className="mt-2 font-bold text-xl">
+                                      <strong className="text-white font-semibold text-lg">
                                         {repoInfo.owner.login}
                                       </strong>
                                     </div>
-                                    <div className="flex mb-2 ">
-                                      <a
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="  "
-                                      >
-                                        <button
-                                          className="p-2 hover:cursor-pointer "
-                                          onClick={() => {
-                                            navigator.clipboard.writeText(
-                                              repoInfo.clone_url
-                                            ),
-                                              alert("Clone link Copied. !! ");
-                                          }}
-                                        >
-                                          Copy
-                                        </button>
-                                      </a>
-                                    </div>
+                                    <button
+                                      className="flex items-center space-x-2 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 transition-all duration-200"
+                                      onClick={() => {
+                                        navigator.clipboard.writeText(
+                                          repoInfo.clone_url,
+                                        );
+                                        alert("Clone link Copied. !! ");
+                                      }}
+                                    >
+                                      <Copy className="w-4 h-4" />
+                                      <span className="text-sm font-medium">
+                                        Clone
+                                      </span>
+                                    </button>
                                   </div>
+
                                   <a
                                     href={repoInfo.html_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="block ml-11 font-bold text-3xl my-5  "
+                                    className="block text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors duration-200 mb-4"
                                   >
                                     <strong>{repoInfo.name}</strong>
                                   </a>
-                                  <div className="">
-                                    <div className="my-2 border-1 border-[#2F3336] max-w-2/5 ml-11 p-2 rounded-lg">
-                                      <label className=" font-bold text-lg ">
+
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/30">
+                                      <label className="block text-blue-300 font-semibold mb-2">
                                         Description
                                       </label>
-                                      <p className="pt-2">
+                                      <p className="text-slate-200">
                                         {repoInfo.description}
                                       </p>
                                     </div>
-                                    <div className="my-2 border-1 border-[#2F3336] w-50 ml-11 p-2 rounded-lg">
-                                      <label className="block font-bold text-lg  my-1 ">
+                                    <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/30">
+                                      <label className="block text-blue-300 font-semibold mb-2">
                                         Language
                                       </label>
-                                      <p>{repoInfo.language}</p>
+                                      <p className="text-slate-200">
+                                        {repoInfo.language}
+                                      </p>
                                     </div>
                                   </div>
                                 </div>
                               )}
-                              <div className="flex ml-3">
+
+                              <div className="flex items-center space-x-6 pt-4 border-t border-slate-700/50">
                                 <LikeButton
                                   postId={post._id}
                                   userId={user._id}
                                 />
                                 <CommentBox postId={post._id} />
                                 <button
-                                  className="ml-10 font-bold mt-2 hover:cursor-pointer"
+                                  className="flex items-center space-x-2 text-slate-400 hover:text-blue-400 transition-colors duration-200"
                                   onClick={() => {
                                     setShowCommentsById((prev) => ({
                                       ...prev,
@@ -462,23 +281,337 @@ function Dashboard() {
                                     }));
                                   }}
                                 >
-                                  {showCommentsById[post._id] ? "Hide" : "Show"}{" "}
-                                  Comments
+                                  {showCommentsById[post._id] ? (
+                                    <>
+                                      <EyeOff className="w-5 h-5" />
+                                      <span className="font-medium">
+                                        Hide Comments
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Eye className="w-5 h-5" />
+                                      <span className="font-medium">
+                                        Show Comments
+                                      </span>
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+
+                              <div>
+                                {showCommentsById[post._id] && (
+                                  <div className="mt-4 pt-4 border-t border-slate-700/50">
+                                    <CommentList
+                                      comments={post.comments || []}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </article>
+                          );
+                        })}
+                      </div>
+                    )
+                  ) : activeTab === "Media" ? (
+                    userPosts.length === 0 ? (
+                      <div className="text-center py-16">
+                        <div className="text-slate-400 text-xl">
+                          No media posts yet
+                        </div>
+                        <div className="text-slate-500 mt-2">
+                          Share some photos or videos!
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        {userPosts
+                          .filter(
+                            (post) =>
+                              (post.images && post.images.length > 0) ||
+                              (post.videos && post.videos.length > 0),
+                          )
+                          .map((post) => (
+                            <article
+                              key={post._id}
+                              className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
+                            >
+                              <div className="flex mb-2">
+                                <img
+                                  src={post.author?.AvatarImage}
+                                  alt="Profile"
+                                  className="h-12 w-12 rounded-full mr-3 object-cover border-2 border-slate-600/50"
+                                />
+                                <strong className="text-white font-semibold">
+                                  {post.author?.username || "Unknown"}
+                                </strong>
+                              </div>
+                              <div className="text-lg text-slate-100 leading-relaxed mb-4 ml-15">
+                                {post.text}
+                              </div>
+                              {post.images && post.images.length > 0 && (
+                                <div
+                                  className="grid gap-3 mb-4 ml-15"
+                                  style={{
+                                    gridTemplateColumns:
+                                      post.images.length === 1
+                                        ? "1fr"
+                                        : "repeat(auto-fit, minmax(300px, 1fr))",
+                                  }}
+                                >
+                                  {post.images.map((img) => (
+                                    <img
+                                      src={img}
+                                      key={img}
+                                      alt="post"
+                                      className="rounded-xl object-cover max-h-96 w-full border border-slate-700/30"
+                                      onLoad={(e) => {
+                                        const el = e.target;
+                                        el.classList.remove(
+                                          "landscape",
+                                          "portrait",
+                                        );
+                                        el.classList.add(
+                                          el.naturalWidth > el.naturalHeight
+                                            ? "landscape"
+                                            : "portrait",
+                                        );
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                              )}
+                              {post.videos && post.videos.length > 0 && (
+                                <div
+                                  className="grid gap-3 mb-4 ml-15"
+                                  style={{
+                                    gridTemplateColumns:
+                                      post.videos.length === 1
+                                        ? "1fr"
+                                        : "repeat(auto-fit, minmax(300px, 1fr))",
+                                  }}
+                                >
+                                  {post.videos.map((vid) => (
+                                    <video
+                                      src={vid}
+                                      key={vid}
+                                      controls
+                                      className="rounded-xl max-h-96 w-full border border-slate-700/30"
+                                      onLoadedMetadata={(e) => {
+                                        const el = e.target;
+                                        el.classList.add(
+                                          el.videoWidth > el.videoHeight
+                                            ? "landscape"
+                                            : "portrait",
+                                        );
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                              )}
+                              <div className="flex items-center space-x-6 pt-4 border-t border-slate-700/50">
+                                <LikeButton
+                                  postId={post._id}
+                                  userId={user._id}
+                                />
+                                <CommentBox postId={post._id} />
+                                <button
+                                  className="flex items-center space-x-2 text-slate-400 hover:text-blue-400 transition-colors duration-200"
+                                  onClick={() => {
+                                    setShowCommentsById((prev) => ({
+                                      ...prev,
+                                      [post._id]: !prev[post._id],
+                                    }));
+                                  }}
+                                >
+                                  {showCommentsById[post._id] ? (
+                                    <>
+                                      <EyeOff className="w-5 h-5" />
+                                      <span className="font-medium">
+                                        Hide Comments
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Eye className="w-5 h-5" />
+                                      <span className="font-medium">
+                                        Show Comments
+                                      </span>
+                                    </>
+                                  )}
                                 </button>
                               </div>
                               <div>
                                 {showCommentsById[post._id] && (
-                                  <CommentList comments={post.comments || []} />
+                                  <div className="mt-4 pt-4 border-t border-slate-700/50">
+                                    <CommentList
+                                      comments={post.comments || []}
+                                    />
+                                  </div>
                                 )}
                               </div>
-                            </div>
-                          );
-                        })}
+                            </article>
+                          ))}
+                      </div>
+                    )
+                  ) : activeTab === "Github" ? (
+                    userPosts.length === 0 ? (
+                      <div className="text-center py-16">
+                        <div className="text-slate-400 text-xl">
+                          No repository posts yet
+                        </div>
+                        <div className="text-slate-500 mt-2">
+                          Share your coding projects!
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        {userPosts
+                          .filter((post) => post.githubRepoName)
+                          .map((post) => {
+                            const repoInfo = repoDetails.find(
+                              (r) => r.name === post.githubRepoName,
+                            );
+
+                            return (
+                              <article
+                                key={post._id}
+                                className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
+                              >
+                                <div className="flex mb-2">
+                                  <img
+                                    src={post.author?.AvatarImage}
+                                    alt="Profile"
+                                    className="h-12 w-12 rounded-full mr-3 object-cover border-2 border-slate-600/50"
+                                  />
+                                  <strong className="text-white font-semibold">
+                                    {post.author?.username || "Unknown"}
+                                  </strong>
+                                </div>
+                                <div className="text-lg text-slate-100 leading-relaxed mb-4 ml-15">
+                                  {post.text}
+                                </div>
+                                {repoInfo && (
+                                  <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 ml-15">
+                                    <div className="flex justify-between">
+                                      <div className="flex mb-2 w-70">
+                                        <img
+                                          src={repoInfo.owner.avatar_url}
+                                          alt={`${repoInfo.owner.login} avatar`}
+                                          className="h-10 w-10 rounded-full mr-2 object-cover border border-slate-600/50"
+                                        />
+                                        <strong className="mt-2 font-bold text-xl text-white">
+                                          {repoInfo.owner.login}
+                                        </strong>
+                                      </div>
+                                      <div className="flex mb-2">
+                                        <a
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className=""
+                                        >
+                                          <button
+                                            className="flex items-center space-x-2 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 transition-all duration-200"
+                                            onClick={() => {
+                                              navigator.clipboard.writeText(
+                                                repoInfo.clone_url,
+                                              );
+                                              alert("Clone link Copied. !! ");
+                                            }}
+                                          >
+                                            <Copy className="w-4 h-4" />
+                                            <span className="text-sm font-medium">
+                                              Clone
+                                            </span>
+                                          </button>
+                                        </a>
+                                      </div>
+                                    </div>
+                                    <a
+                                      href={repoInfo.html_url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="block ml-11 font-bold text-2xl my-5 text-blue-400 hover:text-blue-300 transition-colors duration-200"
+                                    >
+                                      <strong>{repoInfo.name}</strong>
+                                    </a>
+                                    <div className="">
+                                      <div className="my-2 bg-slate-700/30 rounded-lg border border-slate-600/30 max-w-2/5 ml-11 p-4">
+                                        <label className="block text-blue-300 font-semibold mb-2">
+                                          Description
+                                        </label>
+                                        <p className="text-slate-200">
+                                          {repoInfo.description}
+                                        </p>
+                                      </div>
+                                      <div className="my-2 bg-slate-700/30 rounded-lg border border-slate-600/30 w-50 ml-11 p-4">
+                                        <label className="block text-blue-300 font-semibold mb-2">
+                                          Language
+                                        </label>
+                                        <p className="text-slate-200">
+                                          {repoInfo.language}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                <div className="flex items-center space-x-6 pt-4 border-t border-slate-700/50">
+                                  <LikeButton
+                                    postId={post._id}
+                                    userId={user._id}
+                                  />
+                                  <CommentBox postId={post._id} />
+                                  <button
+                                    className="flex items-center  space-x-2 text-slate-400 hover:text-blue-400 transition-colors duration-200"
+                                    onClick={() => {
+                                      setShowCommentsById((prev) => ({
+                                        ...prev,
+                                        [post._id]: !prev[post._id],
+                                      }));
+                                    }}
+                                  >
+                                    {showCommentsById[post._id] ? (
+                                      <>
+                                        <EyeOff className="w-5 h-5" />
+                                        <span className="font-medium">
+                                          Hide Comments
+                                        </span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Eye className="w-5 h-5" />
+                                        <span className="font-medium">
+                                          Show Comments
+                                        </span>
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                                <div>
+                                  {showCommentsById[post._id] && (
+                                    <div className="mt-4 pt-4 border-t border-slate-700/50">
+                                      <CommentList
+                                        comments={post.comments || []}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              </article>
+                            );
+                          })}
+                      </div>
+                    )
+                  ) : activeTab === "Soon" ? (
+                    <div className="text-center py-16">
+                      <div className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4">
+                        Coming Soon...
+                      </div>
+                      <div className="text-slate-400">
+                        Exciting features are on the way!
+                      </div>
                     </div>
-                  )
-                ) : activeTab === "Soon" ? (
-                  <div className="text-4xl text-white bg-red-600">Soon</div>
-                ) : null}
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>

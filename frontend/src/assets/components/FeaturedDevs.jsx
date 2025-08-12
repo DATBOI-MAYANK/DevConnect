@@ -26,7 +26,7 @@ export default function FeaturedDevs() {
   }, []);
 
   return (
-    <div className="filler fixed ml-[700px] bg-black h-screen text-white border-l-1 border-[#2F3336]    ">
+    <div className="filler fixed ml-[700px]  h-screen text-white border-l-1 border-[#2F3336]    ">
       <div>
         <h2 className="text-4xl font-bold m-2 ">Featured Devs</h2>
         {featuredDevs.map((dev) => (

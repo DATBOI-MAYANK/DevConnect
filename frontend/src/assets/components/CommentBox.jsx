@@ -10,12 +10,10 @@ function CommentBox({ postId }) {
   const [text, setText] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
   const post = useSelector((state) =>
-      state.posts.list.find((p) => p._id === postId)
-    );
-  
+    state.posts.list.find((p) => p._id === postId),
+  );
 
-  const commentCount =  post.comments?.length || 0;
-  
+  const commentCount = post.comments?.length || 0;
 
   const submit = () => {
     if (!text.trim()) return;
@@ -68,7 +66,8 @@ function CommentBox({ postId }) {
           setIsOpen(true);
         }}
       >
-        <MessageCircle /> {commentCount > 0 ? commentCount : null}
+        <MessageCircle className=" text-slate-400 hover:text-blue-400 transition-colors duration-200" />{" "}
+        {commentCount > 0 ? commentCount : null}
       </button>
     </>
   );

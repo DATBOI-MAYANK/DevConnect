@@ -55,7 +55,7 @@ function MainFeed() {
             return (
               <div
                 key={post._id}
-                className="mb-4 p-3 bg-black text-white   border-b-1 border-[#2F3336]"
+                className="mb-4 p-3  text-white   border-b-1 border-[#2F3336]"
               >
                 <div className="flex mb-2">
                   <img

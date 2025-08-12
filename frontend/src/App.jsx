@@ -20,7 +20,7 @@ function App() {
         sparkCount={8}
         duration={400}
       >
-        <div className="bg-black h-screen w-full">
+        <div className="bg-[#020617] h-screen w-full">
           <div className="  grid grid-flow-row grid-cols-[auto_350px] ml-[300px] h-full ">
             <Navbar />
             <MainFeed />

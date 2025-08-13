@@ -23,14 +23,14 @@ function LikeButton({ postId, userId }) {
   return (
     <button
       onClick={handleLike}
-      className="mx-9 mt-2 flex hover:cursor-pointer gap-1 "
+      className="mx-9    flex hover:cursor-pointer space-x-1.5 "
     >
       {likedByUser ? (
         <Heart fill="red" color="red" />
       ) : (
-        <Heart className=" text-slate-400 hover:text-red-600 transition-colors duration-200" />
+        <Heart className="  text-slate-400 w-5 h-5 hover:scale-110 hover:text-red-600 transition-colors duration-200" />
       )}{" "}
-      {likesCount > 0 ? <>{likesCount}</> : null}
+      {likesCount > 0 ? <span className="text-white">{likesCount}</span> : null}
     </button>
   );
 }

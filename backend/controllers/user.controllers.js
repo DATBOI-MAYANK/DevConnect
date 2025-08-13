@@ -27,7 +27,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
     console.error("Error generating tokens:", error);
     throw new ApiError(
       500,
-      "Something went wrong while generating refresh and access token"
+      "Something went wrong while generating refresh and access token",
     );
   }
 };
@@ -41,7 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
   //Validation -- Not empty
   if (
     [username, email, password, GithubUsername].some(
-      (fields) => fields.trim() === ""
+      (fields) => fields.trim() === "",
     )
   ) {
     throw new ApiError(400, "All Fields are required !!");
@@ -70,7 +70,7 @@ const registerUser = asyncHandler(async (req, res) => {
   ) {
     throw new ApiError(
       400,
-      "Password must contain uppercase and lowercase letters and must be at least 8 characters long."
+      "Password must contain uppercase and lowercase letters and must be at least 8 characters long.",
     );
   }
 
@@ -116,13 +116,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
   //Generate Tokens
   const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
-    user._id
+    user._id,
   );
 
   // remove password, refreshToken fiels from response
 
   const createdUser = await User.findById(user._id).select(
-    "-password -refreshToken"
+    "-password -refreshToken",
   );
 
   // check for user creation
@@ -130,7 +130,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!createdUser) {
     throw new ApiError(
       500,
-      "Something went wrong while registering the user  "
+      "Something went wrong while registering the user  ",
     );
   }
   const options = {
@@ -168,11 +168,11 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
-    user._id
+    user._id,
   );
 
   const loggedInUser = await User.findById(user._id).select(
-    "-password -refreshToken"
+    "-password -refreshToken",
   );
 
   const options = {
@@ -192,8 +192,8 @@ const loginUser = asyncHandler(async (req, res) => {
           accessToken,
           refreshToken,
         },
-        "User logged In Successfully"
-      )
+        "User logged In Successfully",
+      ),
     );
 });
 
@@ -207,7 +207,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     },
     {
       new: true,
-    }
+    },
   );
 
   const options = {
@@ -232,7 +232,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   try {
     const decodedToken = jwt.verify(
       incomingRefreshToken,
-      process.env.REFRESH_TOKEN_SECRET
+      process.env.REFRESH_TOKEN_SECRET,
     );
 
     const user = await User.findById(decodedToken?._id);
@@ -261,12 +261,19 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         new ApiResponse(
           200,
           { accessToken, refreshToken: newRefreshToken },
-          "access Token refreshed"
-        )
+          "access Token refreshed",
+        ),
       );
   } catch (error) {
     throw new ApiError(401, error?.message || "Invalid refresh Token");
   }
+});
+
+const getAllDevs = asyncHandler(async (req, res) => {
+  try {
+    const allDevs = await User.find({});
+    console.log("Devs", allDevs);
+  } catch {}
 });
 
 const getFeaturedDevs = asyncHandler(async (req, res) => {
@@ -284,4 +291,5 @@ export {
   logoutUser,
   refreshAccessToken,
   getFeaturedDevs,
+  getAllDevs,
 };

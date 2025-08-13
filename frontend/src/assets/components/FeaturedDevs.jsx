@@ -26,13 +26,33 @@ export default function FeaturedDevs() {
         setAllDevs(devs);
         setFeaturedDevs(pickFeaturedDevs(devs, 3));
       } catch (error) {
-        console.error("Error fetching featured devs", error);
+        console.error("Error fetching featured devs", error?.message);
       }
     };
     fetchFeatured();
   }, []);
 
-  // Mock data for additional sections
+  useEffect(() => {
+    const allDevs = async () => {
+      try {
+        const devData = await axios.get(
+          "http://localhost:8000/users/api/v1/devs",
+        );
+        console.log("Devs", devData.length());
+        // const devs = response.data.data;
+        // setAllDevs(devs);
+        // setFeaturedDevs(pickFeaturedDevs(devs, 3));
+      } catch (error) {
+        console.error("Error fetching featured devs", error);
+      }
+    };
+    allDevs();
+  }, []);
+
+  // Mock data for additional sections const devData = await axios.get(
+  //   "http://localhost:8000/users/api/v1/devs",
+  // );
+  // console.log("Devs", devData.length);
   const trendingTopics = [
     { name: "React 18", posts: 1234 },
     { name: "TypeScript", posts: 987 },
@@ -42,7 +62,7 @@ export default function FeaturedDevs() {
   ];
 
   const stats = {
-    totalDevs: allDevs.length || 1250,
+    totalDevs: allDevs.length || 0,
     activeToday: 89,
     totalPosts: 4567,
   };

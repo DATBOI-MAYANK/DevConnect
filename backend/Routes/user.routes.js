@@ -5,6 +5,7 @@ import {
   logoutUser,
   refreshAccessToken,
   registerUser,
+  getAllDevs,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -22,7 +23,7 @@ router.route("/api/v1/register").post(
       maxCount: 1,
     },
   ]),
-  registerUser
+  registerUser,
 );
 
 router.route("/api/v1/login").post(loginUser);
@@ -33,7 +34,7 @@ router.route("/api/v1/me").get(verifyJwt, (req, res) => {
   });
 });
 router.route("/api/v1/featured").get(getFeaturedDevs);
-
+router.route("/api/v1/devs").get(getAllDevs);
 router.route("/api/v1/logout").post(verifyJwt, logoutUser);
 router.route("/api/v1/refresh-Token").post(refreshAccessToken);
 

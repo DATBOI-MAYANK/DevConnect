@@ -7,9 +7,7 @@ import MainFeed from "./assets/components/MainFeed.jsx";
 import FeaturedDevs from "./assets/components/FeaturedDevs.jsx";
 
 function App() {
-  
-
-  console.log("App Mounted!!")
+  console.log("App Mounted!!");
 
   return (
     <ErrorBoundary>
@@ -20,11 +18,11 @@ function App() {
         sparkCount={8}
         duration={400}
       >
-        <div className="bg-[#020617] h-screen w-full">
+        <div className="h-screen w-full">
           <div className="  grid grid-flow-row grid-cols-[auto_350px] ml-[300px] h-full ">
             <Navbar />
             <MainFeed />
-             
+
             <FeaturedDevs />
           </div>
         </div>

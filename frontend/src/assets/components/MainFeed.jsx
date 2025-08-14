@@ -6,7 +6,8 @@ import CommentBox from "./CommentBox.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../../features/PostSlice/postSlice.js";
 import CommentList from "./CommentList.jsx";
-import { Copy, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Copy, X, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 function MainFeed() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
@@ -95,15 +96,23 @@ function MainFeed() {
                   key={post._id}
                   className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
                 >
-                  <div className="flex items-center space-x-3 ">
-                    <img
-                      src={post.author?.AvatarImage}
-                      alt="Profile"
-                      className="h-12 w-12 rounded-full object-cover border-2 border-slate-600/50"
-                    />
-                    <strong className="text-white font-semibold">
-                      {post.author?.username || "Unknown"}
-                    </strong>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={post.author?.AvatarImage}
+                        alt="Profile"
+                        className="h-12 w-12 rounded-full object-cover border-2 border-slate-600/50"
+                      />
+                      <Link
+                        to={`/dashboard/${post.author?._id}`}
+                        className="block text-white font-semibold hover:text-blue-400 transition-colors duration-200"
+                      >
+                        <strong>{post.author?.username || "Unknown"}</strong>
+                      </Link>
+                    </div>
+                    {user?._id === post.author?._id && (
+                      <Trash2 className="w-5 h-5 text-slate-500 hover:text-red-400 cursor-pointer transition-colors duration-200" />
+                    )}
                   </div>
 
                   <div className="text-slate-100 text-lg leading-relaxed mb-4 ml-15">

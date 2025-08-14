@@ -272,8 +272,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 const getAllDevs = asyncHandler(async (req, res) => {
   try {
     const allDevs = await User.find({});
-    console.log("Devs", allDevs);
-  } catch {}
+    // console.log("Devs", allDevs);
+    return res.json(new ApiResponse(200, allDevs));
+  } catch (error) {
+    throw new ApiError(400, "Could not fetch devs.");
+  }
 });
 
 const getFeaturedDevs = asyncHandler(async (req, res) => {

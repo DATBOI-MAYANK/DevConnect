@@ -37,6 +37,10 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
+        path: "dashboard/:userId",
+        element: <Dashboard />,
+      },
+      {
         path: "*",
         element: <NotFound />,
       },
@@ -51,5 +55,5 @@ createRoot(document.getElementById("root")).render(
         <RouterProvider router={router} />
       </ErrorBoundary>
     </Provider>
-  </StrictMode>
+  </StrictMode>,
 );

@@ -3,6 +3,7 @@ import api from "../../assets/api/axiosSetup.js";
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const res = await api.get("get-posts");
+  // console.log("Posts", res);
   return res.data.data;
 });
 
@@ -11,7 +12,7 @@ export const toggleLike = createAsyncThunk(
   async ({ postId }) => {
     const res = await api.post(`posts/${postId}/like`);
     return res.data.data.updatedPost;
-  }
+  },
 );
 
 export const addComment = createAsyncThunk(
@@ -22,7 +23,7 @@ export const addComment = createAsyncThunk(
       throw new Error("Invalid response from addComment API");
     }
     return res.data.data.updatedPost;
-  }
+  },
 );
 
 export const deletePost = createAsyncThunk(
@@ -30,10 +31,10 @@ export const deletePost = createAsyncThunk(
   async ({ postId }) => {
     const res = await api.post(`posts/${postId}/deletePost`);
     if (!res.data?.data?.updatedPost) {
-      throw new Error("Invalid response from addComment API");
+      throw new Error("Invalid response from Delete Post API");
     }
     return res.data.data.updatedPost;
-  }
+  },
 );
 
 const postSlice = createSlice({

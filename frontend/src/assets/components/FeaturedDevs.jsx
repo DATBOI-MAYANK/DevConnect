@@ -11,11 +11,12 @@ import {
   Award,
   Sparkles,
 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export default function FeaturedDevs() {
-  const [allDevs, setAllDevs] = useState([]);
+  const [allDevs, setAllDevs] = useState(0);
   const [featuredDevs, setFeaturedDevs] = useState([]);
-
+  const posts = useSelector((state) => state.posts.list);
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
@@ -23,7 +24,6 @@ export default function FeaturedDevs() {
           "http://localhost:8000/users/api/v1/featured",
         );
         const devs = response.data.data;
-        setAllDevs(devs);
         setFeaturedDevs(pickFeaturedDevs(devs, 3));
       } catch (error) {
         console.error("Error fetching featured devs", error?.message);
@@ -38,10 +38,9 @@ export default function FeaturedDevs() {
         const devData = await axios.get(
           "http://localhost:8000/users/api/v1/devs",
         );
-        console.log("Devs", devData.length());
-        // const devs = response.data.data;
-        // setAllDevs(devs);
-        // setFeaturedDevs(pickFeaturedDevs(devs, 3));
+        const devs = devData.data.data.length;
+
+        setAllDevs(devs);
       } catch (error) {
         console.error("Error fetching featured devs", error);
       }
@@ -62,9 +61,9 @@ export default function FeaturedDevs() {
   ];
 
   const stats = {
-    totalDevs: allDevs.length || 0,
-    activeToday: 89,
-    totalPosts: 4567,
+    totalDevs: allDevs || 0,
+    activeToday: allDevs,
+    totalPosts: posts.length,
   };
 
   const upcomingEvents = [
@@ -99,7 +98,7 @@ export default function FeaturedDevs() {
                 </div>
                 <div className="flex-1">
                   <div className="font-semibold text-white group-hover:text-blue-400 transition-colors duration-300">
-                    {dev?.username || "Unknown"}
+                    {dev?.username.slice(0, 7) + "..." || "Unknown"}
                   </div>
                   <div className="text-sm text-slate-400">
                     Full-stack Developer

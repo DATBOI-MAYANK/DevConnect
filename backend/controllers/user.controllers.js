@@ -288,6 +288,37 @@ const getFeaturedDevs = asyncHandler(async (req, res) => {
   }
 });
 
+const getProfile = asyncHandler(async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).select(
+      "-password -refreshToken -email ",
+    );
+    if (!user) {
+      throw new ApiError(400, "User Does not exists.");
+    }
+    return res.json(new ApiResponse(200, user));
+  } catch (error) {
+    throw new ApiError(400, "Could not fetch user.");
+  }
+});
+const getCurrentUserProfile = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select(
+      "-password -refreshToken",
+    );
+
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    return res.json(
+      new ApiResponse(200, user, "Current user profile fetched successfully"),
+    );
+  } catch (error) {
+    throw new ApiError(500, "Error fetching current user profile");
+  }
+});
 export {
   registerUser,
   loginUser,
@@ -295,4 +326,6 @@ export {
   refreshAccessToken,
   getFeaturedDevs,
   getAllDevs,
+  getCurrentUserProfile,
+  getProfile,
 };

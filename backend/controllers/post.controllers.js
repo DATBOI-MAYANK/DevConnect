@@ -102,18 +102,45 @@ const UpdatePost = asyncHandler(async (req, res) => {
   }
 });
 
-const DeletePost = asyncHandler(async (req, res) => {
+const getPostsByUserId = asyncHandler(async (req, res) => {
   try {
+    const { userId } = req.params;
+
+    const posts = await Post.find({ author: userId })
+      .populate("author", "username AvatarImage")
+      .populate("comments.user", "username AvatarImage")
+      .sort({ createdAt: -1 });
+
+    return res.json(
+      new ApiResponse(200, posts, "User posts fetched successfully"),
+    );
+  } catch (error) {
+    throw new ApiError(500, "Error fetching user posts");
+  }
+});
+
+const deletePostById = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
     const userId = req.user._id;
-    const post = await Post.findOneAndDelete({ author: userId });
+
+    const post = await Post.findById(id);
+
     if (!post) {
-      throw new ApiError(500, "Post not found!!");
+      throw new ApiError(404, "Post not found");
     }
-    res
-      .status(200)
-      .json(new ApiResponse(200, post, "Post Deleted Successfully"));
-  } catch (err) {
-    throw new ApiError(500, "Something went wrong while deleting Post. ");
+
+    if (post.author.toString() !== userId.toString()) {
+      throw new ApiError(403, "You can only delete your own posts");
+    }
+
+    await Post.findByIdAndDelete(id);
+
+    return res.json(
+      new ApiResponse(200, { deletedPostId: id }, "Post deleted successfully"),
+    );
+  } catch (error) {
+    throw new ApiError(500, "Error deleting post");
   }
 });
 
@@ -130,7 +157,7 @@ const toggleLike = asyncHandler(async (req, res, next) => {
     if (liked) {
       // Unlike
       post.likes = post.likes.filter(
-        (id) => id.toString() !== userId.toString()
+        (id) => id.toString() !== userId.toString(),
       );
     } else {
       // Like
@@ -156,7 +183,7 @@ const addComment = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const { text } = req.body;
-    const { username , AvatarImage} = req.user;
+    const { username, AvatarImage } = req.user;
     if (!text || !text.trim()) {
       throw new ApiError(400, "Comments cannot be empty.!!");
     }
@@ -165,10 +192,16 @@ const addComment = asyncHandler(async (req, res, next) => {
       id,
       {
         $push: {
-          comments: { user: req.user._id, text, username , AvatarImage , createdAt: Date.now() },
+          comments: {
+            user: req.user._id,
+            text,
+            username,
+            AvatarImage,
+            createdAt: Date.now(),
+          },
         },
       },
-      { new: true }
+      { new: true },
     )
       .populate("author", "username AvatarImage")
       .populate("comments.user", "username AvatarImage");
@@ -181,4 +214,12 @@ const addComment = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { CreatePost, UpdatePost, DeletePost, GetPosts, toggleLike, addComment };
+export {
+  CreatePost,
+  UpdatePost,
+  deletePostById,
+  GetPosts,
+  toggleLike,
+  addComment,
+  getPostsByUserId,
+};

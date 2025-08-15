@@ -29,11 +29,11 @@ export const addComment = createAsyncThunk(
 export const deletePost = createAsyncThunk(
   "posts/deletePost",
   async ({ postId }) => {
-    const res = await api.post(`posts/${postId}/deletePost`);
-    if (!res.data?.data?.updatedPost) {
-      throw new Error("Invalid response from Delete Post API");
+    const res = await api.delete(`posts/${postId}/deletePost`);
+    if (!res.data?.data?.deletedPostId) {
+      throw new Error("Failed to delete post");
     }
-    return res.data.data.updatedPost;
+    return res.data.data.deletedPostId;
   },
 );
 
@@ -55,6 +55,10 @@ const postSlice = createSlice({
         const updated = action.payload;
         const index = state.list.findIndex((p) => p._id === updated._id);
         if (index !== -1) state.list[index] = updated;
+      })
+      .addCase(deletePost.fulfilled, (state, action) => {
+        const postId = action.payload;
+        state.list = state.list.filter((p) => p._id !== postId);
       });
   },
 });

@@ -6,6 +6,8 @@ import {
   refreshAccessToken,
   registerUser,
   getAllDevs,
+  getCurrentUserProfile,
+  getProfile,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -27,12 +29,8 @@ router.route("/api/v1/register").post(
 );
 
 router.route("/api/v1/login").post(loginUser);
-router.route("/api/v1/me").get(verifyJwt, (req, res) => {
-  res.status(200).json({
-    success: true,
-    user: req.user,
-  });
-});
+router.route("/api/v1/me").get(verifyJwt, getCurrentUserProfile);
+router.route("/api/v1/profile/:userId").get(getProfile);
 router.route("/api/v1/featured").get(getFeaturedDevs);
 router.route("/api/v1/devs").get(getAllDevs);
 router.route("/api/v1/logout").post(verifyJwt, logoutUser);

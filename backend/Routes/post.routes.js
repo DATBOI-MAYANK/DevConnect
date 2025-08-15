@@ -2,10 +2,11 @@ import { Router } from "express";
 import {
   CreatePost,
   UpdatePost,
-  DeletePost,
   GetPosts,
   toggleLike,
   addComment,
+  deletePostById,
+  getPostsByUserId,
 } from "../controllers/post.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -18,15 +19,15 @@ router.route("/api/v1/create-post").post(
     {
       name: "media",
       maxCount: 6,
-    }
+    },
   ]),
-  CreatePost
+  CreatePost,
 );
 
-router.route("/api/v1/get-posts").get( GetPosts)
-
+router.route("/api/v1/get-posts").get(GetPosts);
+router.get("/api/v1/user/:userId", getPostsByUserId);
 router.post("/api/v1/posts/:id/like", verifyJwt, toggleLike);
 router.post("/api/v1/posts/:id/addComment", verifyJwt, addComment);
-router.post("/api/v1/posts/:id/deletePost", verifyJwt, DeletePost);
+router.delete("/api/v1/posts/:id/deletePost", verifyJwt, deletePostById);
 
 export default router;

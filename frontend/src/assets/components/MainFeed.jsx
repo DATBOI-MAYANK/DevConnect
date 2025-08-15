@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import ClickSpark from "../components/ClickSpark.jsx";
+import ClickSpark from "./ClickSpark.jsx";
 import LikeButton from "./LikeButton.jsx";
 import CommentBox from "./CommentBox.jsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import { fetchPosts } from "../../features/PostSlice/postSlice.js";
 import CommentList from "./CommentList.jsx";
 import { Copy, X, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import DeleteBtn from "./DeleteBtn.jsx";
 
 function MainFeed() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
@@ -104,14 +105,15 @@ function MainFeed() {
                         className="h-12 w-12 rounded-full object-cover border-2 border-slate-600/50"
                       />
                       <Link
-                        to={`/dashboard/${post.author?._id}`}
+                        to={`/profile/${post.author?._id}`}
                         className="block text-white font-semibold hover:text-blue-400 transition-colors duration-200"
                       >
                         <strong>{post.author?.username || "Unknown"}</strong>
                       </Link>
                     </div>
                     {user?._id === post.author?._id && (
-                      <Trash2 className="w-5 h-5 text-slate-500 hover:text-red-400 cursor-pointer transition-colors duration-200" />
+                      // <Trash2 className="w-5 h-5 text-slate-500 hover:text-red-400 cursor-pointer transition-colors duration-200" />
+                      <DeleteBtn postId={post._id} />
                     )}
                   </div>
 

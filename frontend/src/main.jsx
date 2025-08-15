@@ -12,6 +12,7 @@ import NotFound from "./assets/components/NotFound.jsx";
 import ErrorBoundary from "./assets/components/ErrorBoundary.jsx";
 import Modal from "react-modal";
 import Dashboard from "./assets/components/Dashboard.jsx";
+import UserProfile from "./assets/components/UserProfile.jsx";
 
 Modal.setAppElement("#root");
 
@@ -37,8 +38,8 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "dashboard/:userId",
-        element: <Dashboard />,
+        path: "profile/:userId",
+        element: <UserProfile />,
       },
       {
         path: "*",

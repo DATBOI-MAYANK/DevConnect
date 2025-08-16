@@ -95,7 +95,7 @@ function MainFeed() {
               return (
                 <article
                   key={post._id}
-                  className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
+                  className="bg-slate-800/40 backdrop-blur-sm rounded-2xl mb-0.5 border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">

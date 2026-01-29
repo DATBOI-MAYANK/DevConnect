@@ -191,9 +191,9 @@ VITE_API_URL=http://localhost:5000/api
 
 ## 📱 Screenshots
 
-_Add screenshots of your application here to showcase the UI_
 
----
+<img width="1348" height="720" alt="Screenshot from 2026-01-29 <img width="1348" height="720" alt="Screenshot from 2026-01-29 19-58-46" src="https://github.com/user-attachments/assets/607b0905-9a04-43d2-9d40-2eda1790c7df" />
+19-58-33" src="https://github.com/user-attachments/assets/885933f0-b497-4cdd-bd2a-0f584ed7c96f" />
 
 ## 🤝 Contributing
 

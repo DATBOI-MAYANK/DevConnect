@@ -44,17 +44,17 @@ function Navbar() {
                 <span>Home</span>
               </Link>
 
-              <button className="flex items-center space-x-4 px-4 py-3 rounded-xl text-lg font-medium transition-all duration-300 hover:bg-slate-800/50 hover:text-blue-400 group w-full text-left">
+              <button className="flex items-center space-x-4 px-4 py-3 rounded-xl text-lg font-medium transition-all duration-300 hover:bg-slate-800/50 hover:text-blue-400 group w-full text-left cursor-not-allowed">
                 <Search className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
                 <span>Explore</span>
               </button>
 
-              <button className="flex items-center space-x-4 px-4 py-3 rounded-xl text-lg font-medium transition-all duration-300 hover:bg-slate-800/50 hover:text-blue-400 group w-full text-left">
+              <button className="flex items-center space-x-4 px-4 py-3 rounded-xl text-lg font-medium transition-all duration-300 hover:bg-slate-800/50 hover:text-blue-400 group w-full text-left cursor-not-allowed">
                 <Bell className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
                 <span>Notifications</span>
               </button>
 
-              <button className="flex items-center space-x-4 px-4 py-3 rounded-xl text-lg font-medium transition-all duration-300 hover:bg-slate-800/50 hover:text-blue-400 group w-full text-left">
+              <button className="flex items-center space-x-4 px-4 py-3 rounded-xl text-lg font-medium transition-all duration-300 hover:bg-slate-800/50 hover:text-blue-400 group w-full text-left cursor-not-allowed">
                 <MoreHorizontal className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
                 <span>More...</span>
               </button>

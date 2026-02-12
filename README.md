@@ -206,11 +206,14 @@ VITE_API_URL=http://localhost:5000/api
 
 ---
 
-## 📝 License
+##Features under development 
+ 
+ 1.Navbar sections .
+ 2. Edit Post.
+ 3. Follow Users.
+ 4. Github Repo section update.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
 
 ## 👨‍💻 Author
 
@@ -218,14 +221,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🙏 Acknowledgments
 
-- React team for the amazing framework
-- MongoDB team for the excellent database
-- Cloudinary for media storage solutions
-- TailwindCSS for the utility-first CSS framework
-
----
 
 ## 📞 Support
 
@@ -236,5 +232,3 @@ If you have any questions or need help, feel free to:
 - Connect with me on social media
 
 ---
-
-**Happy Coding! 🚀**

@@ -206,12 +206,12 @@ VITE_API_URL=http://localhost:5000/api
 
 ---
 
-##Features under development 
+## Features under development 
  
- 1.Navbar sections .
- 2. Edit Post.
- 3. Follow Users.
- 4. Github Repo section update.
+ 1. Navbar sections 
+ 2. Edit Post
+ 3. Follow Users
+ 4. Github Repo section update
 
 
 

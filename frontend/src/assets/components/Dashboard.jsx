@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import ClickSpark from "../components/ClickSpark.jsx";
 import LikeButton from "./LikeButton.jsx";
@@ -16,6 +17,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  ArrowLeft,
 } from "lucide-react";
 
 function Dashboard() {
@@ -89,46 +91,55 @@ function Dashboard() {
   return (
     <ErrorBoundary>
       <ClickSpark>
-        <div className="h-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 ml-[300px]">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 lg:ml-[300px]">
           <div className="grid grid-flow-row grid-cols-1 h-full">
             <Navbar />
             <div className="Dashboard ">
               <div className="relative">
+                <Link
+                  to="/"
+                  className="absolute top-4 left-4 z-10 inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-900/70 text-white hover:bg-slate-800/90 border border-slate-700/60 transition-colors"
+                  aria-label="Back to home"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </Link>
                 {user.CoverImage ? (
                   <img
                     src={user.CoverImage}
                     alt="CoverImage"
-                    className="w-full h-[40vh] object-cover"
+                    className="w-full h-[28vh] sm:h-[40vh] object-cover"
                   />
                 ) : (
-                  <div className="w-full h-[40vh] bg-gradient-to-r from-blue-900/50 to-slate-800/50 border-b border-slate-700/50"></div>
+                  <div className="w-full h-[28vh] sm:h-[40vh] bg-gradient-to-r from-blue-900/50 to-slate-800/50 border-b border-slate-700/50"></div>
                 )}
 
                 {/* Avatar */}
-                <div className="absolute bottom-0 left-6 translate-y-1/2">
+                <div className="absolute bottom-0 left-4 sm:left-6 translate-y-1/2">
                   <img
                     src={user.AvatarImage}
                     alt="AvatarImage"
-                    className="rounded-full w-36 h-36 object-cover border-4 border-slate-900"
+                    className="rounded-full w-24 h-24 sm:w-36 sm:h-36 object-cover border-4 border-slate-900"
                   />
                 </div>
               </div>
 
               {/* Profile Info */}
-              <div className="mt-20 px-6 text-white">
-                <h1 className="text-3xl font-bold">{user.username}</h1>
-                <p className="text-lg text-slate-300 leading-relaxed max-w-2xl mt-2">
+              <div className="mt-16 sm:mt-20 px-4 sm:px-6 text-white">
+                <h1 className="text-2xl sm:text-3xl font-bold">
+                  {user.username}
+                </h1>
+                <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mt-2">
                   {user.Bio}
                 </p>
               </div>
 
               {/* Tabs */}
-              <div className="mt-8 px-6 border-b border-slate-700/50">
+              <div className="mt-8 px-4 sm:px-6 border-b border-slate-700/50">
                 <div className="flex overflow-x-auto">
                   {["Post", "Media", "Github", "Soon"].map((tab) => (
                     <button
                       key={tab}
-                      className={`text-white font-semibold px-6 py-4 text-lg transition-all duration-300 border-b-2 hover:text-blue-400 ${
+                      className={`text-white font-semibold px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-lg transition-all duration-300 border-b-2 hover:text-blue-400 ${
                         activeTab === tab
                           ? "text-blue-400 border-blue-400"
                           : "border-transparent hover:border-slate-600"
@@ -140,7 +151,7 @@ function Dashboard() {
                   ))}
                 </div>
 
-                <div className="Data h-auto absolute top-[80vh] w-[140vh] py-6 mb-2 mt-10 px-0">
+                <div className="Data h-auto relative w-full py-6 mt-6 px-0">
                   {activeTab === "Post" ? (
                     userPosts.length === 0 ? (
                       <div className="text-center py-16">
@@ -176,13 +187,13 @@ function Dashboard() {
                                 <Trash2 className="w-5 h-5 text-slate-500 hover:text-red-400 cursor-pointer transition-colors duration-200" />
                               </div>
 
-                              <div className="text-slate-100 text-lg leading-relaxed mb-4 ml-15">
+                              <div className="text-slate-100 text-base sm:text-lg leading-relaxed mb-4 ml-0 sm:ml-14">
                                 {post.text}
                               </div>
 
                               {post.images && post.images.length > 0 && (
                                 <div
-                                  className={`grid ${getGridClass(post.images.length)} gap-2 ml-15 mb-4 max-w-2xl`}
+                                  className={`grid ${getGridClass(post.images.length)} gap-2 ml-0 sm:ml-14 mb-4 w-full sm:max-w-2xl`}
                                 >
                                   {post.images.slice(0, 4).map((img, index) => (
                                     <div
@@ -217,7 +228,7 @@ function Dashboard() {
 
                               {post.videos && post.videos.length > 0 && (
                                 <div
-                                  className={`grid ${getGridClass(post.videos.length)} gap-2 ml-15 mb-4 max-w-2xl`}
+                                  className={`grid ${getGridClass(post.videos.length)} gap-2 ml-0 sm:ml-14 mb-4 w-full sm:max-w-2xl`}
                                 >
                                   {post.videos.map((vid, index) => (
                                     <video
@@ -231,20 +242,20 @@ function Dashboard() {
                               )}
 
                               {repoInfo && (
-                                <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 ml-15">
-                                  <div className="flex justify-between items-center mb-4">
-                                    <div className="flex items-center space-x-3">
+                                <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 ml-0 sm:ml-14 w-full sm:max-w-2xl">
+                                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+                                    <div className="flex items-center space-x-3 min-w-0">
                                       <img
                                         src={repoInfo.owner.avatar_url}
                                         alt={`${repoInfo.owner.login} avatar`}
                                         className="h-10 w-10 rounded-full object-cover border border-slate-600/50"
                                       />
-                                      <strong className="text-white font-semibold text-lg">
+                                      <strong className="text-white font-semibold text-lg truncate">
                                         {repoInfo.owner.login}
                                       </strong>
                                     </div>
                                     <button
-                                      className="flex items-center space-x-2 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 transition-all duration-200"
+                                      className="flex items-center space-x-2 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 transition-all duration-200 self-start sm:self-auto whitespace-nowrap"
                                       onClick={() => {
                                         navigator.clipboard.writeText(
                                           repoInfo.clone_url,
@@ -263,7 +274,7 @@ function Dashboard() {
                                     href={repoInfo.html_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="block text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors duration-200 mb-4"
+                                    className="block text-xl sm:text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors duration-200 mb-4 break-words"
                                   >
                                     <strong>{repoInfo.name}</strong>
                                   </a>
@@ -289,7 +300,7 @@ function Dashboard() {
                                 </div>
                               )}
 
-                              <div className="flex items-center space-x-6 pt-4 border-t border-slate-700/50">
+                              <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-700/50">
                                 <LikeButton
                                   postId={post._id}
                                   userId={user._id}
@@ -377,13 +388,13 @@ function Dashboard() {
                                 <Trash2 className="w-5 h-5 text-slate-500 hover:text-red-400 cursor-pointer transition-colors duration-200" />
                               </div>
 
-                              <div className="text-lg text-slate-100 leading-relaxed mb-4 ml-15">
+                              <div className="text-base sm:text-lg text-slate-100 leading-relaxed mb-4 ml-0 sm:ml-14">
                                 {post.text}
                               </div>
 
                               {post.images && post.images.length > 0 && (
                                 <div
-                                  className={`grid ${getGridClass(post.images.length)} gap-2 ml-15 mb-4 max-w-2xl`}
+                                  className={`grid ${getGridClass(post.images.length)} gap-2 ml-0 sm:ml-14 mb-4 w-full sm:max-w-2xl`}
                                 >
                                   {post.images.slice(0, 4).map((img, index) => (
                                     <div
@@ -418,7 +429,7 @@ function Dashboard() {
 
                               {post.videos && post.videos.length > 0 && (
                                 <div
-                                  className={`grid ${getGridClass(post.videos.length)} gap-2 ml-15 mb-4 max-w-2xl`}
+                                  className={`grid ${getGridClass(post.videos.length)} gap-2 ml-0 sm:ml-14 mb-4 w-full sm:max-w-2xl`}
                                 >
                                   {post.videos.map((vid, index) => (
                                     <video
@@ -431,7 +442,7 @@ function Dashboard() {
                                 </div>
                               )}
 
-                              <div className="flex items-center space-x-6 pt-4 border-t border-slate-700/50">
+                              <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-700/50">
                                 <LikeButton
                                   postId={post._id}
                                   userId={user._id}
@@ -515,25 +526,25 @@ function Dashboard() {
                                   <Trash2 className="w-5 h-5 text-slate-500 hover:text-red-400 cursor-pointer transition-colors duration-200" />
                                 </div>
 
-                                <div className="text-lg text-slate-100 leading-relaxed mb-4 ml-15">
+                                <div className="text-base sm:text-lg text-slate-100 leading-relaxed mb-4 ml-0 sm:ml-14">
                                   {post.text}
                                 </div>
 
                                 {repoInfo && (
-                                  <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 ml-15">
-                                    <div className="flex justify-between items-center mb-4">
-                                      <div className="flex items-center space-x-3">
+                                  <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 ml-0 sm:ml-14 w-full sm:max-w-2xl">
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+                                      <div className="flex items-center space-x-3 min-w-0">
                                         <img
                                           src={repoInfo.owner.avatar_url}
                                           alt={`${repoInfo.owner.login} avatar`}
                                           className="h-10 w-10 rounded-full object-cover border border-slate-600/50"
                                         />
-                                        <strong className="text-white font-semibold text-lg">
+                                        <strong className="text-white font-semibold text-lg truncate">
                                           {repoInfo.owner.login}
                                         </strong>
                                       </div>
                                       <button
-                                        className="flex items-center space-x-2 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 transition-all duration-200"
+                                        className="flex items-center space-x-2 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 transition-all duration-200 self-start sm:self-auto whitespace-nowrap"
                                         onClick={() => {
                                           navigator.clipboard.writeText(
                                             repoInfo.clone_url,
@@ -552,7 +563,7 @@ function Dashboard() {
                                       href={repoInfo.html_url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="block text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors duration-200 mb-4"
+                                      className="block text-xl sm:text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors duration-200 mb-4 break-words"
                                     >
                                       <strong>{repoInfo.name}</strong>
                                     </a>
@@ -578,7 +589,7 @@ function Dashboard() {
                                   </div>
                                 )}
 
-                                <div className="flex items-center space-x-6 pt-4 border-t border-slate-700/50">
+                                <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-700/50">
                                   <LikeButton
                                     postId={post._id}
                                     userId={user._id}

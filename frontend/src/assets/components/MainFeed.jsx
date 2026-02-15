@@ -169,20 +169,20 @@ function MainFeed() {
                   )}
 
                   {repoInfo && (
-                    <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-600/40 rounded-xl p-5 max-w-fit ml-15 mb-4 hover:bg-slate-700/40 transition-all duration-300">
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex items-center space-x-3">
+                    <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-600/40 rounded-xl p-5 w-full sm:max-w-2xl ml-0 sm:ml-14 mb-4 hover:bg-slate-700/40 transition-all duration-300">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+                        <div className="flex items-center space-x-3 min-w-0">
                           <img
                             src={repoInfo.owner.avatar_url}
                             alt={`${repoInfo.owner.login} avatar`}
                             className="h-10 w-10 rounded-full object-cover border-2 border-slate-600/50"
                           />
-                          <strong className="text-white font-semibold text-lg">
+                          <strong className="text-white font-semibold text-lg truncate">
                             {repoInfo.owner.login}
                           </strong>
                         </div>
                         <button
-                          className="flex items-center space-x-2 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 transition-all duration-200"
+                          className="flex items-center space-x-2 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 transition-all duration-200 self-start sm:self-auto whitespace-nowrap"
                           onClick={() => {
                             navigator.clipboard.writeText(repoInfo.clone_url);
                             alert("Clone link copied!");
@@ -197,7 +197,7 @@ function MainFeed() {
                         href={repoInfo.html_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-white font-bold text-2xl mb-4 hover:text-blue-400 transition-colors duration-200"
+                        className="block text-white font-bold text-xl sm:text-2xl mb-4 hover:text-blue-400 transition-colors duration-200 break-words"
                       >
                         {repoInfo.name}
                       </a>

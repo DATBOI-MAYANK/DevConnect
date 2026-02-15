@@ -5,9 +5,9 @@ import { logout } from "../../features/IsLoggedIn/loginSlice";
 import Logo from "../Logo/Logo-removebg.png";
 import ErrorBoundary from "./ErrorBoundary";
 import CreatePostModal from "./CreatePostModel.jsx";
-import { Home, Search, Bell, MoreHorizontal, Plus, LogOut } from "lucide-react";
+import { Home, Search, Bell, MoreHorizontal, Plus, LogOut, X } from "lucide-react";
 
-function Navbar() {
+function Navbar({ isOpen = false, onClose = () => {} }) {
   const isLoggedIn = useSelector((state) => state.login.value);
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user") || "null"),
@@ -24,13 +24,24 @@ function Navbar() {
   return (
     <ErrorBoundary>
       <>
-        <div className="navbar fixed left-0 top-0 h-screen w-[300px] bg-gradient-to-b from-slate-900 via-blue-900/30 to-slate-900 backdrop-blur-xl border-r border-slate-700/50 text-white">
+        <div
+          className={`navbar fixed top-0 left-0 h-screen w-[280px] xl:w-[300px] bg-gradient-to-b from-slate-900 via-blue-900/30 to-slate-900 backdrop-blur-xl border-r border-slate-700/50 text-white transform transition-transform duration-300 z-40 ${
+            isOpen ? "translate-x-0" : "-translate-x-[110%]"
+          } lg:translate-x-0 lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-[300px]`}
+        >
           {/* Logo Section */}
-          <div className="flex items-center p-6 border-b border-slate-700/30">
+          <div className="flex items-center p-6 border-b border-slate-700/30 relative">
             <img src={Logo} alt="logo image" className="h-12 w-12 mr-3" />
             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               DevConnect
             </h1>
+            <button
+              className="lg:hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-slate-800/60"
+              onClick={onClose}
+              aria-label="Close navigation"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Navigation Links */}
@@ -77,10 +88,10 @@ function Navbar() {
           </div>
 
           {/* User Profile / Login Section */}
-          <div className="absolute bottom-6 left-4 right-4">
+          <div className="relative lg:absolute bottom-6 left-2 right-4 mt-6 lg:mt-20">
             {isLoggedIn && user ? (
-              <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-4 border border-slate-700/50">
-                <div className="flex items-center space-x-3 mb-3">
+              <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl w-min mt-10  p-2 border border-slate-700/50">
+                <div className="flex items-center space-x-3 mb-3 w-48">
                   <div className="relative">
                     <img
                       src={user.AvatarImage}
@@ -101,7 +112,7 @@ function Navbar() {
                 </div>
 
                 <button
-                  className="flex items-center justify-center space-x-2 w-full bg-slate-700/50 hover:bg-red-600/20 hover:border-red-500/50 text-slate-300 hover:text-red-400 py-2 px-4 rounded-lg border border-slate-600/50 transition-all duration-300"
+                  className="flex items-center justify-center space-x-2 w-50% bg-slate-700/50 hover:bg-red-600/20 hover:border-red-500/50 text-slate-300 hover:text-red-400 py-2 px-4 rounded-lg border border-slate-600/50 transition-all duration-300"
                   onClick={() => dispatch(logout(), navigate("/"))}
                 >
                   <LogOut className="w-4 h-4" />

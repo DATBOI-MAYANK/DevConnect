@@ -10,10 +10,11 @@ import {
   Calendar,
   Award,
   Sparkles,
+  X,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
-export default function FeaturedDevs() {
+export default function FeaturedDevs({ isOpen = false, onClose = () => {} }) {
   const [allDevs, setAllDevs] = useState(0);
   const [featuredDevs, setFeaturedDevs] = useState([]);
   const posts = useSelector((state) => state.posts.list);
@@ -73,8 +74,22 @@ export default function FeaturedDevs() {
   ];
 
   return (
-    <div className="fixed right-0 top-0 h-screen w-[350px] bg-gradient-to-b from-slate-900 via-blue-900/20 to-slate-900 backdrop-blur-xl border-l border-slate-700/50 text-white overflow-y-auto">
+    <div
+      className={`fixed top-0 right-0 h-screen w-[300px] xl:w-[350px] bg-gradient-to-b from-slate-900 via-blue-900/20 to-slate-900 backdrop-blur-xl border-l border-slate-700/50 text-white overflow-y-auto transform transition-transform duration-300 z-40 ${
+        isOpen ? "translate-x-0" : "translate-x-full"
+      } lg:translate-x-0 lg:fixed lg:right-0 lg:top-0 lg:h-screen lg:w-[350px]`}
+    >
       <div className="p-6 space-y-6">
+        <div className="lg:hidden flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Featured</h2>
+          <button
+            className="p-2 rounded-lg hover:bg-slate-800/60"
+            onClick={onClose}
+            aria-label="Close featured devs"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
         {/* Featured Devs Section */}
         <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-5 border border-slate-700/50">
           <div className="flex items-center space-x-2 mb-4">
@@ -86,9 +101,9 @@ export default function FeaturedDevs() {
             {featuredDevs.map((dev) => (
               <div
                 key={dev._id}
-                className="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-700/30 transition-all duration-300 cursor-pointer group"
+                className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-700/30 transition-all duration-300 cursor-pointer group"
               >
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   <img
                     src={dev?.AvatarImage}
                     alt="Profile"
@@ -96,15 +111,18 @@ export default function FeaturedDevs() {
                   />
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900"></div>
                 </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-white group-hover:text-blue-400 transition-colors duration-300">
-                    {dev?.username.slice(0, 7) + "..." || "Unknown"}
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-white group-hover:text-blue-400 transition-colors duration-300 truncate">
+                    {dev?.username || "Unknown"}
                   </div>
-                  <div className="text-sm text-slate-400">
+                  <div className="text-sm text-slate-400 truncate">
                     Full-stack Developer
                   </div>
                 </div>
-                <button className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 text-sm font-medium transition-all duration-200">
+                <button
+                  className="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-300 text-sm font-medium opacity-60 cursor-not-allowed whitespace-nowrap"
+                  disabled
+                >
                   Follow
                 </button>
               </div>

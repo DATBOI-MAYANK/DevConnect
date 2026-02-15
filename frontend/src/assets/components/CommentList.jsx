@@ -1,6 +1,6 @@
 function CommentList({ comments }) {
   return (
-    <div className="comment-list border text-white border-[#2F3336] p-2 rounded-lg  ml-10 m-5">
+    <div className="comment-list border text-white border-[#2F3336] p-2 rounded-lg ml-0 sm:ml-10 m-3 sm:m-5">
       {comments.length === 0 ? (
         <div className="text-2xl text-center font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent p-2">
           WOW So Empty.

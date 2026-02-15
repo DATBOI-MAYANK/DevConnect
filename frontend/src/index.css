@@ -10,17 +10,16 @@ body{
   background-color: #020617;
 }
 
-.media-img { object-fit: cover; border-radius: 0.5rem; }
-.media-video { object-fit: cover; border-radius: 0.5rem; }
-.media-img.landscape { width: 480px; height: 220px; margin: 0; padding: 0;}
-.media-img.portrait  { width: 260px; height: 400px; margin: 0;}
-.media-video.landscape { width: 480px; height: 220px; }
-.media-video.portrait  { width: 260px; height: 400px; }
+.media-img { object-fit: cover; border-radius: 0.5rem; max-width: 100%; height: auto; }
+.media-video { object-fit: cover; border-radius: 0.5rem; max-width: 100%; height: auto; }
+.media-img.landscape { width: 100%; height: auto; margin: 0; padding: 0;}
+.media-img.portrait  { width: 100%; height: auto; margin: 0;}
+.media-video.landscape { width: 100%; height: auto; }
+.media-video.portrait  { width: 100%; height: auto; }
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(480px, 220px));
-  /* grid-template-rows: 1fr , 1fr; */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 8px; 
 }
 

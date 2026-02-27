@@ -5,7 +5,18 @@ import { logout } from "../../features/IsLoggedIn/loginSlice";
 import Logo from "../Logo/Logo-removebg.png";
 import ErrorBoundary from "./ErrorBoundary";
 import CreatePostModal from "./CreatePostModel.jsx";
-import { Home, Search, Bell, MoreHorizontal, Plus, LogOut, X } from "lucide-react";
+import Modal from "react-modal";
+import axios from "axios";
+import {
+  Home,
+  Search,
+  Bell,
+  MoreHorizontal,
+  Plus,
+  LogOut,
+  X,
+  Trash2,
+} from "lucide-react";
 
 function Navbar({ isOpen = false, onClose = () => {} }) {
   const isLoggedIn = useSelector((state) => state.login.value);
@@ -13,6 +24,8 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
     JSON.parse(localStorage.getItem("user") || "null"),
   );
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -20,6 +33,39 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
     // Update user info whenever login state changes
     setUser(JSON.parse(localStorage.getItem("user") || "null"));
   }, [isLoggedIn]);
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        "http://localhost:8000/users/api/v1/logout",
+        {},
+        { withCredentials: true },
+      );
+    } catch (error) {
+      console.error("Logout API error:", error);
+    } finally {
+      dispatch(logout());
+      navigate("/login");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      setIsDeleting(true);
+      await axios.delete("http://localhost:8000/users/api/v1/delete-account", {
+        withCredentials: true,
+      });
+
+      dispatch(logout());
+      setIsDeleteModalOpen(false);
+      navigate("/register");
+    } catch (error) {
+      console.error("Delete account error:", error);
+      alert(error?.response?.data?.message || "Failed to delete account");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <ErrorBoundary>
@@ -113,10 +159,18 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
 
                 <button
                   className="flex items-center justify-center space-x-2 w-50% bg-slate-700/50 hover:bg-red-600/20 hover:border-red-500/50 text-slate-300 hover:text-red-400 py-2 px-4 rounded-lg border border-slate-600/50 transition-all duration-300"
-                  onClick={() => dispatch(logout(), navigate("/"))}
+                  onClick={handleLogout}
                 >
                   <LogOut className="w-4 h-4" />
                   <span className="font-medium">Logout</span>
+                </button>
+
+                <button
+                  className="mt-2 flex items-center justify-center space-x-2 w-full bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 hover:text-red-200 py-2 px-4 rounded-lg transition-all duration-300"
+                  onClick={() => setIsDeleteModalOpen(true)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span className="font-medium">Delete Account</span>
                 </button>
               </div>
             ) : (
@@ -128,6 +182,62 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
               </Link>
             )}
           </div>
+
+          <Modal
+            isOpen={isDeleteModalOpen}
+            onRequestClose={() => !isDeleting && setIsDeleteModalOpen(false)}
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.75)",
+                backdropFilter: "blur(8px)",
+                zIndex: 1000,
+              },
+              content: {
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                backgroundColor: "transparent",
+                border: "none",
+                padding: 0,
+                borderRadius: 0,
+                maxWidth: "450px",
+                width: "90%",
+              },
+            }}
+            contentLabel="Delete Account Confirmation"
+          >
+            <div className="bg-slate-800/95 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 shadow-2xl">
+              <h2 className="text-xl font-bold text-white mb-3">
+                Delete your account?
+              </h2>
+              <p className="text-slate-300 mb-6">
+                This action is permanent. Your profile and posts will be
+                deleted and cannot be recovered.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  className="flex-1 px-4 py-2 bg-slate-600/50 hover:bg-slate-600/70 text-white rounded-lg transition-all duration-200 disabled:opacity-60"
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200 disabled:opacity-60"
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Deleting..." : "Yes, Delete"}
+                </button>
+              </div>
+            </div>
+          </Modal>
         </div>
       </>
     </ErrorBoundary>

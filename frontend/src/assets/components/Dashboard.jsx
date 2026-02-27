@@ -64,14 +64,16 @@ function Dashboard() {
     const postRepoName = userPosts
       .filter((post) => post.githubRepoName)
       .map((post) => post.githubRepoName);
-    if (!user.GithubUsername || postRepoName.length === 0) return;
+    const githubUsername = user?.GithubUsername;
+    if (!githubUsername || postRepoName.length === 0) {
+      setRepoDetails([]);
+      return;
+    }
 
     async function fetchSpecificRepos() {
       try {
         const promises = postRepoName.map((name) =>
-          axios.get(
-            `https://api.github.com/repos/${user.GithubUsername}/${name}`,
-          ),
+          axios.get(`https://api.github.com/repos/${githubUsername}/${name}`),
         );
         const results = await Promise.all(promises);
         const repoDetails = results.map((r) => r.data);
@@ -303,7 +305,7 @@ function Dashboard() {
                               <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-700/50">
                                 <LikeButton
                                   postId={post._id}
-                                  userId={user._id}
+                                  userId={user?._id}
                                 />
                                 <CommentBox postId={post._id} />
                                 <button
@@ -445,7 +447,7 @@ function Dashboard() {
                               <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-700/50">
                                 <LikeButton
                                   postId={post._id}
-                                  userId={user._id}
+                                  userId={user?._id}
                                 />
                                 <CommentBox postId={post._id} />
                                 <button
@@ -592,7 +594,7 @@ function Dashboard() {
                                 <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-700/50">
                                   <LikeButton
                                     postId={post._id}
-                                    userId={user._id}
+                                    userId={user?._id}
                                   />
                                   <CommentBox postId={post._id} />
                                   <button

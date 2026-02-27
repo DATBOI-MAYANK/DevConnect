@@ -5,23 +5,20 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import Post from "../models/post.model.js";
 
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
-    // console.log("User found:", user);
+
     if (!user) {
       throw new ApiError(404, "User not found");
     }
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
-    // console.log("Access Token:", accessToken);
-    // console.log("Refresh Token:", refreshToken);
-
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
-    // console.log("User after saving refreshToken:", user);
     return { accessToken, refreshToken };
   } catch (error) {
     console.error("Error generating tokens:", error);
@@ -84,16 +81,22 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User Already Exits.");
   }
 
-  // check for images: check for avatar
-  // console.log("Avatar==>",req.files?.avatarImage?.[0]?.path )
+  // check for existing github name
+
+  const existedGithubUsername = await User.findOne({
+    GithubUsername: GithubUsername,
+  });
+
+  if (existedGithubUsername) {
+    throw new ApiError(409, "Github username Already Exits.");
+  }
+
   const avatarLocalPath = req.files?.avatarImage?.[0]?.path;
   const coverLocalPath = req.files?.coverImage?.[0]?.path;
-  // console.log("avatarpath---" , avatarLocalPath)
+
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar File is required!");
   }
-
-  // upload them to cloudinary
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   const coverImage = await uploadOnCloudinary(coverLocalPath);
@@ -319,6 +322,45 @@ const getCurrentUserProfile = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Error fetching current user profile");
   }
 });
+
+const deleteCurrentUser = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  await Post.deleteMany({ author: userId });
+
+  await Post.updateMany(
+    { author: { $ne: userId } },
+    {
+      $pull: {
+        likes: userId,
+        comments: { user: userId },
+      },
+    },
+  );
+
+  await User.findByIdAndDelete(userId);
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User account deleted successfully"));
+});
 export {
   registerUser,
   loginUser,
@@ -328,4 +370,5 @@ export {
   getAllDevs,
   getCurrentUserProfile,
   getProfile,
+  deleteCurrentUser,
 };

@@ -8,6 +8,7 @@ import {
   getAllDevs,
   getCurrentUserProfile,
   getProfile,
+  deleteCurrentUser,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -34,6 +35,7 @@ router.route("/api/v1/profile/:userId").get(getProfile);
 router.route("/api/v1/featured").get(getFeaturedDevs);
 router.route("/api/v1/devs").get(getAllDevs);
 router.route("/api/v1/logout").post(verifyJwt, logoutUser);
+router.route("/api/v1/delete-account").delete(verifyJwt, deleteCurrentUser);
 router.route("/api/v1/refresh-Token").post(refreshAccessToken);
 
 export default router;

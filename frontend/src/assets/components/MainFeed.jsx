@@ -45,13 +45,18 @@ function MainFeed() {
     const postRepoName = posts
       .filter((post) => post.githubRepoName)
       .map((post) => post.githubRepoName);
-    if (!user.GithubUsername || postRepoName.length === 0) return;
+    const githubUsername = user?.GithubUsername;
+    if (!githubUsername || postRepoName.length === 0) {
+      setRepoDetails([]);
+      return;
+    }
 
     async function fetchSpecificRepos() {
       try {
         const promises = postRepoName.map((name) =>
           axios.get(
-            `https://api.github.com/repos/${user.GithubUsername}/${name}`,
+            import.meta.env.VITE_API_GITHUB_URL +
+              `${githubUsername}/${name}`,
           ),
         );
         const results = await Promise.all(promises);
@@ -224,7 +229,7 @@ function MainFeed() {
                   )}
 
                   <div className="flex items-center space-x-4 pt-4 border-t border-slate-700/50">
-                    <LikeButton postId={post._id} userId={user._id} />
+                    <LikeButton postId={post._id} userId={user?._id} />
                     <CommentBox postId={post._id} />
                     <button
                       className="text-slate-400 hover:text-white font-medium transition-colors duration-200 flex items-center space-x-2"

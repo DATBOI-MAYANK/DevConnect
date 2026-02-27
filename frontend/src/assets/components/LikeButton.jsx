@@ -12,9 +12,12 @@ function LikeButton({ postId, userId }) {
 
   if (!post) return null;
 
-  const likedByUser = post?.likes.some(
-    (likeUser) => (likeUser._id || likeUser).toString() === userId.toString(),
-  );
+  const likedByUser = userId
+    ? post?.likes.some(
+        (likeUser) =>
+          (likeUser._id || likeUser).toString() === userId.toString(),
+      )
+    : false;
   const likesCount = post?.likes.length || 0;
 
   const handleLike = () => {

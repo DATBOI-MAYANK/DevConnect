@@ -8,13 +8,15 @@ import { useLocation } from "react-router-dom";
 function Layout() {
   const dispatch = useDispatch();
   const location = useLocation();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     console.log("Running /me check from Layout");
 
     if (location.pathname === "/login" || location.pathname === "/register")return;
 
     axios
-      .get("http://localhost:8000/users/api/v1/me", { withCredentials: true })
+      .get(`${apiBaseUrl}me`, { withCredentials: true })
       .catch((err) => {
         console.log("Error from /me:", err);
         if (err.response && err.response.status === 401) {
@@ -23,7 +25,7 @@ function Layout() {
           window.location.href = "/login";
         }
       });
-  }, [dispatch, location.pathname]);
+  }, [apiBaseUrl, dispatch, location.pathname]);
 
   return (
     <>

@@ -54,11 +54,8 @@ function MainFeed() {
     async function fetchSpecificRepos() {
       try {
         const promises = postRepoName.map((name) =>
-          axios.get(
-            import.meta.env.VITE_API_GITHUB_URL +
-              `${githubUsername}/${name}`,
-          ),
-        );
+  axios.get(`${import.meta.env.VITE_API_GITHUB_URL}${githubUsername}/${name}`)
+); 
         const results = await Promise.all(promises);
         const repoDetails = results.map((r) => r.data);
         setRepoDetails(repoDetails);

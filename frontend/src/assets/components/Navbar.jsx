@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 function Navbar({ isOpen = false, onClose = () => {} }) {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const isLoggedIn = useSelector((state) => state.login.value);
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user") || "null"),
@@ -36,11 +37,7 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        "http://localhost:8000/users/api/v1/logout",
-        {},
-        { withCredentials: true },
-      );
+      await axios.post(`${apiBaseUrl}logout`, {}, { withCredentials: true });
     } catch (error) {
       console.error("Logout API error:", error);
     } finally {
@@ -52,7 +49,7 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
   const handleDeleteAccount = async () => {
     try {
       setIsDeleting(true);
-      await axios.delete("http://localhost:8000/users/api/v1/delete-account", {
+      await axios.delete(`${apiBaseUrl}delete-account`, {
         withCredentials: true,
       });
 
@@ -136,7 +133,7 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
           {/* User Profile / Login Section */}
           <div className="relative lg:absolute bottom-6 left-2 right-4 mt-6 lg:mt-20">
             {isLoggedIn && user ? (
-              <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl w-min mt-10  p-2 border border-slate-700/50">
+              <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl w-min mt-10 ml-4 p-2 border border-slate-700/50">
                 <div className="flex items-center space-x-3 mb-3 w-48">
                   <div className="relative">
                     <img

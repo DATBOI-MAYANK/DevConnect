@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 const Register = () => {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,7 +50,7 @@ const Register = () => {
       formData.append("Bio", Bio);
 
       const res = await axios.post(
-        "http://localhost:8000/users/api/v1/register",
+        `${apiBaseUrl}register`,
         formData,
         {
           withCredentials: true,

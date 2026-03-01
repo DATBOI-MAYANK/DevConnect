@@ -3,6 +3,7 @@ import Modal from "react-modal";
 import axios from "axios";
 
 export default function CreatePostModal({ isOpen, onRequestClose }) {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [text, setText] = useState("");
   const [files, setFiles] = useState([]);
   const [githubRepoName, setGithubRepoName] = useState("");
@@ -26,14 +27,10 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
         return alert("You can't upload more than 4 files. ");
       } else {
         files.forEach((file) => formData.append("media", file));
-        await axios.post(
-          "http://localhost:8000/users/api/v1/create-post",
-          formData,
-          {
-            withCredentials: true,
-            headers: { "Content-Type": "multipart/form-data" },
-          },
-        );
+        await axios.post(`${apiBaseUrl}create-post`, formData, {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       }
       setText("");
       setFiles([]);

@@ -9,6 +9,7 @@ import { setLogin } from "../../features/IsLoggedIn/loginSlice";
 import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 
 const LoginPage = () => {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +25,7 @@ const LoginPage = () => {
     setIsLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:8000/users/api/v1/login",
+        `${apiBaseUrl}login`,
         { email, password },
         { withCredentials: true },
       );

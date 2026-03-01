@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 function Dashboard() {
+  const githubReposApiUrl = import.meta.env.VITE_API_GITHUB_URL;
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts.list);
@@ -73,7 +74,7 @@ function Dashboard() {
     async function fetchSpecificRepos() {
       try {
         const promises = postRepoName.map((name) =>
-          axios.get(`https://api.github.com/repos/${githubUsername}/${name}`),
+          axios.get(`${githubReposApiUrl}${githubUsername}/${name}`),
         );
         const results = await Promise.all(promises);
         const repoDetails = results.map((r) => r.data);
@@ -84,7 +85,7 @@ function Dashboard() {
     }
 
     fetchSpecificRepos();
-  }, [user?.GithubUsername, posts, userPosts]);
+  }, [githubReposApiUrl, user?.GithubUsername, posts, userPosts]);
 
   useEffect(() => {
     dispatch(fetchPosts());

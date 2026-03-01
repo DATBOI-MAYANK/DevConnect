@@ -26,6 +26,9 @@ import {
 } from "lucide-react";
 
 const UserProfile = () => {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const githubUsersApiUrl = import.meta.env.VITE_API_GITHUB_USERS_URL;
+  const githubWebUrl = import.meta.env.VITE_GITHUB_WEB_URL;
   const { userId } = useParams();
   const [userProfile, setUserProfile] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
@@ -55,12 +58,9 @@ const UserProfile = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8000/users/api/v1/profile/${userId}`,
-        {
-          withCredentials: true,
-        },
-      );
+      const response = await axios.get(`${apiBaseUrl}profile/${userId}`, {
+        withCredentials: true,
+      });
       setUserProfile(response.data.data);
     } catch (err) {
       setError("Failed to load user profile");
@@ -70,12 +70,9 @@ const UserProfile = () => {
 
   const fetchUserPosts = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8000/users/api/v1/user/${userId}`,
-        {
-          withCredentials: true,
-        },
-      );
+      const response = await axios.get(`${apiBaseUrl}user/${userId}`, {
+        withCredentials: true,
+      });
       setUserPosts(response.data.data || []);
     } catch (err) {
       console.error("Error fetching user posts:", err);
@@ -88,7 +85,7 @@ const UserProfile = () => {
   const fetchGithubRepos = async () => {
     try {
       const response = await axios.get(
-        `https://api.github.com/users/${userProfile.GithubUsername}/repos?sort=updated&per_page=10`,
+        `${githubUsersApiUrl}${userProfile.GithubUsername}/repos?sort=updated&per_page=10`,
       );
       setGithubRepos(response.data);
     } catch (err) {
@@ -237,7 +234,7 @@ const UserProfile = () => {
                     </span>
                   </div>
                   <a
-                    href={`https://github.com/${userProfile?.GithubUsername}/${post.githubRepoName}`}
+                    href={`${githubWebUrl}${userProfile?.GithubUsername}/${post.githubRepoName}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center space-x-2 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 transition-all duration-200"
@@ -413,7 +410,7 @@ const UserProfile = () => {
                 <div className="flex items-center text-slate-400">
                   <Github className="w-5 h-5 mr-3" />
                   <a
-                    href={`https://github.com/${userProfile.GithubUsername}`}
+                    href={`${githubWebUrl}${userProfile.GithubUsername}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-blue-400 transition-colors"

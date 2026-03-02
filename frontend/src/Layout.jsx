@@ -16,7 +16,7 @@ function Layout() {
     if (location.pathname === "/login" || location.pathname === "/register")return;
 
     axios
-      .get(`${apiBaseUrl}me`, { withCredentials: true })
+      .get(`${apiBaseUrl}/me`, { withCredentials: true })
       .catch((err) => {
         console.log("Error from /me:", err);
         if (err.response && err.response.status === 401) {

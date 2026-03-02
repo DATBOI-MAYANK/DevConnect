@@ -22,7 +22,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {} }) {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const response = await axios.get(`${apiBaseUrl}featured`);
+        const response = await axios.get(`${apiBaseUrl}/featured`);
         const devs = response.data.data;
         setFeaturedDevs(pickFeaturedDevs(devs, 3));
       } catch (error) {

@@ -35,7 +35,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {} }) {
   useEffect(() => {
     const allDevs = async () => {
       try {
-        const devData = await axios.get(`${apiBaseUrl}devs`);
+        const devData = await axios.get(`${apiBaseUrl}/devs`);
         const devs = devData.data.data.length;
 
         setAllDevs(devs);
@@ -47,7 +47,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {} }) {
   }, []);
 
   // Mock data for additional sections const devData = await axios.get(
-  //   `${apiBaseUrl}devs`,
+  //   `${apiBaseUrl}/devs`,
   // );
   // console.log("Devs", devData.length);
   const trendingTopics = [

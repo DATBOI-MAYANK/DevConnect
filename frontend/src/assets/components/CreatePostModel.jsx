@@ -27,7 +27,7 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
         return alert("You can't upload more than 4 files. ");
       } else {
         files.forEach((file) => formData.append("media", file));
-        await axios.post(`${apiBaseUrl}create-post`, formData, {
+        await axios.post(`${apiBaseUrl}/create-post`, formData, {
           withCredentials: true,
           headers: { "Content-Type": "multipart/form-data" },
         });

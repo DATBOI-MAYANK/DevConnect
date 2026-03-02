@@ -58,7 +58,7 @@ const UserProfile = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get(`${apiBaseUrl}profile/${userId}`, {
+      const response = await axios.get(`${apiBaseUrl}/profile/${userId}`, {
         withCredentials: true,
       });
       setUserProfile(response.data.data);
@@ -70,7 +70,7 @@ const UserProfile = () => {
 
   const fetchUserPosts = async () => {
     try {
-      const response = await axios.get(`${apiBaseUrl}user/${userId}`, {
+      const response = await axios.get(`${apiBaseUrl}/user/${userId}`, {
         withCredentials: true,
       });
       setUserPosts(response.data.data || []);

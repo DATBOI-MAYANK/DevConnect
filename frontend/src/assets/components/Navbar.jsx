@@ -37,7 +37,7 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${apiBaseUrl}logout`, {}, { withCredentials: true });
+      await axios.post(`${apiBaseUrl}/logout`, {}, { withCredentials: true });
     } catch (error) {
       console.error("Logout API error:", error);
     } finally {
@@ -49,7 +49,7 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
   const handleDeleteAccount = async () => {
     try {
       setIsDeleting(true);
-      await axios.delete(`${apiBaseUrl}delete-account`, {
+      await axios.delete(`${apiBaseUrl}/delete-account`, {
         withCredentials: true,
       });
 

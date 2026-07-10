@@ -32,16 +32,16 @@ const generateAccessAndRefereshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
 
-  const { username, password, email, GithubUsername, Bio } = req.body;
+  const { username, password, email, GithubUsername, Bio , Role } = req.body;
   // console.log(username, password, email);
 
   //Validation -- Not empty
   if (
-    [username, email, password, GithubUsername].some(
+    [username, email, password, Role].some(
       (fields) => fields.trim() === "",
     )
   ) {
-    throw new ApiError(400, "All Fields are required !!");
+    throw new ApiError(400, `${fields} is required`);
   }
   if (!email.trim().toLowerCase().endsWith("@gmail.com")) {
     throw new ApiError(400, "Ivalid Email");
@@ -83,13 +83,15 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // check for existing github name
 
-  const existedGithubUsername = await User.findOne({
+ if(GithubUsername){
+   const existedGithubUsername = await User.findOne({
     GithubUsername: GithubUsername,
   });
 
   if (existedGithubUsername) {
     throw new ApiError(409, "Github username Already Exits.");
   }
+ }
 
   const avatarLocalPath = req.files?.avatarImage?.[0]?.path;
   const coverLocalPath = req.files?.coverImage?.[0]?.path;
@@ -115,6 +117,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     GithubUsername,
     Bio,
+    Role,
   });
 
   //Generate Tokens

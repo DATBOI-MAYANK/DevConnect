@@ -62,7 +62,8 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    const postRepoName = userPosts
+   if(user.Role === "developer"){
+     const postRepoName = userPosts
       .filter((post) => post.githubRepoName)
       .map((post) => post.githubRepoName);
     const githubUsername = user?.GithubUsername;
@@ -85,6 +86,7 @@ function Dashboard() {
     }
 
     fetchSpecificRepos();
+   }
   }, [githubReposApiUrl, user?.GithubUsername, posts, userPosts]);
 
   useEffect(() => {
@@ -139,7 +141,19 @@ function Dashboard() {
               {/* Tabs */}
               <div className="mt-8 px-4 sm:px-6 border-b border-slate-700/50">
                 <div className="flex overflow-x-auto">
-                  {["Post", "Media", "Github", "Soon"].map((tab) => (
+                  {user.Role === "developer" ? ["Post", "Media", "Github", "Soon"].map((tab) => (
+                    <button
+                      key={tab}
+                      className={`text-white font-semibold px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-lg transition-all duration-300 border-b-2 hover:text-blue-400 ${
+                        activeTab === tab
+                          ? "text-blue-400 border-blue-400"
+                          : "border-transparent hover:border-slate-600"
+                      }`}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      {tab === "Soon" ? "Coming Soon" : tab}
+                    </button>
+                  )): ["Post", "Media", "Soon"].map((tab) => (
                     <button
                       key={tab}
                       className={`text-white font-semibold px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-lg transition-all duration-300 border-b-2 hover:text-blue-400 ${
@@ -233,7 +247,7 @@ function Dashboard() {
                                 <div
                                   className={`grid ${getGridClass(post.videos.length)} gap-2 ml-0 sm:ml-14 mb-4 w-full sm:max-w-2xl`}
                                 >
-                                  {post.videos.map((vid, index) => (
+                                  {post.videos.map((vid) => (
                                     <video
                                       key={vid}
                                       src={vid}
@@ -244,7 +258,7 @@ function Dashboard() {
                                 </div>
                               )}
 
-                              {repoInfo && (
+                              {user?.Role === "developer" ? repoInfo && (
                                 <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 ml-0 sm:ml-14 w-full sm:max-w-2xl">
                                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
                                     <div className="flex items-center space-x-3 min-w-0">
@@ -301,7 +315,7 @@ function Dashboard() {
                                     </div>
                                   </div>
                                 </div>
-                              )}
+                              ) : null}
 
                               <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-700/50">
                                 <LikeButton
@@ -434,7 +448,7 @@ function Dashboard() {
                                 <div
                                   className={`grid ${getGridClass(post.videos.length)} gap-2 ml-0 sm:ml-14 mb-4 w-full sm:max-w-2xl`}
                                 >
-                                  {post.videos.map((vid, index) => (
+                                  {post.videos.map((vid) => (
                                     <video
                                       key={vid}
                                       src={vid}

@@ -32,6 +32,7 @@ const Register = () => {
   const [GithubUsername, setGithubUsername] = useState("");
   const [Bio, setBio] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [role, setRole] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -48,9 +49,10 @@ const Register = () => {
       formData.append("coverImage", coverImage);
       formData.append("GithubUsername", GithubUsername);
       formData.append("Bio", Bio);
+      formData.append("Role", role);
 
       const res = await axios.post(
-        `${apiBaseUrl}/register`,
+        `${apiBaseUrl}/users/api/v1/register`,
         formData,
         {
           withCredentials: true,
@@ -144,10 +146,9 @@ const Register = () => {
                         className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
                         required
                       />
-                    </div>  
+                    </div>
                   </div>
                 </div>
-
                 {/* Password Field */}
                 <div className="space-y-2">
                   <label
@@ -180,7 +181,6 @@ const Register = () => {
                     </button>
                   </div>
                 </div>
-
                 {/* Image Upload Row */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -221,27 +221,60 @@ const Register = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* GitHub Username */}
+                {/* Role*/}
                 <div className="space-y-2">
                   <label
-                    htmlFor="githubUsername"
+                    htmlFor="role"
                     className="text-sm font-medium text-slate-300 block"
                   >
-                    GitHub Username (Optional)
+                    Role
                   </label>
                   <div className="relative">
-                    <Github className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                     <input
-                      id="githubUsername"
-                      type="text"
-                      value={GithubUsername}
-                      onChange={(e) => setGithubUsername(e.target.value)}
-                      placeholder="your-github-username"
-                      className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                      id="role"
+                      type="radio"
+                      value="Developer"
+                      checked={role === "Developer"}
+                      onChange={(e) => setRole(e.target.value)}
+                      className="mr-2"
                     />
+                    <label htmlFor="developer" className="text-slate-400 ">
+                      Developer
+                    </label>
+                    <input
+                      id="role"
+                      type="radio"
+                      value="User"
+                      checked={role === "User"}
+                      onChange={(e) => setRole(e.target.value)}
+                      className="ml-4 mr-2"
+                    />
+                    <label htmlFor="user" className="text-slate-400">
+                      User
+                    </label>
                   </div>
                 </div>
+                {role === "Developer" ? (
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="githubUsername"
+                      className="text-sm font-medium text-slate-300 block"
+                    >
+                      GitHub Username
+                    </label>
+                    <div className="relative">
+                      <Github className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                      <input
+                        id="githubUsername"
+                        type="text"
+                        value={GithubUsername}
+                        onChange={(e) => setGithubUsername(e.target.value)}
+                        placeholder="your-github-username"
+                        className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                      />
+                    </div>
+                  </div>
+                ) : null}
 
                 {/* Bio */}
                 <div className="space-y-2">
@@ -263,7 +296,6 @@ const Register = () => {
                     />
                   </div>
                 </div>
-
                 {/* Register Button */}
                 <button
                   type="submit"

@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
-export default function FeaturedDevs({ isOpen = false, onClose = () => {} }) {
+export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [allDevs, setAllDevs] = useState(0);
   const [featuredDevs, setFeaturedDevs] = useState([]);
@@ -22,7 +22,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {} }) {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const response = await axios.get(`${apiBaseUrl}/users/featured`);
+        const response = await axios.get(`${apiBaseUrl}/featured`);
         const devs = response.data.data;
         setFeaturedDevs(pickFeaturedDevs(devs, 3));
       } catch (error) {
@@ -35,7 +35,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {} }) {
   useEffect(() => {
     const allDevs = async () => {
       try {
-        const devData = await axios.get(`${apiBaseUrl}/users/devs`);
+        const devData = await axios.get(`${apiBaseUrl}/devs`);
         const devs = devData.data.data.length;
 
         setAllDevs(devs);
@@ -46,10 +46,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {} }) {
     allDevs();
   }, []);
 
-  // Mock data for additional sections const devData = await axios.get(
-  //   `${apiBaseUrl}/devs`,
-  // );
-  // console.log("Devs", devData.length);
+ 
   const trendingTopics = [
     { name: "React 18", posts: 1234 },
     { name: "TypeScript", posts: 987 },

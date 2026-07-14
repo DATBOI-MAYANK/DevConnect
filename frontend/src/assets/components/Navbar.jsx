@@ -18,7 +18,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-function Navbar({ isOpen = false, onClose = () => {} }) {
+function Navbar( {isOpen = false, onClose = () => {} }) {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const isLoggedIn = useSelector((state) => state.login.value);
   const [user, setUser] = useState(
@@ -37,7 +37,7 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${apiBaseUrl}/users/logout`, {}, { withCredentials: true });
+      await axios.post(`${apiBaseUrl}/logout`, {}, { withCredentials: true });
     } catch (error) {
       console.error("Logout API error:", error);
     } finally {
@@ -49,7 +49,7 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
   const handleDeleteAccount = async () => {
     try {
       setIsDeleting(true);
-      await axios.delete(`${apiBaseUrl}/users/delete-account`, {
+      await axios.delete(`${apiBaseUrl}/delete-account`, {
         withCredentials: true,
       });
 
@@ -68,14 +68,14 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
     <ErrorBoundary>
       <>
         <div
-          className={`navbar fixed top-0 left-0 h-screen w-[280px] xl:w-[300px] bg-gradient-to-b from-slate-900 via-blue-900/30 to-slate-900 backdrop-blur-xl border-r border-slate-700/50 text-white transform transition-transform duration-300 z-40 ${
+          className={`navbar fixed top-0 left-0 h-screen w-[280px] xl:w-[300px] bg-gray-950 backdrop-blur-xl border-r border-slate-700/50 text-white transform transition-transform duration-300 z-40 ${
             isOpen ? "translate-x-0" : "-translate-x-[110%]"
           } lg:translate-x-0 lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-[300px]`}
         >
           {/* Logo Section */}
           <div className="flex items-center p-6 border-b border-slate-700/30 relative">
             <img src={Logo} alt="logo image" className="h-12 w-12 mr-3" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-blue-400">
               DevConnect
             </h1>
             <button
@@ -118,7 +118,7 @@ function Navbar({ isOpen = false, onClose = () => {} }) {
           {/* Post Button */}
           <div className="px-4 mb-6">
             <button
-              className="w-full flex items-center justify-center space-x-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              className="w-full flex items-center justify-center space-x-3 bg-blue-800 hover:bg-blue-600 hover:cursor-pointer text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               onClick={() => setIsPostModalOpen(true)}
             >
               <Plus className="w-5 h-5" />

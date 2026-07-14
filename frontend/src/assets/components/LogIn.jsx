@@ -6,7 +6,8 @@ import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin } from "../../features/IsLoggedIn/loginSlice";
-import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, LogIn, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import Logo from "../Logo/Logo-removebg.png";
 
 const LoginPage = () => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -25,7 +26,7 @@ const LoginPage = () => {
     setIsLoading(true);
     try {
       const res = await axios.post(
-        `${apiBaseUrl}/users/login`,
+        `${apiBaseUrl}/login`,
         { email, password },
         { withCredentials: true },
       );
@@ -52,10 +53,11 @@ const LoginPage = () => {
 
   return (
     <ClickSpark>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-black p-4">
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="text-center mb-8">
+            <img src={Logo} alt="logo image" className="h-12 w-12 ml-[43%]" />
             <h1 className="text-4xl font-bold text-white mb-2">Welcome Back</h1>
             <p className="text-slate-400">
               Sign in to your account to continue
@@ -63,7 +65,7 @@ const LoginPage = () => {
           </div>
 
           {/* Login Form */}
-          <div className="bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 shadow-2xl">
+          <div className=" bg-gray-950 backdrop-blur-2xl rounded-3xl border border-slate-900/70 p-8 shadow-2xl">
             <form onSubmit={handleLogin} className="space-y-6">
               {/* Email Field */}
               <div className="space-y-2">
@@ -81,7 +83,7 @@ const LoginPage = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                    className="w-full pl-12 pr-4 py-3 bg-black border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
                     required
                   />
                 </div>
@@ -103,7 +105,7 @@ const LoginPage = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    className="w-full pl-12 pr-12 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                    className="w-full pl-12 pr-12 py-3 bg-black border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
                     required
                   />
                   <button
@@ -124,7 +126,7 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-slate-600 disabled:to-slate-600 text-white font-semibold py-3 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
+                className="w-full bg-blue-800 hover:bg-blue-600 hover:cursor-pointer disabled:from-slate-600 disabled:to-slate-600 text-white font-semibold py-3 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
@@ -147,7 +149,7 @@ const LoginPage = () => {
             {/* Register Link */}
             <div className="text-center">
               <p className="text-slate-400">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link
                   to="/register"
                   className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200 hover:underline"
@@ -160,7 +162,7 @@ const LoginPage = () => {
 
           {/* Footer */}
           <div className="text-center mt-8 text-slate-500 text-sm">
-            <p>Secure login with end-to-end encryption</p>
+            <p className= " flex gap-[15px]  ml-[52px]"><ShieldCheck color="blue"/>Secure login with end-to-end encryption</p>
           </div>
         </div>
       </div>
@@ -173,13 +175,13 @@ const LoginPage = () => {
         overlayClassName="fixed inset-0 bg-black/75 backdrop-blur-sm"
         contentLabel="Login Modal"
       >
-        <div className="bg-slate-800 rounded-2xl p-8 max-w-md w-full border border-slate-700/50 shadow-2xl">
+        <div className="bg-gray-950 rounded-2xl p-8 max-w-md w-full border border-slate-700/50 shadow-2xl">
           <h2 className="text-2xl font-bold text-white mb-4 text-center">
             {isLogin ? "Success!" : "Error"}
           </h2>
           <p className="text-slate-300 text-center mb-6">{modalMessage}</p>
           <button
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 rounded-xl transition-all duration-200"
+            className="w-full bg-blue-800 hover:bg-blue-600 hover:cursor-pointer text-white font-semibold py-3 rounded-xl transition-all duration-200"
             onClick={() => {
               setIsOpen(false);
               if (isLogin === true) {

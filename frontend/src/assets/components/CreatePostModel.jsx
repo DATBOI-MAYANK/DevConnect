@@ -8,7 +8,7 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
   const [files, setFiles] = useState([]);
   const [githubRepoName, setGithubRepoName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
+  // const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
 
   const handleFilesChange = (e) => {
     if (e.target.files) {
@@ -27,7 +27,7 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
         return alert("You can't upload more than 4 files. ");
       } else {
         files.forEach((file) => formData.append("media", file));
-        await axios.post(`${apiBaseUrl}/users/api/v1/create-post`, formData, {
+        await axios.post(`${apiBaseUrl}/api/v1/create-post`, formData, {
           withCredentials: true,
           headers: { "Content-Type": "multipart/form-data" },
         });

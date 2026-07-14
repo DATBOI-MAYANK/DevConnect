@@ -1,4 +1,4 @@
-function CommentList({ comments }) {
+function CommentList( {comments} ) {
   return (
     <div className="comment-list border text-white border-[#2F3336] p-2 rounded-lg ml-0 sm:ml-10 m-3 sm:m-5">
       {comments.length === 0 ? (

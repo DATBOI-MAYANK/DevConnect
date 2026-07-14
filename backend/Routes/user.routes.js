@@ -39,7 +39,7 @@ router.route("/profile/:userId").get(getProfile);
 router.route("/api/v1/profile/:userId").get(getProfile);
 
 router.route("/featured").get(getFeaturedDevs);
-// router.route("/api/v1/featured").get(getFeaturedDevs);
+router.route("/api/v1/featured").get(getFeaturedDevs);
 
 router.route("/devs").get(getAllDevs);
 router.route("/api/v1/devs").get(getAllDevs);

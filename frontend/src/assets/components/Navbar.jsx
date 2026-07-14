@@ -18,7 +18,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-function Navbar( isOpen = false, onClose = () => {} ) {
+function Navbar( {isOpen = false, onClose = () => {} }) {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const isLoggedIn = useSelector((state) => state.login.value);
   const [user, setUser] = useState(
@@ -37,7 +37,7 @@ function Navbar( isOpen = false, onClose = () => {} ) {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${apiBaseUrl}/users/logout`, {}, { withCredentials: true });
+      await axios.post(`${apiBaseUrl}/logout`, {}, { withCredentials: true });
     } catch (error) {
       console.error("Logout API error:", error);
     } finally {
@@ -49,7 +49,7 @@ function Navbar( isOpen = false, onClose = () => {} ) {
   const handleDeleteAccount = async () => {
     try {
       setIsDeleting(true);
-      await axios.delete(`${apiBaseUrl}/users/delete-account`, {
+      await axios.delete(`${apiBaseUrl}/delete-account`, {
         withCredentials: true,
       });
 

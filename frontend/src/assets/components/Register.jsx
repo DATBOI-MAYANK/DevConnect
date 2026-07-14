@@ -53,7 +53,7 @@ const Register = () => {
       formData.append("Role", role);
 
       const res = await axios.post(
-        `${apiBaseUrl}/users/api/v1/register`,
+        `${apiBaseUrl}/register`,
         formData,
         {
           withCredentials: true,

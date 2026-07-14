@@ -35,9 +35,9 @@ const UserProfile = () => {
   const [githubRepos, setGithubRepos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentUser] = useState(
-    JSON.parse(localStorage.getItem("user") || "null"),
-  );
+  // const [currentUser] = useState(
+  //   JSON.parse(localStorage.getItem("user") || "null"),
+  // );
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentImages, setCurrentImages] = useState([]);
@@ -48,17 +48,17 @@ const UserProfile = () => {
   useEffect(() => {
     fetchUserProfile();
     fetchUserPosts();
-  }, [userId]);
+  }, [userId ]);
 
   useEffect(() => {
     if (userProfile?.GithubUsername) {
       fetchGithubRepos();
     }
-  }, [userProfile]);
+  }, [userProfile ]);
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get(`${apiBaseUrl}/users/profile/${userId}`, {
+      const response = await axios.get(`${apiBaseUrl}/profile/${userId}`, {
         withCredentials: true,
       });
       setUserProfile(response.data.data);
@@ -70,7 +70,7 @@ const UserProfile = () => {
 
   const fetchUserPosts = async () => {
     try {
-      const response = await axios.get(`${apiBaseUrl}/users/api/v1/user/${userId}`, {
+      const response = await axios.get(`${apiBaseUrl}/user/${userId}`, {
         withCredentials: true,
       });
       setUserPosts(response.data.data || []);
@@ -122,11 +122,11 @@ const UserProfile = () => {
   };
 
   // Filter functions for different content types
-  const getTextPosts = () =>
-    userPosts.filter(
-      (post) =>
-        !post.images?.length && !post.videos?.length && !post.githubRepoName,
-    );
+  // const getTextPosts = () =>
+  //   userPosts.filter(
+  //     (post) =>
+  //       !post.images?.length && !post.videos?.length && !post.githubRepoName,
+  //   );
   const getMediaPosts = () =>
     userPosts.filter(
       (post) => post.images?.length > 0 || post.videos?.length > 0,

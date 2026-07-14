@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios"; // adjust path if needed
@@ -16,7 +16,7 @@ function Layout() {
     if (location.pathname === "/login" || location.pathname === "/register")return;
 
     axios
-      .get(`${apiBaseUrl}/users/me`, { withCredentials: true })
+      .get(`${apiBaseUrl}/me`, { withCredentials: true })
       .catch((err) => {
         console.log("Error from /me:", err);
         if (err.response && err.response.status === 401) {

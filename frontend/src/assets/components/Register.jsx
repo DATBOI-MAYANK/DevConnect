@@ -17,6 +17,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import Logo from "../Logo/Logo-removebg.png";
 
 const Register = () => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -93,10 +94,12 @@ const Register = () => {
   return (
     <ErrorBoundary>
       <ClickSpark>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-black p-4">
           <div className="w-full max-w-2xl">
             {/* Header */}
             <div className="text-center mb-8">
+              <img src={Logo} alt="logo image" className="h-12 w-12 ml-[43%]" />
+
               <h1 className="text-4xl font-bold text-white mb-2">
                 Join Our Community
               </h1>
@@ -106,10 +109,10 @@ const Register = () => {
             </div>
 
             {/* Registration Form */}
-            <div className="bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 shadow-2xl">
+            <div className="bg-gray-950  backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 shadow-2xl">
               <form onSubmit={handleRegister} className="space-y-6">
                 {/* Username and Email Row */}
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
                     <label
                       htmlFor="username"
@@ -125,10 +128,13 @@ const Register = () => {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         placeholder="Choose a username"
-                        className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                        className="w-full pl-12 pr-4 py-3 bg-black border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
                         required
                       />
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
                     <label
                       htmlFor="email"
                       className="text-sm font-medium text-slate-300 block"
@@ -143,7 +149,7 @@ const Register = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your email"
-                        className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                        className="w-full pl-12 pr-4 py-3 bg-black border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
                         required
                       />
                     </div>
@@ -165,7 +171,7 @@ const Register = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Create a secure password"
-                      className="w-full pl-12 pr-12 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                      className="w-full pl-12 pr-12 py-3 bg-black border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
                       required
                     />
                     <button
@@ -197,7 +203,7 @@ const Register = () => {
                         type="file"
                         accept="image/*"
                         onChange={(e) => setAvatarImage(e.target.files[0])}
-                        className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                        className="w-full pl-12 pr-4 py-3 bg-black border border-slate-600/50 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
                       />
                     </div>
                   </div>
@@ -216,7 +222,7 @@ const Register = () => {
                         type="file"
                         accept="image/*"
                         onChange={(e) => setCoverImage(e.target.files[0])}
-                        className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                        className="w-full pl-12 pr-4 py-3 bg-black border border-slate-600/50 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
                       />
                     </div>
                   </div>
@@ -270,7 +276,7 @@ const Register = () => {
                         value={GithubUsername}
                         onChange={(e) => setGithubUsername(e.target.value)}
                         placeholder="your-github-username"
-                        className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                        className="w-full pl-12 pr-4 py-3 bg-black border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
                       />
                     </div>
                   </div>
@@ -292,7 +298,7 @@ const Register = () => {
                       onChange={(e) => setBio(e.target.value)}
                       placeholder="Tell us a bit about yourself..."
                       rows={4}
-                      className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200 resize-none"
+                      className="w-full pl-12 pr-4 py-3 bg-black border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200 resize-none"
                     />
                   </div>
                 </div>
@@ -300,7 +306,7 @@ const Register = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-slate-600 disabled:to-slate-600 text-white font-semibold py-3 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
+                  className="w-full bg-blue-800 hover:bg-blue-600 hover:cursor-pointer disabled:from-slate-600 disabled:to-slate-600 text-white font-semibold py-3 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
@@ -349,13 +355,13 @@ const Register = () => {
           overlayClassName="fixed inset-0 bg-black/75 backdrop-blur-sm"
           contentLabel="Register Modal"
         >
-          <div className="bg-slate-800 rounded-2xl p-8 max-w-md w-full border border-slate-700/50 shadow-2xl">
+          <div className="bg-black rounded-2xl p-8 max-w-md w-full border border-slate-700/50 shadow-2xl">
             <h2 className="text-2xl font-bold text-white mb-4 text-center">
               {isRegister ? "Welcome!" : "Error"}
             </h2>
             <p className="text-slate-300 text-center mb-6">{modalMessage}</p>
             <button
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 rounded-xl transition-all duration-200"
+              className="w-full bg-blue-800 hover:bg-blue-600 hover:cursor-pointer text-white font-semibold py-3 rounded-xl transition-all duration-200"
               onClick={() => {
                 setIsOpen(false);
                 if (isRegister === true) {

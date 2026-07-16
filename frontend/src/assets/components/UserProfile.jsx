@@ -151,9 +151,9 @@ const UserProfile = () => {
   const renderPosts = (posts) => {
     if (posts.length === 0) {
       return (
-        <div className="text-center py-16">
+        <div className="  text-center py-16">
           <div className="text-slate-400 text-xl">No posts found</div>
-          <div className="text-slate-500 mt-2">
+          <div className=" text-slate-500 mt-2">
             {activeTab === "media" && "No media posts yet"}
             {activeTab === "github" && "No GitHub posts yet"}
             {activeTab === "posts" &&
@@ -168,7 +168,7 @@ const UserProfile = () => {
         {posts.map((post) => (
           <article
             key={post._id}
-            className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
+            className="bg-gray-950 w-[80%] backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
           >
             <div className="text-slate-100 text-lg leading-relaxed mb-4">
               {post.text}
@@ -225,7 +225,7 @@ const UserProfile = () => {
 
             {/* GitHub Repo Info */}
             {post.githubRepoName && (
-              <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-600/40 rounded-xl p-5 mb-4 hover:bg-slate-700/40 transition-all duration-300">
+              <div className="bg-gray-950 w-[80%] backdrop-blur-sm border border-slate-600/40 rounded-xl p-5 mb-4 hover:bg-slate-700/40 transition-all duration-300">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-3">
                     <Github className="w-6 h-6 text-slate-400" />
@@ -290,7 +290,7 @@ const UserProfile = () => {
             {githubRepos.map((repo) => (
               <div
                 key={repo.id}
-                className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 p-4 hover:border-slate-600/50 transition-all duration-300"
+                className="bg-gray-950 w-[80%] backdrop-blur-sm rounded-xl border border-slate-700/50 p-4 hover:border-slate-600/50 transition-all duration-300"
               >
                 <div className="flex items-start justify-between mb-3">
                   <a
@@ -357,7 +357,7 @@ const UserProfile = () => {
   );
 
   const renderAbout = () => (
-    <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-8">
+    <div className="bg-gray-950 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-8">
       <h3 className="text-2xl font-bold text-white mb-6">
         About {userProfile?.username}
       </h3>
@@ -428,17 +428,17 @@ const UserProfile = () => {
 
   if (loading) {
     return (
-      <ClickSpark>
+      <>
         <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-500 border-t-transparent"></div>
         </div>
-      </ClickSpark>
+      </>
     );
   }
 
   if (error) {
     return (
-      <ClickSpark>
+      <>
         <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white mb-4">Error</h1>
@@ -452,13 +452,13 @@ const UserProfile = () => {
             </Link>
           </div>
         </div>
-      </ClickSpark>
+      </>
     );
   }
 
   return (
-    <ClickSpark>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
+    
+      <div className="min-h-screen bg-black">
         {/* Header with Cover Image */}
         <div className="relative">
           <div className="h-80 bg-gradient-to-r from-blue-600 to-purple-600 relative overflow-hidden">
@@ -487,7 +487,7 @@ const UserProfile = () => {
                 <img
                   src={userProfile?.AvatarImage || "/default-avatar.png"}
                   alt={userProfile?.username}
-                  className="w-32 h-32 rounded-full border-4 border-white shadow-xl object-cover"
+                  className="w-32 h-32 rounded-full border-4 border-gray-950 shadow-xl object-cover"
                 />
               </div>
 
@@ -507,7 +507,7 @@ const UserProfile = () => {
 
         {/* Tabs */}
         <div className="max-w-6xl mx-auto px-6 mt-8">
-          <div className="flex space-x-1 bg-slate-800/50 rounded-lg p-1 mb-8">
+          <div className="flex space-x-1 bg-gray-950  border-slate-700/50 rounded-lg p-1 mb-8">
             {[
               { id: "posts", label: "All Posts", icon: Activity },
               { id: "media", label: "Media", icon: Image },
@@ -590,7 +590,7 @@ const UserProfile = () => {
           </div>
         )}
       </div>
-    </ClickSpark>
+    
   );
 };
 

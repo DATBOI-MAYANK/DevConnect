@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import Navbar from "./Navbar";
 import ClickSpark from "../components/ClickSpark.jsx";
 import LikeButton from "./LikeButton.jsx";
 import { fetchPosts } from "../../features/PostSlice/postSlice";
@@ -96,9 +95,8 @@ function Dashboard() {
   return (
     <ErrorBoundary>
       <ClickSpark>
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 lg:ml-[300px]">
-          <div className="grid grid-flow-row grid-cols-1 h-full">
-            <Navbar />
+        <div className="min-h-screen w-full bg-black">
+          
             <div className="Dashboard ">
               <div className="relative">
                 <Link
@@ -188,7 +186,7 @@ function Dashboard() {
                           return (
                             <article
                               key={post._id}
-                              className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
+                              className="bg-gray-950 w-[80%] backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
                             >
                               <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center space-x-3">
@@ -210,7 +208,7 @@ function Dashboard() {
 
                               {post.images && post.images.length > 0 && (
                                 <div
-                                  className={`grid ${getGridClass(post.images.length)} gap-2 ml-0 sm:ml-14 mb-4 w-full sm:max-w-2xl`}
+                                  className={`grid ${getGridClass(post.images.length)} gap-2 mb-4 w-full sm:ml-14 sm:w-[calc(100%-3.5rem)] sm:max-w-2xl`}
                                 >
                                   {post.images.slice(0, 4).map((img, index) => (
                                     <div
@@ -245,7 +243,7 @@ function Dashboard() {
 
                               {post.videos && post.videos.length > 0 && (
                                 <div
-                                  className={`grid ${getGridClass(post.videos.length)} gap-2 ml-0 sm:ml-14 mb-4 w-full sm:max-w-2xl`}
+                                  className={`grid ${getGridClass(post.videos.length)} gap-2 mb-4 w-full sm:ml-14 sm:w-[calc(100%-3.5rem)] sm:max-w-2xl`}
                                 >
                                   {post.videos.map((vid) => (
                                     <video
@@ -259,7 +257,7 @@ function Dashboard() {
                               )}
 
                               {user?.Role === "developer" ? repoInfo && (
-                                <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 ml-0 sm:ml-14 w-full sm:max-w-2xl">
+                                <div className="bg-gray-950 w-[80%] border border-slate-600/50 rounded-xl p-5 mb-4  sm:ml-14 sm:w-[calc(100%-3.5rem)] sm:max-w-2xl">
                                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
                                     <div className="flex items-center space-x-3 min-w-0">
                                       <img
@@ -389,7 +387,7 @@ function Dashboard() {
                           .map((post) => (
                             <article
                               key={post._id}
-                              className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
+                              className="bg-gray-950 w-[80%] backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
                             >
                               <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center space-x-3">
@@ -411,7 +409,7 @@ function Dashboard() {
 
                               {post.images && post.images.length > 0 && (
                                 <div
-                                  className={`grid ${getGridClass(post.images.length)} gap-2 ml-0 sm:ml-14 mb-4 w-full sm:max-w-2xl`}
+                                  className={`grid ${getGridClass(post.images.length)} gap-2 mb-4 w-full sm:ml-14 sm:w-[calc(100%-3.5rem)] sm:max-w-2xl`}
                                 >
                                   {post.images.slice(0, 4).map((img, index) => (
                                     <div
@@ -446,7 +444,7 @@ function Dashboard() {
 
                               {post.videos && post.videos.length > 0 && (
                                 <div
-                                  className={`grid ${getGridClass(post.videos.length)} gap-2 ml-0 sm:ml-14 mb-4 w-full sm:max-w-2xl`}
+                                  className={`grid ${getGridClass(post.videos.length)} gap-2 mb-4 w-full sm:ml-14 sm:w-[calc(100%-3.5rem)] sm:max-w-2xl`}
                                 >
                                   {post.videos.map((vid) => (
                                     <video
@@ -527,7 +525,7 @@ function Dashboard() {
                             return (
                               <article
                                 key={post._id}
-                                className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
+                                className="bg-gray-950 w-[80%] backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
                               >
                                 <div className="flex items-center justify-between mb-4">
                                   <div className="flex items-center space-x-3">
@@ -548,7 +546,7 @@ function Dashboard() {
                                 </div>
 
                                 {repoInfo && (
-                                  <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 ml-0 sm:ml-14 w-full sm:max-w-2xl">
+                                  <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 w-full sm:ml-14 sm:w-[calc(100%-3.5rem)] sm:max-w-2xl">
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
                                       <div className="flex items-center space-x-3 min-w-0">
                                         <img
@@ -665,7 +663,7 @@ function Dashboard() {
                 </div>
               </div>
             </div>
-          </div>
+         
         </div>
 
         {/* Image Modal */}

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./index.css";
 import Navbar from "./assets/components/Navbar.jsx";
-import ClickSpark from "./assets/components/ClickSpark.jsx";
 import ErrorBoundary from "./assets/components/ErrorBoundary.jsx";
 import MainFeed from "./assets/components/MainFeed.jsx";
 import FeaturedDevs from "./assets/components/FeaturedDevs.jsx";
@@ -14,13 +13,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <ClickSpark
-        sparkColor="#fff"
-        sparkSize={10}
-        sparkRadius={15}
-        sparkCount={8}
-        duration={400}
-      >
+      
         <div className="min-h-screen w-full">
           <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-slate-900/90 backdrop-blur border-b border-slate-700/50">
             <div className="flex items-center justify-between px-4 py-3 text-white">
@@ -64,7 +57,7 @@ function App() {
             </div>
           </main>
         </div>
-      </ClickSpark>
+      
     </ErrorBoundary>
   );
 }

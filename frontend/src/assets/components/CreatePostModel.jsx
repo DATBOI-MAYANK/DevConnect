@@ -70,7 +70,7 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
       }}
       contentLabel="Create Post Modal"
     >
-      <div className="bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-8 shadow-2xl">
+      <div className="bg-gray-950 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-8 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-white">Create a Post</h2>
           <button

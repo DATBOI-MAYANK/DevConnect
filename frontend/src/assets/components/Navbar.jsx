@@ -16,9 +16,10 @@ import {
   LogOut,
   X,
   Trash2,
+  Settings,
 } from "lucide-react";
 
-function Navbar( {isOpen = false, onClose = () => {} }) {
+function Navbar({ isOpen = false, onClose = () => {} }) {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const isLoggedIn = useSelector((state) => state.login.value);
   const [user, setUser] = useState(
@@ -27,6 +28,7 @@ function Navbar( {isOpen = false, onClose = () => {} }) {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -75,9 +77,7 @@ function Navbar( {isOpen = false, onClose = () => {} }) {
           {/* Logo Section */}
           <div className="flex items-center p-6 border-b border-slate-700/30 relative">
             <img src={Logo} alt="logo image" className="h-12 w-12 mr-3" />
-            <h1 className="text-2xl font-bold text-blue-400">
-              DevConnect
-            </h1>
+            <h1 className="text-2xl font-bold text-blue-400">DevConnect</h1>
             <button
               className="lg:hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-slate-800/60"
               onClick={onClose}
@@ -133,7 +133,7 @@ function Navbar( {isOpen = false, onClose = () => {} }) {
           {/* User Profile / Login Section */}
           <div className="relative lg:absolute bottom-6 left-2 right-4 mt-6 lg:mt-20">
             {isLoggedIn && user ? (
-              <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl w-min mt-10 ml-4 p-2 border border-slate-700/50">
+              <div className=" w-min mt-10 ml-4 p-2 ">
                 <div className="flex items-center space-x-3 mb-3 w-48">
                   <div className="relative">
                     <img
@@ -141,7 +141,6 @@ function Navbar( {isOpen = false, onClose = () => {} }) {
                       alt="Profile"
                       className="h-12 w-12 rounded-full object-cover border-2 border-slate-600/50"
                     />
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900"></div>
                   </div>
                   <div className="flex-1">
                     <Link
@@ -150,25 +149,12 @@ function Navbar( {isOpen = false, onClose = () => {} }) {
                     >
                       {user.username}
                     </Link>
-                    <div className="text-sm text-slate-400">Online</div>
                   </div>
+                  <Settings
+                    className=" hover:cursor-pointer"
+                    onClick={() => setIsSettingModalOpen(true)}
+                  />
                 </div>
-
-                <button
-                  className="flex items-center justify-center space-x-2 w-50% bg-slate-700/50 hover:bg-red-600/20 hover:border-red-500/50 text-slate-300 hover:text-red-400 py-2 px-4 rounded-lg border border-slate-600/50 transition-all duration-300"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span className="font-medium">Logout</span>
-                </button>
-
-                <button
-                  className="mt-2 flex items-center justify-center space-x-2 w-full bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 hover:text-red-200 py-2 px-4 rounded-lg transition-all duration-300"
-                  onClick={() => setIsDeleteModalOpen(true)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                  <span className="font-medium">Delete Account</span>
-                </button>
               </div>
             ) : (
               <Link
@@ -206,19 +192,19 @@ function Navbar( {isOpen = false, onClose = () => {} }) {
             }}
             contentLabel="Delete Account Confirmation"
           >
-            <div className="bg-slate-800/95 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 shadow-2xl">
+            <div className="bg-gray-950 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 shadow-2xl">
               <h2 className="text-xl font-bold text-white mb-3">
                 Delete your account?
               </h2>
               <p className="text-slate-300 mb-6">
-                This action is permanent. Your profile and posts will be
-                deleted and cannot be recovered.
+                This action is permanent. Your profile and posts will be deleted
+                and cannot be recovered.
               </p>
 
               <div className="flex gap-3">
                 <button
                   type="button"
-                  className="flex-1 px-4 py-2 bg-slate-600/50 hover:bg-slate-600/70 text-white rounded-lg transition-all duration-200 disabled:opacity-60"
+                  className="flex-1 px-4 py-2 bg-slate-600/50 hover:cursor-pointer hover:bg-slate-600/70 text-white rounded-lg transition-all duration-200 disabled:opacity-60"
                   onClick={() => setIsDeleteModalOpen(false)}
                   disabled={isDeleting}
                 >
@@ -226,13 +212,63 @@ function Navbar( {isOpen = false, onClose = () => {} }) {
                 </button>
                 <button
                   type="button"
-                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200 disabled:opacity-60"
+                  className="flex-1 px-4 py-2 bg-red-600 hover:cursor-pointer hover:bg-red-700 text-white rounded-lg transition-all duration-200 disabled:opacity-60"
                   onClick={handleDeleteAccount}
                   disabled={isDeleting}
                 >
                   {isDeleting ? "Deleting..." : "Yes, Delete"}
                 </button>
               </div>
+            </div>
+          </Modal>
+          <Modal
+            isOpen={isSettingModalOpen}
+            onRequestClose={() => setIsSettingModalOpen(false)}
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.75)",
+                backdropFilter: "blur(8px)",
+                zIndex: 1000,
+              },
+              content: {
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-152%, 145%)",
+                backgroundColor: "transparent",
+                border: "none",
+                padding: 0,
+                borderRadius: 0,
+                maxWidth: "450px",
+                width: "90%",
+              },
+            }}
+            contentLabel="Setting Modal"
+          >
+            <div className="bg-gray-950 w-[52%] backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 shadow-2xl">
+             <button className="absolute text-white left-[85%] top-[7%] hover:cursor-pointer" onClick={
+              ()=>{
+                 setIsSettingModalOpen(false)
+              }
+             }> <X/></button>
+              <button
+                className="flex items-center justify-center space-x-2 w-50% bg-slate-700/50 hover:cursor-pointer hover:bg-red-600/20 hover:border-red-500/50 text-slate-300 hover:text-red-400 py-2 px-4 rounded-lg border border-slate-600/50 transition-all duration-300"
+                onClick={handleLogout}
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="font-medium">Logout</span>
+               
+              </button>
+                
+              <button
+                className="mt-2 flex items-center justify-center space-x-2 w-50% bg-red-600/20 hover:cursor-pointer hover:bg-red-600/30 border border-red-500/40 text-red-300 hover:text-red-200 py-2 px-4 rounded-lg transition-all duration-300"
+                onClick={() =>{ setIsDeleteModalOpen(true); setIsSettingModalOpen(false)}}
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="font-medium">Delete Account</span>
+              </button>
             </div>
           </Modal>
         </div>

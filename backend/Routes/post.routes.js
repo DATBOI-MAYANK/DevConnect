@@ -25,9 +25,18 @@ router.route("/api/v1/create-post").post(
 );
 
 router.route("/api/v1/get-posts").get(GetPosts);
+router.route("/get-posts").get(GetPosts);
+
 router.get("/api/v1/user/:userId", getPostsByUserId);
+router.get("/user/:userId", getPostsByUserId);
+
 router.post("/api/v1/posts/:id/like", verifyJwt, toggleLike);
+router.post("/posts/:id/like", verifyJwt, toggleLike);
+
 router.post("/api/v1/posts/:id/addComment", verifyJwt, addComment);
+router.post("/posts/:id/addComment", verifyJwt, addComment);
+
 router.delete("/api/v1/posts/:id/deletePost", verifyJwt, deletePostById);
+router.delete("/posts/:id/deletePost", verifyJwt, deletePostById);
 
 export default router;

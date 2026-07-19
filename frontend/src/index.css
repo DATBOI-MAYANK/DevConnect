@@ -1,4 +1,6 @@
 @import "tailwindcss";
+
+@plugin "@tailwindcss/typography";
 @font-face {
   font-family: machina;
   src: url(./assets/fonts/NeueMachina-Regular.otf);

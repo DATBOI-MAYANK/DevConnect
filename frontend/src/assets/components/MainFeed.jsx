@@ -6,9 +6,12 @@ import CommentBox from "./CommentBox.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../../features/PostSlice/postSlice.js";
 import CommentList from "./CommentList.jsx";
-import { Copy, X, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import { Copy, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import DeleteBtn from "./DeleteBtn.jsx";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
 
 function MainFeed() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
@@ -54,8 +57,10 @@ function MainFeed() {
     async function fetchSpecificRepos() {
       try {
         const promises = postRepoName.map((name) =>
-  axios.get(`${import.meta.env.VITE_API_GITHUB_URL}${githubUsername}/${name}`)
-); 
+          axios.get(
+            `${import.meta.env.VITE_API_GITHUB_URL}${githubUsername}/${name}`,
+          ),
+        );
         const results = await Promise.all(promises);
         const repoDetails = results.map((r) => r.data);
         setRepoDetails(repoDetails);
@@ -119,8 +124,13 @@ function MainFeed() {
                     )}
                   </div>
 
-                  <div className="text-slate-100 text-lg leading-relaxed mb-4 ml-15">
-                    {post.text}
+                  <div className="prose prose-invert leading-relaxed max-w-none">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeSanitize]}
+                    >
+                      {post.text}
+                    </ReactMarkdown>
                   </div>
 
                   {post.images && post.images.length > 0 && (

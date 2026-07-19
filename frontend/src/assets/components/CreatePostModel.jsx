@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Modal from "react-modal";
 import axios from "axios";
+import { Code2 } from "lucide-react";
+
 
 export default function CreatePostModal({ isOpen, onRequestClose }) {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -8,12 +10,23 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
   const [files, setFiles] = useState([]);
   const [githubRepoName, setGithubRepoName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("javascript");
+  const [showDropdown,setShowDropdown] = useState(false);
+  
   // const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
 
   const handleFilesChange = (e) => {
     if (e.target.files) {
       setFiles((prev) => [...prev, ...Array.from(e.target.files)]);
     }
+  };
+
+  const insertCodeBlock = () => {
+    setText(prev =>
+        prev + `\n\`\`\`${selectedValue}\n\n\`\`\`\n`
+    );
+
+    setShowDropdown(false)
   };
 
   const handleSubmit = async (e) => {
@@ -32,6 +45,7 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
+      console.log("Text:",text)
       setText("");
       setFiles([]);
       setGithubRepoName("");
@@ -90,6 +104,27 @@ export default function CreatePostModal({ isOpen, onRequestClose }) {
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
+            <Code2 className="text-white" onClick={()=>{setShowDropdown(true)}} />
+           {showDropdown && (
+             <div>
+              <select
+              className="text-white bg-gray-950 hover:cursor-pointer "
+              value={selectedValue}
+              onChange={(e) => setSelectedValue(e.target.value)}
+            >
+              <option value="javascript">Javascript</option>
+              <option value="typescript">Typescript</option>
+              <option value="python">Python</option>
+              <option value="c++">C++</option>
+              <option value="java">Java</option>
+              <option value="go">Go</option>
+              <option value="rust">Rust</option>
+            </select>
+               <button className="text-white hover:cursor-pointer" onClick={insertCodeBlock}>
+            Insert
+        </button>
+             </div>
+           )}
           </div>
 
           <div>

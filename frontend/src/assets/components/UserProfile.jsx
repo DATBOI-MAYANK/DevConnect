@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import ClickSpark from "./ClickSpark";
 import {
   ArrowLeft,
   Github,
@@ -24,6 +23,9 @@ import {
   Code,
   Activity,
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
 
 const UserProfile = () => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -48,13 +50,13 @@ const UserProfile = () => {
   useEffect(() => {
     fetchUserProfile();
     fetchUserPosts();
-  }, [userId ]);
+  }, [userId]);
 
   useEffect(() => {
     if (userProfile?.GithubUsername) {
       fetchGithubRepos();
     }
-  }, [userProfile ]);
+  }, [userProfile]);
 
   const fetchUserProfile = async () => {
     try {
@@ -170,8 +172,13 @@ const UserProfile = () => {
             key={post._id}
             className="bg-gray-950 w-[80%] backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
           >
-            <div className="text-slate-100 text-lg leading-relaxed mb-4">
-              {post.text}
+            <div className="prose prose-invert leading-relaxed max-w-none">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeSanitize]}
+              >
+                {post.text}
+              </ReactMarkdown>
             </div>
 
             {/* Images */}
@@ -457,140 +464,138 @@ const UserProfile = () => {
   }
 
   return (
-    
-      <div className="min-h-screen bg-black">
-        {/* Header with Cover Image */}
-        <div className="relative">
-          <div className="h-80 bg-gradient-to-r from-blue-600 to-purple-600 relative overflow-hidden">
-            {userProfile?.CoverImage && (
+    <div className="min-h-screen bg-black">
+      {/* Header with Cover Image */}
+      <div className="relative">
+        <div className="h-80 bg-gradient-to-r from-blue-600 to-purple-600 relative overflow-hidden">
+          {userProfile?.CoverImage && (
+            <img
+              src={userProfile.CoverImage}
+              alt="Cover"
+              className="w-full h-full object-cover"
+            />
+          )}
+          <div className="absolute inset-0 bg-black/30"></div>
+
+          <Link
+            to="/"
+            className="absolute top-6 left-6 flex items-center space-x-2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-black/70 transition-all duration-200"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back</span>
+          </Link>
+        </div>
+
+        {/* Profile Info */}
+        <div className="max-w-6xl mx-auto px-6 -mt-20 relative z-10">
+          <div className="flex flex-col md:flex-row items-start md:items-end space-y-4 md:space-y-0 md:space-x-6">
+            <div className="relative">
               <img
-                src={userProfile.CoverImage}
-                alt="Cover"
-                className="w-full h-full object-cover"
+                src={userProfile?.AvatarImage || "/default-avatar.png"}
+                alt={userProfile?.username}
+                className="w-32 h-32 rounded-full border-4 border-gray-950 shadow-xl object-cover"
               />
-            )}
-            <div className="absolute inset-0 bg-black/30"></div>
-
-            <Link
-              to="/"
-              className="absolute top-6 left-6 flex items-center space-x-2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-black/70 transition-all duration-200"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back</span>
-            </Link>
-          </div>
-
-          {/* Profile Info */}
-          <div className="max-w-6xl mx-auto px-6 -mt-20 relative z-10">
-            <div className="flex flex-col md:flex-row items-start md:items-end space-y-4 md:space-y-0 md:space-x-6">
-              <div className="relative">
-                <img
-                  src={userProfile?.AvatarImage || "/default-avatar.png"}
-                  alt={userProfile?.username}
-                  className="w-32 h-32 rounded-full border-4 border-gray-950 shadow-xl object-cover"
-                />
-              </div>
-
-              <div className="flex-1 text-center md:text-left">
-                <h1 className="text-3xl font-bold text-white mb-2">
-                  {userProfile?.username}
-                </h1>
-                {userProfile?.Bio && (
-                  <p className="text-slate-300 mb-4 max-w-2xl">
-                    {userProfile.Bio}
-                  </p>
-                )}
-              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Tabs */}
-        <div className="max-w-6xl mx-auto px-6 mt-8">
-          <div className="flex space-x-1 bg-gray-950  border-slate-700/50 rounded-lg p-1 mb-8">
-            {[
-              { id: "posts", label: "All Posts", icon: Activity },
-              { id: "media", label: "Media", icon: Image },
-              { id: "github", label: "GitHub", icon: Github },
-              { id: "about", label: "About", icon: FileText },
-            ].map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => setActiveTab(id)}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-md font-medium transition-all duration-200 ${
-                  activeTab === id
-                    ? "bg-slate-700 text-white shadow-lg"
-                    : "text-slate-400 hover:text-white hover:bg-slate-700/50"
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                <span>{label}</span>
-                {id === "posts" && (
-                  <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded-full text-xs">
-                    {userPosts.length}
-                  </span>
-                )}
-                {id === "media" && (
-                  <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded-full text-xs">
-                    {getMediaPosts().length}
-                  </span>
-                )}
-                {id === "github" && (
-                  <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded-full text-xs">
-                    {getGithubPosts().length + githubRepos.length}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab Content */}
-          <div className="pb-8">{renderTabContent()}</div>
-        </div>
-
-        {/* Image Modal */}
-        {selectedImage && (
-          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="relative max-w-4xl max-h-full">
-              <button
-                onClick={closeImageModal}
-                className="absolute -top-12 right-0 text-white hover:text-slate-300 transition-colors"
-              >
-                <X className="w-8 h-8" />
-              </button>
-
-              <img
-                src={selectedImage}
-                alt="Full size"
-                className="max-w-full max-h-[80vh] object-contain rounded-lg"
-              />
-
-              {currentImages.length > 1 && (
-                <>
-                  <button
-                    onClick={() => navigateImage("prev")}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-slate-300 bg-black/50 rounded-full p-2 transition-all"
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </button>
-
-                  <button
-                    onClick={() => navigateImage("next")}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-slate-300 bg-black/50 rounded-full p-2 transition-all"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
-
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white bg-black/50 px-3 py-1 rounded-full text-sm">
-                    {currentImageIndex + 1} / {currentImages.length}
-                  </div>
-                </>
+            <div className="flex-1 text-center md:text-left">
+              <h1 className="text-3xl font-bold text-white mb-2">
+                {userProfile?.username}
+              </h1>
+              {userProfile?.Bio && (
+                <p className="text-slate-300 mb-4 max-w-2xl">
+                  {userProfile.Bio}
+                </p>
               )}
             </div>
           </div>
-        )}
+        </div>
       </div>
-    
+
+      {/* Tabs */}
+      <div className="max-w-6xl mx-auto px-6 mt-8">
+        <div className="flex space-x-1 bg-gray-950  border-slate-700/50 rounded-lg p-1 mb-8">
+          {[
+            { id: "posts", label: "All Posts", icon: Activity },
+            { id: "media", label: "Media", icon: Image },
+            { id: "github", label: "GitHub", icon: Github },
+            { id: "about", label: "About", icon: FileText },
+          ].map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`flex items-center space-x-2 px-6 py-3 rounded-md font-medium transition-all duration-200 ${
+                activeTab === id
+                  ? "bg-slate-700 text-white shadow-lg"
+                  : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+              }`}
+            >
+              <Icon className="w-5 h-5" />
+              <span>{label}</span>
+              {id === "posts" && (
+                <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded-full text-xs">
+                  {userPosts.length}
+                </span>
+              )}
+              {id === "media" && (
+                <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded-full text-xs">
+                  {getMediaPosts().length}
+                </span>
+              )}
+              {id === "github" && (
+                <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded-full text-xs">
+                  {getGithubPosts().length + githubRepos.length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="pb-8">{renderTabContent()}</div>
+      </div>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="relative max-w-4xl max-h-full">
+            <button
+              onClick={closeImageModal}
+              className="absolute -top-12 right-0 text-white hover:text-slate-300 transition-colors"
+            >
+              <X className="w-8 h-8" />
+            </button>
+
+            <img
+              src={selectedImage}
+              alt="Full size"
+              className="max-w-full max-h-[80vh] object-contain rounded-lg"
+            />
+
+            {currentImages.length > 1 && (
+              <>
+                <button
+                  onClick={() => navigateImage("prev")}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-slate-300 bg-black/50 rounded-full p-2 transition-all"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+
+                <button
+                  onClick={() => navigateImage("next")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-slate-300 bg-black/50 rounded-full p-2 transition-all"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white bg-black/50 px-3 py-1 rounded-full text-sm">
+                  {currentImageIndex + 1} / {currentImages.length}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

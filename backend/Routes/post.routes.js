@@ -24,6 +24,17 @@ router.route("/api/v1/create-post").post(
   CreatePost,
 );
 
+router.route("/create-post").post(
+  verifyJwt,
+  upload.fields([
+    {
+      name: "media",
+      maxCount: 6,
+    },
+  ]),
+  CreatePost,
+);
+
 router.route("/api/v1/get-posts").get(GetPosts);
 router.route("/get-posts").get(GetPosts);
 

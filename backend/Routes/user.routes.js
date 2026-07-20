@@ -28,6 +28,19 @@ router.route("/api/v1/register").post(
   ]),
   registerUser,
 );
+router.route("/register").post(
+  upload.fields([
+    {
+      name: "avatarImage",
+      maxCount: 1,
+    },
+    {
+      name: "coverImage",
+      maxCount: 1,
+    },
+  ]),
+  registerUser,
+);
 
 router.route("/login").post(loginUser);
 router.route("/api/v1/login").post(loginUser);

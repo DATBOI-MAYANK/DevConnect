@@ -1,4 +1,3 @@
-import React from "react";
 import { Heart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleLike } from "../../features/PostSlice/postSlice.js";
@@ -23,17 +22,23 @@ function LikeButton({ postId, userId }) {
   const handleLike = () => {
     dispatch(toggleLike({ postId }));
   };
+
+  const formatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  compactDisplay: "short",
+});
+
   return (
     <button
       onClick={handleLike}
-      className="mx-9    flex hover:cursor-pointer space-x-1.5 "
+      className="mx-9    flex items-center hover:cursor-pointer space-x-1.5 "
     >
       {likedByUser ? (
-        <Heart fill="red" color="red" />
+        <Heart fill="red" color="red" className=" w-5 h-5" />
       ) : (
         <Heart className="  text-slate-400 w-5 h-5 hover:scale-110 hover:text-red-600 transition-colors duration-200" />
       )}{" "}
-      {likesCount > 0 ? <span className="text-white">{likesCount}</span> : null}
+      {likesCount > 0 ? <span className="text-white">{formatter.format(likesCount)}</span> : null}
     </button>
   );
 }

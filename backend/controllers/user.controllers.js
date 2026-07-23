@@ -289,7 +289,7 @@ const getAllDevs = asyncHandler(async (req, res) => {
 const getFeaturedDevs = asyncHandler(async (req, res) => {
   try {
     const featured = await User.aggregate([
-      { $match: { Role: "developer" }, $sample: { size: 4 } },
+      { $match: { Role: "developer" }}, {$sample: { size: 4 } },
     ]); // get random 4 devs
     return res.json(new ApiResponse(200, featured));
   } catch (error) {

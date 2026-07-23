@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -24,6 +25,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
       try {
         const response = await axios.get(`${apiBaseUrl}/featured`);
         const devs = response.data.data;
+        console.log("Devs", devs)
         setFeaturedDevs(pickFeaturedDevs(devs, 3));
       } catch (error) {
         console.error("Error fetching featured devs", error?.message);
@@ -69,7 +71,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
 
   return (
     <div
-      className={`fixed top-0 right-0 h-screen w-[300px] xl:w-[350px] bg-gradient-to-b from-slate-900 via-blue-900/20 to-slate-900 backdrop-blur-xl border-l border-slate-700/50 text-white overflow-y-auto transform transition-transform duration-300 z-40 ${
+      className={`fixed top-0 right-0 h-screen w-[300px] xl:w-[350px] bg-gray-950 backdrop-blur-xl border-l border-slate-700/50 text-white overflow-y-auto transform transition-transform duration-300 z-40 ${
         isOpen ? "translate-x-0" : "translate-x-full"
       } lg:translate-x-0 lg:fixed lg:right-0 lg:top-0 lg:h-screen lg:w-[350px]`}
     >
@@ -85,7 +87,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
           </button>
         </div>
         {/* Featured Devs Section */}
-        <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-5 border border-slate-700/50">
+        <div className="bg-gray-900 backdrop-blur-sm rounded-2xl p-5 border border-slate-700/50">
           <div className="flex items-center space-x-2 mb-4">
             <Star className="w-6 h-6 text-yellow-400" />
             <h2 className="text-xl font-bold">Featured Devs</h2>
@@ -103,12 +105,15 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
                     alt="Profile"
                     className="h-12 w-12 rounded-full object-cover border-2 border-slate-600/50 group-hover:border-blue-400/50 transition-colors duration-300"
                   />
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900"></div>
+                
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-white group-hover:text-blue-400 transition-colors duration-300 truncate">
-                    {dev?.username || "Unknown"}
-                  </div>
+                  <Link
+                        to={`/profile/${dev._id}`}
+                        className="block text-white font-semibold hover:text-blue-400 transition-colors duration-200"
+                      >
+                        <strong>{dev.username || "Unknown"}</strong>
+                      </Link>
                   <div className="text-sm text-slate-400 truncate">
                     Full-stack Developer
                   </div>

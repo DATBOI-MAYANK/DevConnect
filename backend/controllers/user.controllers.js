@@ -6,6 +6,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import Post from "../models/post.model.js";
+import { Follow } from "../models/follow.model.js";
 
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
@@ -32,14 +33,12 @@ const generateAccessAndRefereshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
 
-  const { username, password, email, GithubUsername, Bio , Role } = req.body;
+  const { username, password, email, GithubUsername, Bio, Role } = req.body;
   // console.log(username, password, email);
 
   //Validation -- Not empty
   if (
-    [username, email, password, Role].some(
-      (fields) => fields.trim() === "",
-    )
+    [username, email, password, Role].some((fields) => fields.trim() === "")
   ) {
     throw new ApiError(400, `${fields} is required`);
   }
@@ -83,15 +82,15 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // check for existing github name
 
- if(GithubUsername){
-   const existedGithubUsername = await User.findOne({
-    GithubUsername: GithubUsername,
-  });
+  if (GithubUsername) {
+    const existedGithubUsername = await User.findOne({
+      GithubUsername: GithubUsername,
+    });
 
-  if (existedGithubUsername) {
-    throw new ApiError(409, "Github username Already Exits.");
+    if (existedGithubUsername) {
+      throw new ApiError(409, "Github username Already Exits.");
+    }
   }
- }
 
   const avatarLocalPath = req.files?.avatarImage?.[0]?.path;
   const coverLocalPath = req.files?.coverImage?.[0]?.path;
@@ -182,7 +181,7 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken",
   );
 
-   const options = {
+  const options = {
     httpOnly: true,
     secure: true,
     sameSite: "none",
@@ -289,7 +288,9 @@ const getAllDevs = asyncHandler(async (req, res) => {
 
 const getFeaturedDevs = asyncHandler(async (req, res) => {
   try {
-    const featured = await User.aggregate([{ $match:{Role: "developer"}, $sample: { size: 4 } }]); // get random 4 devs
+    const featured = await User.aggregate([
+      { $match: { Role: "developer" }, $sample: { size: 4 } },
+    ]); // get random 4 devs
     return res.json(new ApiResponse(200, featured));
   } catch (error) {
     throw new ApiError(400, "Could not fetch devs.");
@@ -366,6 +367,60 @@ const deleteCurrentUser = asyncHandler(async (req, res) => {
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User account deleted successfully"));
 });
+
+const followUserController = asyncHandler(async (req, res) => {
+  const followerUsername = req.user.username;
+  const followeeUsername = req.params.username;
+
+  const isFolloweeExists = await User.findOne({
+    username: followeeUsername,
+  });
+
+  if (!isFolloweeExists) {
+    throw new ApiError(400, "User Does not exists.");
+  }
+
+  if (followerUsername === followeeUsername) {
+    throw new ApiError(400, "You can't follow yourself");
+  }
+
+  const isAlreadyFollowing = await Follow.findOne({
+    follower: followerUsername,
+    followee: followeeUsername,
+  });
+
+  if (isAlreadyFollowing) {
+    throw new ApiError(400, "You already follow this user.");
+  }
+
+  const followRecord = await Follow.create({
+    follower: followerUsername,
+    followee: followeeUsername,
+  });
+
+  return res.json(
+    new ApiResponse(201, followRecord, `You are following ${followeeUsername}`),
+  );
+});
+
+const unfollowUserController = asyncHandler(async (req, res) => {
+  const followerUsername = req.user.username;
+  const followeeUsername = req.params.username;
+
+  const isFollowing = await Follow.findOne({
+    follower: followerUsername,
+    followee: followeeUsername,
+  });
+
+  if(!isFollowing){
+    throw new ApiError(400, "You don't follow this user")
+  }
+
+  await Follow.findByIdAndDelete(isFollowing._id);
+
+  return new ApiResponse(200,"User unfollowed")
+});
+
 export {
   registerUser,
   loginUser,
@@ -376,4 +431,6 @@ export {
   getCurrentUserProfile,
   getProfile,
   deleteCurrentUser,
+  followUserController,
+  unfollowUserController,
 };

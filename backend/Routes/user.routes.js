@@ -9,6 +9,7 @@ import {
   getCurrentUserProfile,
   getProfile,
   deleteCurrentUser,
+  followUserController,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -65,5 +66,7 @@ router.route("/api/v1/delete-account").delete(verifyJwt, deleteCurrentUser);
 
 router.route("/refresh-Token").post(refreshAccessToken);
 router.route("/api/v1/refresh-Token").post(refreshAccessToken);
+
+router.route("/follow/:username").post(verifyJwt, followUserController)
 
 export default router;

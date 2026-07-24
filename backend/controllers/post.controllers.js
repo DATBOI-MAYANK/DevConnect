@@ -3,6 +3,8 @@ import Post from "../models/post.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import postModel from "../models/post.model.js";
+import { likeModal } from "../models/like.model.js";
 
 const CreatePost = asyncHandler(async (req, res) => {
   try {
@@ -179,6 +181,26 @@ const toggleLike = asyncHandler(async (req, res, next) => {
   }
 });
 
+const likePostController = asyncHandler(async(req,res)=>{
+
+      const postId = req.params.postId;
+      const username = req.user.username;
+
+      const isPostExist = await postModel.findById(postId);
+
+      if(!isPostExist){
+        throw new ApiError(404, "Post does not  exist");
+      }
+
+      const like = likeModal.create({
+        post:postId,
+        user:username,
+      })
+
+
+      return res.json (new ApiResponse(200,like,"Post liked Successfully"))
+})
+
 const addComment = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -222,4 +244,5 @@ export {
   toggleLike,
   addComment,
   getPostsByUserId,
+  likePostController,
 };

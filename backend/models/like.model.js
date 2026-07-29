@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ref } from "process";
 
 
 const likeSchema = new mongoose.Schema({
@@ -8,11 +9,12 @@ const likeSchema = new mongoose.Schema({
         required:true
     },
     user:{
-        type:String,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
         required:true
     }
 },{timestamps:true})
 
 likeSchema.index({post:1,user:1},{unique:true});
 
-export const likeModal = mongoose.model("Like",likeSchema)
+export const likeModel = mongoose.model("Like",likeSchema)

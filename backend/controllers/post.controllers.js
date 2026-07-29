@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import postModel from "../models/post.model.js";
-import { likeModal } from "../models/like.model.js";
+import { likeModal, likeModel } from "../models/like.model.js";
 
 const CreatePost = asyncHandler(async (req, res) => {
   try {
@@ -181,25 +181,36 @@ const toggleLike = asyncHandler(async (req, res, next) => {
   }
 });
 
-const likePostController = asyncHandler(async(req,res)=>{
+const likePostController = asyncHandler(async (req, res) => {
+  const postId = req.params.postId;
+  const userId = req.user._id;
+  let isLiked = false;
 
-      const postId = req.params.postId;
-      const username = req.user.username;
+  const isPostExist = await postModel.findById(postId);
 
-      const isPostExist = await postModel.findById(postId);
+  if (!isPostExist) {
+    throw new ApiError(404, "Post does not  exist");
+  }
 
-      if(!isPostExist){
-        throw new ApiError(404, "Post does not  exist");
-      }
+  const isLikeExist = await likeModel.findOne({ post: postId, user: userId });
 
-      const like = likeModal.create({
-        post:postId,
-        user:username,
-      })
+  if (isLikeExist) {
+    isLiked = false;
+    await likeModel.deleteOne({ post: postId, user: userId });
+  } else {
+    isLiked = true;
+    await likeModel.create({
+      post: postId,
+      user: userId,
+    });
+  }
 
+  const likeCount = await likeModel.countDocuments({ post: postId });
 
-      return res.json (new ApiResponse(200,like,"Post liked Successfully"))
-})
+  return res.json(
+    new ApiResponse(200,{ isLiked, likeCount}, isLiked ? "Post liked Successfully" : "Post Unliked Successfully"),
+  );
+});
 
 const addComment = asyncHandler(async (req, res, next) => {
   try {

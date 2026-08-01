@@ -36,15 +36,15 @@ router.route("/create-post").post(
   CreatePost,
 );
 
-router.route("/api/v1/get-posts").get(GetPosts);
+router.get("/api/v1/get-posts",verifyJwt ,GetPosts);
 router.route("/get-posts").get(GetPosts);
 
 router.get("/api/v1/user/:userId", getPostsByUserId);
 router.get("/user/:userId", getPostsByUserId);
 
-router.post("/api/v1/posts/:id/like", verifyJwt, toggleLike);
-router.post("/posts/:id/like", verifyJwt, toggleLike);
 
+
+router.post("/api/v1/posts/:postId" , verifyJwt , likePostController)
 router.post("posts/:postId" , verifyJwt , likePostController)
 
 router.post("/api/v1/posts/:id/addComment", verifyJwt, addComment);

@@ -11,7 +11,6 @@ const PostSchema = new mongoose.Schema(
     images: [{ type: String }], // Array of image URLs
     videos: [{ type: String }], // Array of video URLs
     githubRepoName: { type: String, trim: true, default: "" },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     comments: [
       {
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

@@ -369,24 +369,22 @@ const deleteCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const followUserController = asyncHandler(async (req, res) => {
-  const followerUsername = req.user.username;
-  const followeeUsername = req.params.username;
+  const followerId = req.user?._id;
+  const followeeId = req.params._id;
 
-  const isFolloweeExists = await User.findOne({
-    username: followeeUsername,
-  });
+  const isFolloweeExists = await User.findById(followeeId);
 
   if (!isFolloweeExists) {
     throw new ApiError(400, "User Does not exists.");
   }
 
-  if (followerUsername === followeeUsername) {
+  if (followerId === followeeId) {
     throw new ApiError(400, "You can't follow yourself");
   }
 
   const isAlreadyFollowing = await Follow.findOne({
-    follower: followerUsername,
-    followee: followeeUsername,
+    follower: followerId,
+    followee: followeeId,
   });
 
   if (isAlreadyFollowing) {
@@ -394,12 +392,12 @@ const followUserController = asyncHandler(async (req, res) => {
   }
 
   const followRecord = await Follow.create({
-    follower: followerUsername,
-    followee: followeeUsername,
+    follower: followerId,
+    followee: followeeId,
   });
 
   return res.json(
-    new ApiResponse(201, followRecord, `You are following ${followeeUsername}`),
+    new ApiResponse(201, followRecord, `You are following `),
   );
 });
 

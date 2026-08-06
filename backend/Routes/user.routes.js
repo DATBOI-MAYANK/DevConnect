@@ -67,6 +67,7 @@ router.route("/api/v1/delete-account").delete(verifyJwt, deleteCurrentUser);
 router.route("/refresh-Token").post(refreshAccessToken);
 router.route("/api/v1/refresh-Token").post(refreshAccessToken);
 
-router.route("/follow/:username").post(verifyJwt, followUserController)
+router.route("/follow/:userId").post(verifyJwt, followUserController)
+router.route("api/v1/follow/:userId").post(verifyJwt, followUserController);
 
 export default router;

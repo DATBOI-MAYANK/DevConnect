@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import postModel from "../models/post.model.js";
-import {  likeModel } from "../models/like.model.js";
+import { likeModel } from "../models/like.model.js";
 
 const CreatePost = asyncHandler(async (req, res) => {
   try {
@@ -55,28 +55,28 @@ const GetPosts = asyncHandler(async (req, res) => {
 
     const postIds = posts.map((post) => post._id);
 
-    const likes = await likeModel.find({
-      post: { $in: postIds },
-    }).lean();
+    const likes = await likeModel
+      .find({
+        post: { $in: postIds },
+      })
+      .lean();
 
     const updatedPosts = posts.map((post) => {
       const postLikes = likes.filter(
-        (like) => like.post.toString() === post._id.toString()
+        (like) => like.post.toString() === post._id.toString(),
       );
 
       return {
         ...post,
         likeCount: postLikes.length || 0,
         isLiked: userId
-          ? postLikes.some(
-              (like) => like.user.toString() === userId
-            )
+          ? postLikes.some((like) => like.user.toString() === userId)
           : false,
       };
     });
 
     return res.json(
-      new ApiResponse(200, updatedPosts, "Posts fetched successfully")
+      new ApiResponse(200, updatedPosts, "Posts fetched successfully"),
     );
   } catch (error) {
     console.error(error);
@@ -175,11 +175,9 @@ const deletePostById = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 const likePostController = asyncHandler(async (req, res) => {
-  const postId = req.params.postId;
-  const userId = req.user._id;
+  const postId = req.params?.postId;
+  const userId = req.user?._id;
   let isLiked = false;
 
   const isPostExist = await postModel.findById(postId);
@@ -204,13 +202,17 @@ const likePostController = asyncHandler(async (req, res) => {
   const likeCount = await likeModel.countDocuments({ post: postId });
 
   const updatedPost = {
-    id : postId,
+    id: postId,
     isLiked,
     likeCount,
-  }
+  };
 
   return res.json(
-    new ApiResponse(200,updatedPost, isLiked ? "Post liked Successfully" : "Post Unliked Successfully"),
+    new ApiResponse(
+      200,
+      updatedPost,
+      isLiked ? "Post liked Successfully" : "Post Unliked Successfully",
+    ),
   );
 });
 
@@ -254,7 +256,6 @@ export {
   UpdatePost,
   deletePostById,
   GetPosts,
-  toggleLike,
   addComment,
   getPostsByUserId,
   likePostController,

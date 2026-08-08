@@ -6,8 +6,6 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   return res.data.data;
 });
 
-
-
 export const Like = createAsyncThunk("posts/Like", async ({ postId }) => {
   const res = await api.post(`posts/${postId}`);
   return res.data.data;

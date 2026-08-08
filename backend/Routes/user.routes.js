@@ -10,6 +10,7 @@ import {
   getProfile,
   deleteCurrentUser,
   followUserController,
+  unfollowUserController,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -67,7 +68,12 @@ router.route("/api/v1/delete-account").delete(verifyJwt, deleteCurrentUser);
 router.route("/refresh-Token").post(refreshAccessToken);
 router.route("/api/v1/refresh-Token").post(refreshAccessToken);
 
-router.route("/follow/:userId").post(verifyJwt, followUserController)
+router.route("/follow/:userId").post(verifyJwt, followUserController);
 router.route("api/v1/follow/:userId").post(verifyJwt, followUserController);
+
+router.route("/unfollow/:userId").delete(verifyJwt, unfollowUserController);
+router
+  .route("api/v1/unfollow/:userId")
+  .delete(verifyJwt, unfollowUserController);
 
 export default router;

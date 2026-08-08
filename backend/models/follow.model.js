@@ -3,19 +3,21 @@ import mongoose from "mongoose";
 const followSchema = new mongoose.Schema(
   {
     follower: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     followee: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
-    status:{
-        type:String,
-        default:"Pending",
-        enum:{
-            values:["Pending", "Accepted","Rejected"],
-            message:"Status can only be Pending ,Accepted ,Rejected"
-        }
-    }
+    // status:{ TODO- Implement this feature for later Private accounts etc.
+    //     type:String,
+    //     default:"Pending",
+    //     enum:{
+    //         values:["Pending", "Accepted","Rejected"],
+    //         message:"Status can only be Pending ,Accepted ,Rejected"
+    //     }
+    // }
   },
   {
     timestamps: true,

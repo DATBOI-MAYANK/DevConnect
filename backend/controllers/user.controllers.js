@@ -289,7 +289,8 @@ const getAllDevs = asyncHandler(async (req, res) => {
 const getFeaturedDevs = asyncHandler(async (req, res) => {
   try {
     const featured = await User.aggregate([
-      { $match: { Role: "developer" }}, {$sample: { size: 4 } },
+      { $match: { Role: "developer" } },
+      { $sample: { size: 4 } },
     ]); // get random 4 devs
     return res.json(new ApiResponse(200, featured));
   } catch (error) {
@@ -396,27 +397,40 @@ const followUserController = asyncHandler(async (req, res) => {
     followee: followeeId,
   });
 
-  return res.json(
-    new ApiResponse(201, followRecord, `You are following `),
-  );
+  return res.json(new ApiResponse(201, followRecord, `You are following `));
 });
 
 const unfollowUserController = asyncHandler(async (req, res) => {
-  const followerUsername = req.user.username;
-  const followeeUsername = req.params.username;
+  const followerId = req.user._id;
+  const followeeId = req.params._id;
 
   const isFollowing = await Follow.findOne({
-    follower: followerUsername,
-    followee: followeeUsername,
+    follower: followerId,
+    followee: followeeId,
   });
 
-  if(!isFollowing){
-    throw new ApiError(400, "You don't follow this user")
+  if (!isFollowing) {
+    throw new ApiError(400, "You don't follow this user");
   }
 
   await Follow.findByIdAndDelete(isFollowing._id);
 
-  return new ApiResponse(200,"User unfollowed")
+  return new ApiResponse(200, "User unfollowed");
+});
+
+const getFollowRecord = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  const isUserExists = await User.findById(userId);
+
+  if (!isUserExists) {
+    throw new ApiError(400, "User does not exists.");
+  }
+
+  const followingRecord = await Follow.find({ follower: userId });
+  const followerRecord = await Follow.find({ followee: userId });
+
+  return res.json(new ApiResponse(200, { followerRecord, followingRecord }));
 });
 
 export {

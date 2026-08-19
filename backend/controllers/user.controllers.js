@@ -371,7 +371,7 @@ const deleteCurrentUser = asyncHandler(async (req, res) => {
 
 const followUserController = asyncHandler(async (req, res) => {
   const followerId = req.user?._id;
-  const followeeId = req.params._id;
+  const followeeId = req.params.userId;
 
   const isFolloweeExists = await User.findById(followeeId);
 
@@ -379,7 +379,7 @@ const followUserController = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User Does not exists.");
   }
 
-  if (followerId === followeeId) {
+  if (followerId.toString() === followeeId) {
     throw new ApiError(400, "You can't follow yourself");
   }
 
@@ -402,7 +402,7 @@ const followUserController = asyncHandler(async (req, res) => {
 
 const unfollowUserController = asyncHandler(async (req, res) => {
   const followerId = req.user._id;
-  const followeeId = req.params._id;
+  const followeeId = req.params.userId;
 
   const isFollowing = await Follow.findOne({
     follower: followerId,
@@ -415,7 +415,7 @@ const unfollowUserController = asyncHandler(async (req, res) => {
 
   await Follow.findByIdAndDelete(isFollowing._id);
 
-  return new ApiResponse(200, "User unfollowed");
+  return res.json(new ApiResponse(200, {}, "User unfollowed"));
 });
 
 const getFollowRecord = asyncHandler(async (req, res) => {
@@ -445,4 +445,5 @@ export {
   deleteCurrentUser,
   followUserController,
   unfollowUserController,
+  getFollowRecord,
 };

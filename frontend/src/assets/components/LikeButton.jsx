@@ -2,20 +2,22 @@ import { Heart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Like } from "../../features/PostSlice/postSlice.js";
 
-function LikeButton({ postId }) {
+function LikeButton({ postId, post: postProp, onLiked }) {
   const dispatch = useDispatch();
   // Always get the latest post from Redux
-  const post = useSelector((state) => {
-   return   state.posts.list.find((p) => p._id === postId);
-  });
+  const storePost = useSelector((state) =>
+    state.posts.list.find((p) => p._id === postId),
+  );
+  const post = postProp || storePost;
 
 
-  const handleLike = () => {
-    dispatch(Like({ postId }));
+  const handleLike = async () => {
+    const result = await dispatch(Like({ postId })).unwrap();
+    onLiked?.(result);
   };
 
-  const isLiked = post.isLiked || 0;
-  const likeCount = post.likeCount;
+  const isLiked = post?.isLiked || false;
+  const likeCount = post?.likeCount || 0;
 
   const formatter = new Intl.NumberFormat("en", {
     notation: "compact",

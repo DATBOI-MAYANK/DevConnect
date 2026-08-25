@@ -3,17 +3,13 @@ import api from "../../assets/api/axiosSetup.js";
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const res = await api.get("get-posts");
-  // console.log("Posts", res);
   return res.data.data;
 });
 
-export const toggleLike = createAsyncThunk(
-  "posts/toggleLike",
-  async ({ postId }) => {
-    const res = await api.post(`posts/${postId}/like`);
-    return res.data.data.updatedPost;
-  },
-);
+export const Like = createAsyncThunk("posts/Like", async ({ postId }) => {
+  const res = await api.post(`posts/${postId}`);
+  return res.data.data;
+});
 
 export const addComment = createAsyncThunk(
   "posts/addComment",
@@ -37,6 +33,12 @@ export const deletePost = createAsyncThunk(
   },
 );
 
+const updatePostInState = (state, payload) => {
+  const updated = payload;
+  const index = state.list.findIndex((p) => p._id === updated._id);
+  if (index !== -1) state.list[index] = updated;
+};
+
 const postSlice = createSlice({
   name: "posts",
   initialState: { list: [], status: "idle" },
@@ -46,15 +48,17 @@ const postSlice = createSlice({
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.list = action.payload;
       })
-      .addCase(toggleLike.fulfilled, (state, action) => {
+      .addCase(Like.fulfilled, (state, action) => {
         const updated = action.payload;
-        const index = state.list.findIndex((p) => p._id === updated._id);
-        if (index !== -1) state.list[index] = updated;
+        const post = state.list.find((p) => p._id === updated.id);
+
+        if (post) {
+          post.isLiked = action.payload.isLiked;
+          post.likeCount = action.payload.likeCount;
+        }
       })
       .addCase(addComment.fulfilled, (state, action) => {
-        const updated = action.payload;
-        const index = state.list.findIndex((p) => p._id === updated._id);
-        if (index !== -1) state.list[index] = updated;
+        updatePostInState(state, action.payload);
       })
       .addCase(deletePost.fulfilled, (state, action) => {
         const postId = action.payload;

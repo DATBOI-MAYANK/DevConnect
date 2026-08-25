@@ -9,6 +9,9 @@ import {
   getCurrentUserProfile,
   getProfile,
   deleteCurrentUser,
+  followUserController,
+  unfollowUserController,
+  getFollowRecord,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -16,6 +19,19 @@ import { verifyJwt } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.route("/api/v1/register").post(
+  upload.fields([
+    {
+      name: "avatarImage",
+      maxCount: 1,
+    },
+    {
+      name: "coverImage",
+      maxCount: 1,
+    },
+  ]),
+  registerUser,
+);
+router.route("/register").post(
   upload.fields([
     {
       name: "avatarImage",
@@ -52,5 +68,16 @@ router.route("/api/v1/delete-account").delete(verifyJwt, deleteCurrentUser);
 
 router.route("/refresh-Token").post(refreshAccessToken);
 router.route("/api/v1/refresh-Token").post(refreshAccessToken);
+
+router.route("/follow/:userId").post(verifyJwt, followUserController);
+router.route("/api/v1/follow/:userId").post(verifyJwt, followUserController);
+
+router.route("/unfollow/:userId").delete(verifyJwt, unfollowUserController);
+router
+  .route("/api/v1/unfollow/:userId")
+  .delete(verifyJwt, unfollowUserController);
+
+router.route("/follow-record").get(verifyJwt, getFollowRecord);
+router.route("/api/v1/follow-record").get(verifyJwt, getFollowRecord);
 
 export default router;

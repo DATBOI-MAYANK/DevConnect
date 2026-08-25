@@ -5,18 +5,20 @@ import { MessageCircle } from "lucide-react";
 import Modal from "react-modal";
 import { useSelector } from "react-redux";
 
-function CommentBox({ postId }) {
+function CommentBox({ postId, post: postProp, onCommented }) {
   const dispatch = useDispatch();
   const [text, setText] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
-  const post = useSelector((state) =>
+  const storePost = useSelector((state) =>
     state.posts.list.find((p) => p._id === postId),
   );
-  const commentCount = post.comments?.length || 0;
+  const post = postProp || storePost;
+  const commentCount = post?.comments?.length || 0;
 
-  const submit = () => {
+  const submit = async () => {
     if (!text.trim()) return;
-    dispatch(addComment({ postId, text }));
+    const updatedPost = await dispatch(addComment({ postId, text })).unwrap();
+    onCommented?.(updatedPost);
     setText("");
   };
 
@@ -75,8 +77,8 @@ function CommentBox({ postId }) {
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  submit();
+                onClick={async () => {
+                  await submit();
                   setIsOpen(false);
                 }}
                 disabled={!text.trim()}

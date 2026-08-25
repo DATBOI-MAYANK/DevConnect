@@ -3,6 +3,8 @@ import Post from "../models/post.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import postModel from "../models/post.model.js";
+import { likeModel } from "../models/like.model.js";
 
 const CreatePost = asyncHandler(async (req, res) => {
   try {
@@ -43,13 +45,42 @@ const CreatePost = asyncHandler(async (req, res) => {
 
 const GetPosts = asyncHandler(async (req, res) => {
   try {
+    const userId = req.user?._id?.toString();
+
     const posts = await Post.find()
       .populate("author", "username AvatarImage")
       .populate("comments.user", "username AvatarImage")
-      .sort({ createdAt: -1 });
-    res.json(new ApiResponse(200, posts));
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const postIds = posts.map((post) => post._id);
+
+    const likes = await likeModel
+      .find({
+        post: { $in: postIds },
+      })
+      .lean();
+
+    const updatedPosts = posts.map((post) => {
+      const postLikes = likes.filter(
+        (like) => like.post.toString() === post._id.toString(),
+      );
+
+      return {
+        ...post,
+        likeCount: postLikes.length || 0,
+        isLiked: userId
+          ? postLikes.some((like) => like.user.toString() === userId)
+          : false,
+      };
+    });
+
+    return res.json(
+      new ApiResponse(200, updatedPosts, "Posts fetched successfully"),
+    );
   } catch (error) {
-    throw new ApiError(500, "Could not find/fetch  Posts");
+    console.error(error);
+    throw new ApiError(500, "Could not fetch posts");
   }
 });
 
@@ -144,39 +175,45 @@ const deletePostById = asyncHandler(async (req, res) => {
   }
 });
 
-const toggleLike = asyncHandler(async (req, res, next) => {
-  try {
-    const postId = req.params.id;
-    const userId = req.user._id;
+const likePostController = asyncHandler(async (req, res) => {
+  const postId = req.params?.postId;
+  const userId = req.user?._id;
+  let isLiked = false;
 
-    const post = await Post.findById(postId);
-    if (!post) throw new ApiError(404, "Post not found");
+  const isPostExist = await postModel.findById(postId);
 
-    const liked = post.likes.includes(userId);
-
-    if (liked) {
-      // Unlike
-      post.likes = post.likes.filter(
-        (id) => id.toString() !== userId.toString(),
-      );
-    } else {
-      // Like
-      post.likes.push(userId);
-    }
-
-    await post.save();
-
-    // Optionally, populate author for frontend
-    const updatedPost = await Post.findById(postId)
-      .populate("author", "username AvatarImage")
-      .populate("likes", "username");
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, { updatedPost }, liked ? "Unliked" : "Liked"));
-  } catch (error) {
-    next(error);
+  if (!isPostExist) {
+    throw new ApiError(404, "Post does not  exist");
   }
+
+  const isLikeExist = await likeModel.findOne({ post: postId, user: userId });
+
+  if (isLikeExist) {
+    isLiked = false;
+    await likeModel.deleteOne({ post: postId, user: userId });
+  } else {
+    isLiked = true;
+    await likeModel.create({
+      post: postId,
+      user: userId,
+    });
+  }
+
+  const likeCount = await likeModel.countDocuments({ post: postId });
+
+  const updatedPost = {
+    id: postId,
+    isLiked,
+    likeCount,
+  };
+
+  return res.json(
+    new ApiResponse(
+      200,
+      updatedPost,
+      isLiked ? "Post liked Successfully" : "Post Unliked Successfully",
+    ),
+  );
 });
 
 const addComment = asyncHandler(async (req, res, next) => {
@@ -219,7 +256,7 @@ export {
   UpdatePost,
   deletePostById,
   GetPosts,
-  toggleLike,
   addComment,
   getPostsByUserId,
+  likePostController,
 };

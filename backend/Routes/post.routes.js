@@ -3,10 +3,10 @@ import {
   CreatePost,
   UpdatePost,
   GetPosts,
-  toggleLike,
   addComment,
   deletePostById,
   getPostsByUserId,
+  likePostController,
 } from "../controllers/post.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -24,14 +24,27 @@ router.route("/api/v1/create-post").post(
   CreatePost,
 );
 
-router.route("/api/v1/get-posts").get(GetPosts);
+router.route("/create-post").post(
+  verifyJwt,
+  upload.fields([
+    {
+      name: "media",
+      maxCount: 6,
+    },
+  ]),
+  CreatePost,
+);
+
+router.get("/api/v1/get-posts",verifyJwt ,GetPosts);
 router.route("/get-posts").get(GetPosts);
 
 router.get("/api/v1/user/:userId", getPostsByUserId);
 router.get("/user/:userId", getPostsByUserId);
 
-router.post("/api/v1/posts/:id/like", verifyJwt, toggleLike);
-router.post("/posts/:id/like", verifyJwt, toggleLike);
+
+
+router.post("/api/v1/posts/:postId" , verifyJwt , likePostController)
+router.post("posts/:postId" , verifyJwt , likePostController)
 
 router.post("/api/v1/posts/:id/addComment", verifyJwt, addComment);
 router.post("/posts/:id/addComment", verifyJwt, addComment);

@@ -5,27 +5,26 @@ import {
   ArrowLeft,
   Github,
   Calendar,
-  MapPin,
-  Mail,
-  Users,
   FileText,
   Star,
   GitFork,
   ExternalLink,
   Copy,
-  Heart,
   MessageCircle,
   X,
   ChevronLeft,
   ChevronRight,
   Image,
-  Video,
   Code,
   Activity,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSanitize from "rehype-sanitize";
+import FollowBtn from "./FollowBtn";
+import LikeButton from "./LikeButton";
+import CommentBox from "./CommentBox";
+import CommentList from "./CommentList";
 
 const UserProfile = () => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -43,6 +42,10 @@ const UserProfile = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentImages, setCurrentImages] = useState([]);
+  const [currentUser] = useState(
+    JSON.parse(localStorage.getItem("user") || "null"),
+  );
+  const [visibleComments, setVisibleComments] = useState({});
 
   // Tab state
   const [activeTab, setActiveTab] = useState("posts");
@@ -134,6 +137,13 @@ const UserProfile = () => {
       (post) => post.images?.length > 0 || post.videos?.length > 0,
     );
   const getGithubPosts = () => userPosts.filter((post) => post.githubRepoName);
+  const updatePost = (postId, patch) => {
+    setUserPosts((currentPosts) =>
+      currentPosts.map((post) =>
+        post._id === postId ? { ...post, ...patch } : post,
+      ),
+    );
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -219,7 +229,7 @@ const UserProfile = () => {
               <div
                 className={`grid ${getGridClass(post.videos.length)} gap-2 mb-4 max-w-2xl`}
               >
-                {post.videos.map((vid, index) => (
+                {post.videos.map((vid) => (
                   <video
                     key={vid}
                     src={vid}
@@ -253,20 +263,38 @@ const UserProfile = () => {
               </div>
             )}
 
-            {/* Post Stats */}
-            <div className="flex items-center space-x-6 pt-4 border-t border-slate-700/50 text-slate-400">
-              <div className="flex items-center space-x-2">
-                <Heart className="w-5 h-5" />
-                <span>{post.likes?.length || 0}</span>
-              </div>
-              <div className="flex items-center space-x-2">
+            {/* Post actions */}
+            <div className="flex items-center gap-5 pt-4 border-t border-slate-700/50 text-slate-400">
+              <LikeButton
+                postId={post._id}
+                post={post}
+                onLiked={(result) => updatePost(post._id, result)}
+              />
+              <CommentBox
+                postId={post._id}
+                post={post}
+                onCommented={(updatedPost) => updatePost(post._id, updatedPost)}
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  setVisibleComments((current) => ({
+                    ...current,
+                    [post._id]: !current[post._id],
+                  }))
+                }
+                className="flex items-center gap-2 text-sm hover:text-white transition-colors"
+              >
                 <MessageCircle className="w-5 h-5" />
-                <span>{post.comments?.length || 0}</span>
-              </div>
+                {visibleComments[post._id] ? "Hide comments" : "View comments"}
+              </button>
               <div className="text-sm">
                 {new Date(post.createdAt).toLocaleDateString()}
               </div>
             </div>
+            {visibleComments[post._id] && (
+              <CommentList comments={post.comments || []} />
+            )}
           </article>
         ))}
       </div>
@@ -507,6 +535,7 @@ const UserProfile = () => {
                 </p>
               )}
             </div>
+            <FollowBtn userId={userId} currentUserId={currentUser?._id} />
           </div>
         </div>
       </div>

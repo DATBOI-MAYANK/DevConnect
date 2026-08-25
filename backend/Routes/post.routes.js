@@ -3,7 +3,6 @@ import {
   CreatePost,
   UpdatePost,
   GetPosts,
-  toggleLike,
   addComment,
   deletePostById,
   getPostsByUserId,

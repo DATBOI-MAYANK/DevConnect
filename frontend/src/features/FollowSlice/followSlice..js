@@ -79,4 +79,4 @@ const followSlice = createSlice({
   },
 });
 
-export default followSlice;
+export default followSlice.reducer;

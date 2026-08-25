@@ -14,9 +14,13 @@ import {
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import FollowBtn from "./FollowBtn";
 
 export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const [currentUser] = useState(
+    JSON.parse(localStorage.getItem("user") || "null"),
+  );
   const [allDevs, setAllDevs] = useState(0);
   const [featuredDevs, setFeaturedDevs] = useState([]);
   const posts = useSelector((state) => state.posts.list);
@@ -33,6 +37,9 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
     };
     fetchFeatured();
   }, []);
+
+ 
+
 
   useEffect(() => {
     const allDevs = async () => {
@@ -118,12 +125,13 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
                     Full-stack Developer
                   </div>
                 </div>
-                <button
+                {/* <button
                   className="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-300 text-sm font-medium opacity-60 cursor-not-allowed whitespace-nowrap"
                   disabled
                 >
                   Follow
-                </button>
+                </button> */}
+                <FollowBtn userId={dev._id} currentUserId={currentUser?._id} />
               </div>
             ))}
           </div>

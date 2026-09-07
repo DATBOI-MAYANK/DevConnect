@@ -5,6 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import postModel from "../models/post.model.js";
 import { likeModel } from "../models/like.model.js";
+import redis from "../utils/cache.js";
 
 const CreatePost = asyncHandler(async (req, res) => {
   try {
@@ -37,6 +38,7 @@ const CreatePost = asyncHandler(async (req, res) => {
       githubRepoName: githubRepoName || "",
     });
 
+    await redis.del(`posts:${req.user._id}`);
     res.status(201).json(new ApiResponse(201, post, "Post Created"));
   } catch (err) {
     throw new ApiError(500, "Something went wrong while creating post.");
@@ -46,6 +48,16 @@ const CreatePost = asyncHandler(async (req, res) => {
 const GetPosts = asyncHandler(async (req, res) => {
   try {
     const userId = req.user?._id?.toString();
+
+    const key = `posts:${userId}`;
+
+    const cached = await redis.get(key);
+
+    if (cached) {
+      return res.json(
+        new ApiResponse(200, JSON.parse(cached), "Posts fetched successfully"),
+      );
+    }
 
     const posts = await Post.find()
       .populate("author", "username AvatarImage")
@@ -74,6 +86,8 @@ const GetPosts = asyncHandler(async (req, res) => {
           : false,
       };
     });
+
+    await redis.set(key, JSON.stringify(updatedPosts), { EX: 60 });
 
     return res.json(
       new ApiResponse(200, updatedPosts, "Posts fetched successfully"),
@@ -127,6 +141,7 @@ const UpdatePost = asyncHandler(async (req, res) => {
     });
 
     if (!post) throw new ApiError(404, "Post not found");
+    await redis.del(`posts:${userId}`);
     res.json(new ApiResponse(200, post, "Post Updated Successfully."));
   } catch (err) {
     throw new ApiError(500, "Something went wrong while updating Post. ");
@@ -136,14 +151,49 @@ const UpdatePost = asyncHandler(async (req, res) => {
 const getPostsByUserId = asyncHandler(async (req, res) => {
   try {
     const { userId } = req.params;
+    const currentUserId = req.user?._id?.toString();
+
+    const key = `profile:posts:${userId}`;
+
+    const cached = await redis.get(key);
+
+    if(cached){
+      return res.json(new ApiResponse(200, JSON.parse(cached), "User posts fetched successfully"))
+
+    }
 
     const posts = await Post.find({ author: userId })
       .populate("author", "username AvatarImage")
       .populate("comments.user", "username AvatarImage")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
+    const postIds = posts.map((post) => post._id);
+
+    const likes = await likeModel
+      .find({
+        post: { $in: postIds },
+      })
+      .lean();
+
+    const updatedPosts = posts.map((post) => {
+      const postLikes = likes.filter(
+        (like) => like.post.toString() === post._id.toString(),
+      );
+
+      return {
+        ...post,
+        likeCount: postLikes.length || 0,
+        isLiked: currentUserId
+          ? postLikes.some((like) => like.user.toString() === currentUserId)
+          : false,
+      };
+    });
+
+
+    await redis.set(key , JSON.stringify(updatedPosts),{EX:60})
     return res.json(
-      new ApiResponse(200, posts, "User posts fetched successfully"),
+      new ApiResponse(200, updatedPosts, "User posts fetched successfully"),
     );
   } catch (error) {
     throw new ApiError(500, "Error fetching user posts");
@@ -201,6 +251,8 @@ const likePostController = asyncHandler(async (req, res) => {
 
   const likeCount = await likeModel.countDocuments({ post: postId });
 
+  await redis.del(`posts:${userId}`);
+
   const updatedPost = {
     id: postId,
     isLiked,
@@ -243,6 +295,9 @@ const addComment = asyncHandler(async (req, res, next) => {
       .populate("author", "username AvatarImage")
       .populate("comments.user", "username AvatarImage");
     if (!updatedPost) throw new ApiError(404, "Post not Found");
+
+    await redis.del(`posts:${req.user._id}`);
+
     res
       .status(200)
       .json(new ApiResponse(200, { updatedPost }, "Comment added"));

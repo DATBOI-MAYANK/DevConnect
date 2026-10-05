@@ -97,6 +97,63 @@ npm run dev
 
 The frontend will run on `http://localhost:5173`
 
+### 4. Run with Docker
+
+Install Docker Desktop and make sure Docker is running. Before starting the
+containers, create `backend/.env` and add valid values for `MONGODB_URL`, the
+JWT variables, and the Cloudinary variables. This file is used by the backend
+container and must not be committed.
+
+Build both images and start the application from the project root:
+
+```bash
+docker compose up --build
+```
+
+The frontend will be available at `http://localhost:5173` and the backend API
+will be available at `http://localhost:8000/users/api/v1`.
+
+The frontend Docker image is a multi-stage build: Vite builds the application
+and Nginx serves the generated files. The local API URL is passed as a build
+argument by `docker-compose.yml`:
+
+```yaml
+VITE_API_BASE_URL: http://localhost:8000/users/api/v1
+```
+
+If you build the frontend image manually, pass the API URL explicitly:
+
+```bash
+docker build \
+  --build-arg VITE_API_BASE_URL=http://localhost:8000/users/api/v1 \
+  -t devconnect-frontend ./frontend
+docker build -t devconnect-backend ./backend
+```
+
+For a deployed frontend, use the public Render backend URL instead of
+`localhost`, for example:
+
+```bash
+docker build \
+  --build-arg VITE_API_BASE_URL=https://your-backend.onrender.com/users/api/v1 \
+  -t devconnect-frontend ./frontend
+```
+
+Because Vite embeds `VITE_API_BASE_URL` during the build, rebuild the frontend
+image whenever this value changes.
+
+To stop the containers:
+
+```bash
+docker compose down
+```
+
+To rebuild and start the containers after a code or environment change:
+
+```bash
+docker compose up --build
+```
+
 ---
 
 ## 📁 Project Structure

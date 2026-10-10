@@ -8,6 +8,12 @@ import jwt from "jsonwebtoken";
 import Post from "../models/post.model.js";
 import { Follow } from "../models/follow.model.js";
 
+const authCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+};
+
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -138,11 +144,7 @@ const registerUser = asyncHandler(async (req, res) => {
       "Something went wrong while registering the user  ",
     );
   }
-  const options = {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  };
+  const options = authCookieOptions;
   // return res
 
   return res
@@ -181,11 +183,7 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken",
   );
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  };
+  const options = authCookieOptions;
 
   return res
     .status(200)
@@ -217,14 +215,9 @@ const logoutUser = asyncHandler(async (req, res) => {
     },
   );
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
-
   return res
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("accessToken", authCookieOptions)
+    .clearCookie("refreshToken", authCookieOptions)
     .json(new ApiResponse(200, {}, "User Logged out"));
 });
 
@@ -255,15 +248,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const { accessToken, newRefreshToken } =
       await generateAccessAndRefereshTokens(user._id);
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
-
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newRefreshToken, options)
+      .cookie("accessToken", accessToken, authCookieOptions)
+      .cookie("refreshToken", newRefreshToken, authCookieOptions)
       .json(
         new ApiResponse(
           200,
@@ -272,6 +260,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         ),
       );
   } catch (error) {
+    res
+      .clearCookie("accessToken", authCookieOptions)
+      .clearCookie("refreshToken", authCookieOptions);
     throw new ApiError(401, error?.message || "Invalid refresh Token");
   }
 });
@@ -357,15 +348,10 @@ const deleteCurrentUser = asyncHandler(async (req, res) => {
 
   await User.findByIdAndDelete(userId);
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
-
   return res
     .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("accessToken", authCookieOptions)
+    .clearCookie("refreshToken", authCookieOptions)
     .json(new ApiResponse(200, {}, "User account deleted successfully"));
 });
 

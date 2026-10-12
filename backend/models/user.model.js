@@ -24,6 +24,16 @@ const UserSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    githubId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     AvatarImage: {
       type: String,
       required: true,
@@ -34,6 +44,7 @@ const UserSchema = new mongoose.Schema(
     GithubUsername: {
       type: String,
       unique: true,
+      sparse: true,
     },
     Bio: {
       type: String,

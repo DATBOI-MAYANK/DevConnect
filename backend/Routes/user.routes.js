@@ -12,9 +12,13 @@ import {
   followUserController,
   unfollowUserController,
   getFollowRecord,
+  googleLogin,
+  githubLogin,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
+import passport from "passport";
+import "../config/passport.js";
 
 const router = Router();
 
@@ -47,6 +51,38 @@ router.route("/register").post(
 
 router.route("/login").post(loginUser);
 router.route("/api/v1/login").post(loginUser);
+
+router
+  .route("/auth/google")
+  .get(passport.authenticate("google", { scope: ["profile", "email"], session: false }));
+router
+  .route("/auth/google/callback")
+  .get(
+    passport.authenticate("google", {
+      failureRedirect: "/users/auth/google/failure",
+      session: false,
+    }),
+    googleLogin,
+  );
+router.route("/auth/google/failure").get((req, res) => {
+  res.status(401).json({ success: false, message: "Google authentication failed" });
+});
+
+router
+  .route("/auth/github")
+  .get(passport.authenticate("github", { scope: ["user:email"], session: false }));
+router
+  .route("/auth/github/callback")
+  .get(
+    passport.authenticate("github", {
+      failureRedirect: "/users/auth/github/failure",
+      session: false,
+    }),
+    githubLogin,
+  );
+router.route("/auth/github/failure").get((req, res) => {
+  res.status(401).json({ success: false, message: "GitHub authentication failed" });
+});
 
 router.route("/me").get(verifyJwt, getCurrentUserProfile);
 router.route("/api/v1/me").get(verifyJwt, getCurrentUserProfile);

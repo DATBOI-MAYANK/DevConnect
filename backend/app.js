@@ -5,18 +5,24 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-const allowedOrigins =  process.env.CORS_ORIGIN;
+const allowedOrigins = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/$/, ""))
+  .filter(Boolean);
 
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins === origin) {
+      const normalizedOrigin = origin?.replace(/\/$/, "");
+      if (!origin || allowedOrigins.includes(normalizedOrigin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 

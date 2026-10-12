@@ -7,6 +7,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import Post from "../models/post.model.js";
 import { Follow } from "../models/follow.model.js";
+import { randomUUID } from "node:crypto";
 
 const authCookieOptions = {
   httpOnly: true,
@@ -200,6 +201,118 @@ const loginUser = asyncHandler(async (req, res) => {
         "User logged In Successfully",
       ),
     );
+});
+
+const createUniqueUsername = async (profile) => {
+  const baseUsername = (profile.displayName || profile.emails?.[0]?.value?.split("@")[0] || "google-user")
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 24) || "google-user";
+
+  let username = baseUsername;
+  let suffix = 1;
+  while (await User.exists({ username })) {
+    username = `${baseUsername.slice(0, 24 - String(suffix).length - 1)}_${suffix}`;
+    suffix += 1;
+  }
+  return username;
+};
+
+const googleLogin = asyncHandler(async (req, res) => {
+  const profile = req.user;
+  const email = profile.emails?.[0]?.value?.toLowerCase();
+  const avatar = profile.photos?.[0]?.value;
+
+  if (!email || !avatar) {
+    throw new ApiError(400, "Google did not provide an email address and profile photo");
+  }
+
+  let user = await User.findOne({
+    $or: [{ googleId: profile.id }, { email }],
+  });
+
+  if (!user) {
+    user = await User.create({
+      googleId: profile.id,
+      username: await createUniqueUsername(profile),
+      email,
+      password: randomUUID(),
+      AvatarImage: avatar,
+      Role: "user",
+    });
+  } else if (!user.googleId) {
+    user.googleId = profile.id;
+    await user.save({ validateBeforeSave: false });
+  }
+
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
+  const frontendUrl = process.env.GOOGLE_SUCCESS_REDIRECT || process.env.CORS_ORIGIN;
+
+  if (!frontendUrl) {
+    throw new ApiError(500, "GOOGLE_SUCCESS_REDIRECT or CORS_ORIGIN is required");
+  }
+
+  return res
+    .cookie("accessToken", accessToken, authCookieOptions)
+    .cookie("refreshToken", refreshToken, authCookieOptions)
+    .redirect(frontendUrl);
+});
+
+const githubLogin = asyncHandler(async (req, res) => {
+  const profile = req.user;
+  const email = profile.emails?.find((item) => item.value)?.value?.toLowerCase();
+  const avatar = profile.photos?.[0]?.value;
+  const githubUsername = profile.username;
+
+  if (!email || !avatar || !githubUsername) {
+    throw new ApiError(400, "GitHub did not provide the required profile information");
+  }
+
+  let user = await User.findOne({
+    $or: [{ githubId: profile.id }, { email }],
+  });
+
+  if (!user) {
+    user = await User.create({
+      githubId: profile.id,
+      GithubUsername: githubUsername,
+      username: await createUniqueUsername(profile),
+      email,
+      password: randomUUID(),
+      AvatarImage: avatar,
+      Role: "developer",
+    });
+  } else {
+    let changed = false;
+    if (!user.githubId) {
+      user.githubId = profile.id;
+      changed = true;
+    }
+    if (!user.GithubUsername) {
+      user.GithubUsername = githubUsername;
+      changed = true;
+    }
+    if (user.Role !== "developer") {
+      user.Role = "developer";
+      changed = true;
+    }
+    if (changed) {
+      await user.save({ validateBeforeSave: false });
+    }
+  }
+
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
+  const frontendUrl = process.env.GITHUB_SUCCESS_REDIRECT || process.env.CORS_ORIGIN;
+
+  if (!frontendUrl) {
+    throw new ApiError(500, "GITHUB_SUCCESS_REDIRECT or CORS_ORIGIN is required");
+  }
+
+  return res
+    .cookie("accessToken", accessToken, authCookieOptions)
+    .cookie("refreshToken", refreshToken, authCookieOptions)
+    .redirect(frontendUrl);
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
@@ -432,4 +545,6 @@ export {
   followUserController,
   unfollowUserController,
   getFollowRecord,
+  googleLogin,
+  githubLogin,
 };

@@ -16,11 +16,13 @@ import {
   UserPlus,
   Eye,
   EyeOff,
+  Chrome,
 } from "lucide-react";
 import Logo from "../Logo/Logo-removebg.png";
 
 const Register = () => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const backendBaseUrl = apiBaseUrl.replace(/\/users\/api\/v1\/?$/, "");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -318,6 +320,23 @@ const Register = () => {
                   )}
                 </button>
               </form>
+
+              <div className="mt-6">
+                <a
+                  href={`${backendBaseUrl}/users/auth/google`}
+                  className="flex items-center justify-center gap-2 rounded-xl border border-slate-600/50 bg-white px-4 py-3 mb-2 font-semibold text-slate-900 transition-colors hover:bg-slate-200"
+                >
+                  <Chrome className="h-5 w-5" />
+                  Continue with Google
+                </a>
+                <a
+                  href={`${backendBaseUrl}/users/auth/github`}
+                  className="flex items-center justify-center gap-2 rounded-xl border border-slate-600/50 bg-slate-800 px-4 py-3 font-semibold text-white transition-colors hover:bg-slate-700"
+                >
+                  <Github className="h-5 w-5" />
+                  Continue with GitHub
+                </a>
+              </div>
 
               {/* Divider */}
               <div className="my-8 flex items-center">

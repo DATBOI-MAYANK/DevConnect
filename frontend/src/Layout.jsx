@@ -2,7 +2,7 @@ import  { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios"; // adjust path if needed
-import { logout } from "./features/IsLoggedIn/loginSlice";
+import { logout, setLogin } from "./features/IsLoggedIn/loginSlice";
 import { useLocation } from "react-router-dom";
 
 function Layout() {
@@ -13,10 +13,22 @@ function Layout() {
   useEffect(() => {
     console.log("Running /me check from Layout");
 
-    if (location.pathname === "/login" || location.pathname === "/register")return;
+    if (
+      location.pathname === "/login" ||
+      location.pathname === "/register" ||
+      location.pathname === "/oauth/google/callback"
+    ) {
+      return;
+    }
 
     axios
       .get(`${apiBaseUrl}/me`, { withCredentials: true })
+      .then(({ data }) => {
+        dispatch(setLogin(true));
+        if (data?.data) {
+          localStorage.setItem("user", JSON.stringify(data.data));
+        }
+      })
       .catch((err) => {
         console.log("Error from /me:", err);
         if (err.response && err.response.status === 401) {

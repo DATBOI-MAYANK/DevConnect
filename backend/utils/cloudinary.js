@@ -26,4 +26,17 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
-export { uploadOnCloudinary }
+const uploadImageFromUrl = async (imageUrl) => {
+    try {
+        if (!imageUrl) return null;
+        const response = await cloudinary.uploader.upload(imageUrl, {
+            resource_type: "image"
+        });
+        return response.secure_url;
+    } catch (error) {
+        console.log("Cloudinary URL upload error", error);
+        return null;
+    }
+}
+
+export { uploadOnCloudinary, uploadImageFromUrl }

@@ -2,11 +2,21 @@ import "dotenv/config";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  uploadImageFromUrl,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import Post from "../models/post.model.js";
 import { Follow } from "../models/follow.model.js";
+import { randomUUID } from "node:crypto";
+
+const authCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+};
 
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
@@ -138,11 +148,7 @@ const registerUser = asyncHandler(async (req, res) => {
       "Something went wrong while registering the user  ",
     );
   }
-  const options = {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  };
+  const options = authCookieOptions;
   // return res
 
   return res
@@ -181,11 +187,7 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken",
   );
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  };
+  const options = authCookieOptions;
 
   return res
     .status(200)
@@ -204,6 +206,145 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+const createUniqueUsername = async (profile) => {
+  const baseUsername = (profile.displayName || profile.emails?.[0]?.value?.split("@")[0] || "google-user")
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 24) || "google-user";
+
+  let username = baseUsername;
+  let suffix = 1;
+  while (await User.exists({ username })) {
+    username = `${baseUsername.slice(0, 24 - String(suffix).length - 1)}_${suffix}`;
+    suffix += 1;
+  }
+  return username;
+};
+
+const isCloudinaryUrl = (imageUrl) =>
+  typeof imageUrl === "string" && imageUrl.includes("res.cloudinary.com/");
+
+const getOAuthAvatarUrl = async (avatar) => {
+  const cloudinaryAvatar = await uploadImageFromUrl(avatar);
+
+  if (!cloudinaryAvatar) {
+    throw new ApiError(502, "Unable to save OAuth profile image");
+  }
+
+  return cloudinaryAvatar;
+};
+
+const googleLogin = asyncHandler(async (req, res) => {
+  const profile = req.user;
+  const email = profile.emails?.[0]?.value?.toLowerCase();
+  const avatar = profile.photos?.[0]?.value;
+
+  if (!email || !avatar) {
+    throw new ApiError(400, "Google did not provide an email address and profile photo");
+  }
+
+  let user = await User.findOne({
+    $or: [{ googleId: profile.id }, { email }],
+  });
+
+  if (!user) {
+    user = await User.create({
+      googleId: profile.id,
+      username: await createUniqueUsername(profile),
+      email,
+      password: randomUUID(),
+      AvatarImage: await getOAuthAvatarUrl(avatar),
+      Role: "user",
+    });
+  } else {
+    let changed = false;
+    if (!user.googleId) {
+      user.googleId = profile.id;
+      changed = true;
+    }
+    if (!isCloudinaryUrl(user.AvatarImage)) {
+      user.AvatarImage = await getOAuthAvatarUrl(avatar);
+      changed = true;
+    }
+    if (changed) {
+      await user.save({ validateBeforeSave: false });
+    }
+  }
+
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
+  const frontendUrl = process.env.GOOGLE_SUCCESS_REDIRECT || process.env.CORS_ORIGIN;
+
+  if (!frontendUrl) {
+    throw new ApiError(500, "GOOGLE_SUCCESS_REDIRECT or CORS_ORIGIN is required");
+  }
+
+  return res
+    .cookie("accessToken", accessToken, authCookieOptions)
+    .cookie("refreshToken", refreshToken, authCookieOptions)
+    .redirect(`${frontendUrl.replace(/\/$/, "")}/oauth/google/callback`);
+});
+
+const githubLogin = asyncHandler(async (req, res) => {
+  const profile = req.user;
+  const email = profile.emails?.find((item) => item.value)?.value?.toLowerCase();
+  const avatar = profile.photos?.[0]?.value;
+  const githubUsername = profile.username;
+
+  if (!email || !avatar || !githubUsername) {
+    throw new ApiError(400, "GitHub did not provide the required profile information");
+  }
+
+  let user = await User.findOne({
+    $or: [{ githubId: profile.id }, { email }],
+  });
+
+  if (!user) {
+    user = await User.create({
+      githubId: profile.id,
+      GithubUsername: githubUsername,
+      username: await createUniqueUsername(profile),
+      email,
+      password: randomUUID(),
+      AvatarImage: await getOAuthAvatarUrl(avatar),
+      Role: "developer",
+    });
+  } else {
+    let changed = false;
+    if (!user.githubId) {
+      user.githubId = profile.id;
+      changed = true;
+    }
+    if (!user.GithubUsername) {
+      user.GithubUsername = githubUsername;
+      changed = true;
+    }
+    if (user.Role !== "developer") {
+      user.Role = "developer";
+      changed = true;
+    }
+    if (!isCloudinaryUrl(user.AvatarImage)) {
+      user.AvatarImage = await getOAuthAvatarUrl(avatar);
+      changed = true;
+    }
+    if (changed) {
+      await user.save({ validateBeforeSave: false });
+    }
+  }
+
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
+  const frontendUrl = process.env.GITHUB_SUCCESS_REDIRECT || process.env.CORS_ORIGIN;
+
+  if (!frontendUrl) {
+    throw new ApiError(500, "GITHUB_SUCCESS_REDIRECT or CORS_ORIGIN is required");
+  }
+
+  return res
+    .cookie("accessToken", accessToken, authCookieOptions)
+    .cookie("refreshToken", refreshToken, authCookieOptions)
+    .redirect(frontendUrl);
+});
+
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
@@ -217,14 +358,9 @@ const logoutUser = asyncHandler(async (req, res) => {
     },
   );
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
-
   return res
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("accessToken", authCookieOptions)
+    .clearCookie("refreshToken", authCookieOptions)
     .json(new ApiResponse(200, {}, "User Logged out"));
 });
 
@@ -255,15 +391,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const { accessToken, newRefreshToken } =
       await generateAccessAndRefereshTokens(user._id);
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
-
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newRefreshToken, options)
+      .cookie("accessToken", accessToken, authCookieOptions)
+      .cookie("refreshToken", newRefreshToken, authCookieOptions)
       .json(
         new ApiResponse(
           200,
@@ -272,6 +403,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         ),
       );
   } catch (error) {
+    res
+      .clearCookie("accessToken", authCookieOptions)
+      .clearCookie("refreshToken", authCookieOptions);
     throw new ApiError(401, error?.message || "Invalid refresh Token");
   }
 });
@@ -357,15 +491,10 @@ const deleteCurrentUser = asyncHandler(async (req, res) => {
 
   await User.findByIdAndDelete(userId);
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
-
   return res
     .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("accessToken", authCookieOptions)
+    .clearCookie("refreshToken", authCookieOptions)
     .json(new ApiResponse(200, {}, "User account deleted successfully"));
 });
 
@@ -446,4 +575,6 @@ export {
   followUserController,
   unfollowUserController,
   getFollowRecord,
+  googleLogin,
+  githubLogin,
 };

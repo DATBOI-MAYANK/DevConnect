@@ -22,7 +22,7 @@ export const verifyJwt = asyncHandler(async (req, res, next) => {
     );
 
     if (!user) {
-      throw new ApiError(401, "Invalid Token");
+      throw new ApiError(402, "Invalid Token");
     }
 
     req.user = user;

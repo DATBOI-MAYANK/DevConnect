@@ -13,6 +13,7 @@ import ErrorBoundary from "./assets/components/ErrorBoundary.jsx";
 import Modal from "react-modal";
 import Dashboard from "./assets/components/Dashboard.jsx";
 import UserProfile from "./assets/components/UserProfile.jsx";
+import OAuthCallback from "./assets/components/OAuthCallback.jsx";
 
 Modal.setAppElement("#root");
 
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <LoginPage />,
+      },
+      {
+        path: "oauth/google/callback",
+        element: <OAuthCallback />,
       },
       {
         path: "register",

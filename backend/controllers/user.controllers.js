@@ -2,7 +2,10 @@ import "dotenv/config";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  uploadImageFromUrl,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import Post from "../models/post.model.js";
@@ -219,6 +222,19 @@ const createUniqueUsername = async (profile) => {
   return username;
 };
 
+const isCloudinaryUrl = (imageUrl) =>
+  typeof imageUrl === "string" && imageUrl.includes("res.cloudinary.com/");
+
+const getOAuthAvatarUrl = async (avatar) => {
+  const cloudinaryAvatar = await uploadImageFromUrl(avatar);
+
+  if (!cloudinaryAvatar) {
+    throw new ApiError(502, "Unable to save OAuth profile image");
+  }
+
+  return cloudinaryAvatar;
+};
+
 const googleLogin = asyncHandler(async (req, res) => {
   const profile = req.user;
   const email = profile.emails?.[0]?.value?.toLowerCase();
@@ -238,12 +254,22 @@ const googleLogin = asyncHandler(async (req, res) => {
       username: await createUniqueUsername(profile),
       email,
       password: randomUUID(),
-      AvatarImage: avatar,
+      AvatarImage: await getOAuthAvatarUrl(avatar),
       Role: "user",
     });
-  } else if (!user.googleId) {
-    user.googleId = profile.id;
-    await user.save({ validateBeforeSave: false });
+  } else {
+    let changed = false;
+    if (!user.googleId) {
+      user.googleId = profile.id;
+      changed = true;
+    }
+    if (!isCloudinaryUrl(user.AvatarImage)) {
+      user.AvatarImage = await getOAuthAvatarUrl(avatar);
+      changed = true;
+    }
+    if (changed) {
+      await user.save({ validateBeforeSave: false });
+    }
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
@@ -256,7 +282,7 @@ const googleLogin = asyncHandler(async (req, res) => {
   return res
     .cookie("accessToken", accessToken, authCookieOptions)
     .cookie("refreshToken", refreshToken, authCookieOptions)
-    .redirect(frontendUrl);
+    .redirect(`${frontendUrl.replace(/\/$/, "")}/oauth/google/callback`);
 });
 
 const githubLogin = asyncHandler(async (req, res) => {
@@ -280,7 +306,7 @@ const githubLogin = asyncHandler(async (req, res) => {
       username: await createUniqueUsername(profile),
       email,
       password: randomUUID(),
-      AvatarImage: avatar,
+      AvatarImage: await getOAuthAvatarUrl(avatar),
       Role: "developer",
     });
   } else {
@@ -295,6 +321,10 @@ const githubLogin = asyncHandler(async (req, res) => {
     }
     if (user.Role !== "developer") {
       user.Role = "developer";
+      changed = true;
+    }
+    if (!isCloudinaryUrl(user.AvatarImage)) {
+      user.AvatarImage = await getOAuthAvatarUrl(avatar);
       changed = true;
     }
     if (changed) {

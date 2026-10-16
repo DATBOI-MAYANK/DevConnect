@@ -13,7 +13,13 @@ function Layout() {
   useEffect(() => {
     console.log("Running /me check from Layout");
 
-    if (location.pathname === "/login" || location.pathname === "/register")return;
+    if (
+      location.pathname === "/login" ||
+      location.pathname === "/register" ||
+      location.pathname === "/oauth/google/callback"
+    ) {
+      return;
+    }
 
     axios
       .get(`${apiBaseUrl}/me`, { withCredentials: true })

@@ -63,32 +63,48 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    if (user.Role === "developer") {
-      const postRepoName = userPosts
-        .filter((post) => post.githubRepoName)
-        .map((post) => post.githubRepoName);
-      const githubUsername = user?.GithubUsername;
-      if (!githubUsername || postRepoName.length === 0) {
-        setRepoDetails([]);
-        return;
-      }
+    let isMounted = true;
 
-      async function fetchSpecificRepos() {
-        try {
-          const promises = postRepoName.map((name) =>
-            axios.get(`${githubReposApiUrl}${githubUsername}/${name}`),
-          );
-          const results = await Promise.all(promises);
-          const repoDetails = results.map((r) => r.data);
-          setRepoDetails(repoDetails);
-        } catch (err) {
-          console.error("Error fetching repos:", err);
-        }
-      }
-
-      fetchSpecificRepos();
+    if (user?.Role !== "developer") {
+      setRepoDetails([]);
+      return () => {
+        isMounted = false;
+      };
     }
-  }, [githubReposApiUrl, user?.GithubUsername, posts, userPosts]);
+
+    const postRepoName = posts
+      .filter((post) => post.author?._id === user?._id)
+      .filter((post) => post.githubRepoName)
+      .map((post) => post.githubRepoName);
+    const githubUsername = user?.GithubUsername;
+    if (!githubUsername || postRepoName.length === 0) {
+      setRepoDetails([]);
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    async function fetchSpecificRepos() {
+      try {
+        const promises = postRepoName.map((name) =>
+          axios.get(`${githubReposApiUrl}${githubUsername}/${name}`),
+        );
+        const results = await Promise.all(promises);
+        const fetchedRepoDetails = results.map((r) => r.data);
+        if (isMounted) {
+          setRepoDetails(fetchedRepoDetails);
+        }
+      } catch (err) {
+        console.error("Error fetching repos:", err);
+      }
+    }
+
+    fetchSpecificRepos();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [githubReposApiUrl, user?._id, user?.GithubUsername, user?.Role, posts]);
 
   useEffect(() => {
     dispatch(fetchPosts());

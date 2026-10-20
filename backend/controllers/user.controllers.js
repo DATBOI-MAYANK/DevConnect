@@ -452,6 +452,7 @@ const getCurrentUserProfile = asyncHandler(async (req, res) => {
       "-password -refreshToken",
     );
 
+    console.log("User in profile ---", user)
     if (!user) {
       throw new ApiError(404, "User not found");
     }

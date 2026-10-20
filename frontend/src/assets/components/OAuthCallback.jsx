@@ -18,6 +18,7 @@ function OAuthCallback() {
           withCredentials: true,
         });
         const user = data?.data;
+        console.log("User--" , user)
 
         if (!user?._id) {
           throw new Error("Authenticated user data was not returned");

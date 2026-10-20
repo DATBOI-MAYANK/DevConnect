@@ -75,7 +75,7 @@ NODE_ENV=development
 Start the backend server:
 
 ```bash
-npm run server
+npm run dev
 ```
 
 The backend will run on `http://localhost:5000`
@@ -197,7 +197,8 @@ DevConnect/
 
 ### Backend
 
-- `npm run server` - Start the development server with nodemon
+- `npm run dev` - Start the development server with nodemon
+- `npm start` - Start the production server
 
 ### Frontend
 

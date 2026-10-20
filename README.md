@@ -142,6 +142,12 @@ docker build \
 Because Vite embeds `VITE_API_BASE_URL` during the build, rebuild the frontend
 image whenever this value changes.
 
+For a deployed backend, set `NODE_ENV=production` (or
+`COOKIE_SECURE=true`) so OAuth cookies use `SameSite=None; Secure` and can be
+sent from the deployed frontend to the API. Set `CORS_ORIGIN`,
+`GOOGLE_SUCCESS_REDIRECT`, and `GITHUB_SUCCESS_REDIRECT` to the deployed
+frontend origin, not the backend URL.
+
 To stop the containers:
 
 ```bash

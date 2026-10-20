@@ -12,10 +12,15 @@ import Post from "../models/post.model.js";
 import { Follow } from "../models/follow.model.js";
 import { randomUUID } from "node:crypto";
 
+const secureCookies =
+  process.env.COOKIE_SECURE === "true" ||
+  process.env.NODE_ENV === "production" ||
+  Boolean(process.env.RENDER_EXTERNAL_URL);
+
 const authCookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: secureCookies,
+  sameSite: secureCookies ? "none" : "lax",
 };
 
 const generateAccessAndRefereshTokens = async (userId) => {

@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/users/:path*",
+      "destination": "https://devconnect-api-n7j6.onrender.com/users/:path*"
+    }
+  ]
+}

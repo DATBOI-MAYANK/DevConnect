@@ -13,6 +13,7 @@ services:
       context: ./frontend
       args:
         VITE_API_BASE_URL: http://localhost:8000/users/api/v1
+        BACKEND_URL: http://backend:8000
         VITE_API_GITHUB_URL: https://api.github.com/repos/
         VITE_API_GITHUB_USERS_URL: https://api.github.com/users/
         VITE_GITHUB_WEB_URL: https://github.com/

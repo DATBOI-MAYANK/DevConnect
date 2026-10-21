@@ -130,17 +130,47 @@ docker build \
 docker build -t devconnect-backend ./backend
 ```
 
-For a deployed frontend, use the public Render backend URL instead of
-`localhost`, for example:
+For a frontend deployed on Vercel, add the included `vercel.json` rewrite and
+set this Vercel environment variable:
+
+```env
+VITE_API_BASE_URL=/users/api/v1
+```
+
+The rewrite proxies `/users/*` through the Vercel frontend origin to the
+Render backend. This keeps the OAuth session cookie first-party from the
+browser's perspective. Redeploy the Vercel project after changing this
+variable because Vite embeds it during the build.
+
+For a standalone Docker deployment, use the public Render backend URL instead
+of `localhost`, for example:
 
 ```bash
 docker build \
-  --build-arg VITE_API_BASE_URL=https://your-backend.onrender.com/users/api/v1 \
+  --build-arg VITE_API_BASE_URL=/users/api/v1 \
+  --build-arg BACKEND_URL=https://your-backend.onrender.com \
   -t devconnect-frontend ./frontend
 ```
 
 Because Vite embeds `VITE_API_BASE_URL` during the build, rebuild the frontend
 image whenever this value changes.
+
+For the Vercel setup, configure the Render backend with the Vercel deployment
+origin as all of these values:
+
+```env
+CORS_ORIGIN=https://your-project.vercel.app
+GOOGLE_CALLBACK_URL=https://your-project.vercel.app/users/auth/google/callback
+GITHUB_CALLBACK_URL=https://your-project.vercel.app/users/auth/github/callback
+GOOGLE_SUCCESS_REDIRECT=https://your-project.vercel.app
+GITHUB_SUCCESS_REDIRECT=https://your-project.vercel.app
+NODE_ENV=production
+COOKIE_SECURE=true
+```
+
+Register the same Vercel callback URLs in the Google and GitHub OAuth
+applications. Do not use the Render backend URL as the OAuth callback URL when
+using the Vercel rewrite.
 
 For a deployed backend, set `NODE_ENV=production` (or
 `COOKIE_SECURE=true`) so OAuth cookies use `SameSite=None; Secure` and can be

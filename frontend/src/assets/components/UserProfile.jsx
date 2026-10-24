@@ -36,9 +36,6 @@ const UserProfile = () => {
   const [githubRepos, setGithubRepos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [currentUser] = useState(
-  //   JSON.parse(localStorage.getItem("user") || "null"),
-  // );
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentImages, setCurrentImages] = useState([]);
@@ -49,9 +46,10 @@ const UserProfile = () => {
 
   // Tab state
   const [activeTab, setActiveTab] = useState("posts");
-  const [followRecord,  setFollowRecord] = useState('');
-
-
+  const [followRecord, setFollowRecord] = useState({
+    followerRecord: [],
+    followingRecord: [],
+  });
 
   useEffect(() => {
     fetchUserProfile();
@@ -65,8 +63,32 @@ const UserProfile = () => {
   }, [userProfile]);
 
   useEffect(() => {
-    fetchFollowRecord();
-  },[])
+    let cancelled = false;
+
+    axios
+      .get(`${apiBaseUrl}/user-follow-record/${userId}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (!cancelled) {
+          setFollowRecord(
+            response.data?.data || {
+              followerRecord: [],
+              followingRecord: [],
+            },
+          );
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error("Error fetching follow record:", err);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBaseUrl, userId]);
 
   const fetchUserProfile = async () => {
     try {
@@ -105,21 +127,6 @@ const UserProfile = () => {
     }
   };
 
-  const fetchFollowRecord = async () => {
-    try {
-      const res = await axios.get(`${apiBaseUrl}/follow-record`,{}, {
-         withCredentials: true,
-      });
-
-      console.log("Data" , res)
-
-
-      setFollowRecord(res.data)
-    } catch(err) {
-      throw new Error(err)
-      }
-    }
-
   const openImageModal = (images, index) => {
     setCurrentImages(images);
     setCurrentImageIndex(index);
@@ -148,12 +155,6 @@ const UserProfile = () => {
     return "grid-cols-2";
   };
 
-  // Filter functions for different content types
-  // const getTextPosts = () =>
-  //   userPosts.filter(
-  //     (post) =>
-  //       !post.images?.length && !post.videos?.length && !post.githubRepoName,
-  //   );
   const getMediaPosts = () =>
     userPosts.filter(
       (post) => post.images?.length > 0 || post.videos?.length > 0,

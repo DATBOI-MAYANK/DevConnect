@@ -433,6 +433,21 @@ const getFollowRecord = asyncHandler(async (req, res) => {
   return res.json(new ApiResponse(200, { followerRecord, followingRecord }));
 });
 
+const getUserFollowRecord = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  const isUserExists = await User.findById(userId);
+
+  if (!isUserExists) {
+    throw new ApiError(400, "User does not exists.");
+  }
+
+  const followingRecord = await Follow.find({ follower: userId });
+  const followerRecord = await Follow.find({ followee: userId });
+
+  return res.json(new ApiResponse(200, { followerRecord, followingRecord }));
+});
+
 export {
   registerUser,
   loginUser,
@@ -446,4 +461,5 @@ export {
   followUserController,
   unfollowUserController,
   getFollowRecord,
+  getUserFollowRecord,
 };

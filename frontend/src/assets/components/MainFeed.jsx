@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import ClickSpark from "./ClickSpark.jsx";
 import LikeButton from "./LikeButton.jsx";
 import CommentBox from "./CommentBox.jsx";
@@ -12,6 +11,7 @@ import DeleteBtn from "./DeleteBtn.jsx";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSanitize from "rehype-sanitize";
+import { fetchGithubRepos } from "../utils/githubRepoCache.js";
 
 function MainFeed() {
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
@@ -22,6 +22,7 @@ function MainFeed() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentImages, setCurrentImages] = useState([]);
+  const currentUser = user?._id;
 
   const openImageModal = (images, index) => {
     setCurrentImages(images);
@@ -54,22 +55,22 @@ function MainFeed() {
       return;
     }
 
-    async function fetchSpecificRepos() {
-      try {
-        const promises = postRepoName.map((name) =>
-          axios.get(
-            `${import.meta.env.VITE_API_GITHUB_URL}${githubUsername}/${name}`,
-          ),
-        );
-        const results = await Promise.all(promises);
-        const repoDetails = results.map((r) => r.data);
-        setRepoDetails(repoDetails);
-      } catch (err) {
-        console.error("Error fetching repos:", err);
-      }
-    }
+    let cancelled = false;
+    fetchGithubRepos(
+      import.meta.env.VITE_API_GITHUB_URL,
+      githubUsername,
+      postRepoName,
+    )
+      .then((repos) => {
+        if (!cancelled) setRepoDetails(repos);
+      })
+      .catch((err) => {
+        if (!cancelled) console.error("Error fetching repos:", err);
+      });
 
-    fetchSpecificRepos();
+    return () => {
+      cancelled = true;
+    };
   }, [user?.GithubUsername, posts]);
 
   useEffect(() => {
@@ -112,13 +113,13 @@ function MainFeed() {
                         className="h-12 w-12 rounded-full object-cover border-2 border-slate-600/50"
                       />
                       <Link
-                        to={`/profile/${post.author?._id}`}
+                        to={currentUser === post.author?._id ? `/dashboard`  : `/profile/${post.author?._id}`}
                         className="block text-white font-semibold hover:text-blue-400 transition-colors duration-200"
                       >
                         <strong>{post.author?.username || "Unknown"}</strong>
                       </Link>
                     </div>
-                    {user?._id === post.author?._id && (
+                    {currentUser === post.author?._id && (
                       // <Trash2 className="w-5 h-5 text-slate-500 hover:text-red-400 cursor-pointer transition-colors duration-200" />
                       <DeleteBtn postId={post._id} />
                     )}

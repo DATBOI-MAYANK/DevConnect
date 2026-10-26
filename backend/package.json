@@ -15,7 +15,8 @@
   },
   "type": "module",
   "scripts": {
-    "server": "nodemon index.js",
+    "server": "node index.js",
+    "dev": "nodemon index.js",
     "start": "node index.js"
   },
   "devDependencies": {

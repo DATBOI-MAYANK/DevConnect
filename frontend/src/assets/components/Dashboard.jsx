@@ -164,20 +164,22 @@ function Dashboard() {
             </div>
 
             {/* Profile Info */}
-            <div className="mt-16 sm:mt-20 px-4 sm:px-6 text-white">
-              <h1 className="text-2xl sm:text-3xl font-bold">
-                {user.username}
-              </h1>
-              <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mt-2">
-                {user.Bio}
-              </p>
-              <div className="flex  mt-2">
-                <span className="flex flex-col mr-4">
-                  <span className="text-slate-400">Followers</span>
+            <div className="mt-16 sm:mt-20 px-4 sm:px-6 text-white flex">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold">
+                  {user.username}
+                </h1>
+                <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mt-2">
+                  {user.Bio}
+                </p>
+              </div>
+              <div className="flex  mt-2 ml-56">
+                <span className="flex flex-col mr-10">
+                  <span className="text-slate-200 text-2xl">Followers</span>
                   <span>{followRecord.followerRecord.length}</span>
                 </span>
                 <span className="flex flex-col">
-                  <span className="text-slate-400">Following</span>
+                  <span className="text-slate-200 text-2xl">Following</span>
                   <span>{followRecord.followingRecord.length}</span>
                 </span>
               </div>

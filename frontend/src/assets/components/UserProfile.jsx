@@ -574,8 +574,8 @@ const UserProfile = () => {
             </p>
           )}
           <div className="flex  mt-2">
-            <span className="flex flex-col mr-2 "><p>Followers</p>   <p>{ followRecord.followerRecord.length}</p> </span>
-            <span className="flex flex-col"><p>Following</p>   <p>{ followRecord.followingRecord.length}</p> </span>
+            <span className="flex flex-col mr-4 text-slate-200 text-xl "><p>Followers</p>   <p>{ followRecord.followerRecord.length}</p> </span>
+            <span className="flex flex-col text-slate-200 text-xl "><p>Following</p>   <p>{ followRecord.followingRecord.length}</p> </span>
           </div>
         </div>
         <FollowBtn userId={userId} currentUserId={currentUser?._id} />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import ClickSpark from "../components/ClickSpark.jsx";
@@ -20,8 +20,10 @@ import {
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { fetchGithubRepos } from "../utils/githubRepoCache.js";
 
 function Dashboard() {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const githubReposApiUrl = import.meta.env.VITE_API_GITHUB_URL;
   const [user] = useState(JSON.parse(localStorage.getItem("user") || "null"));
   const dispatch = useDispatch();
@@ -32,7 +34,23 @@ function Dashboard() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentImages, setCurrentImages] = useState([]);
+  const [followRecord, setFollowRecord] = useState({
+    followerRecord: [],
+    followingRecord: [],
+  });
   const userPosts = posts.filter((post) => post.author?._id === user?._id);
+  const repoNamesKey = useMemo(
+    () =>
+      [...new Set(
+        posts
+          .filter((post) => post.author?._id === user?._id)
+          .filter((post) => post.githubRepoName)
+          .map((post) => post.githubRepoName),
+      )]
+        .sort()
+        .join(","),
+    [posts, user?._id],
+  );
 
   const openImageModal = (images, index) => {
     setCurrentImages(images);
@@ -63,36 +81,54 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    if (user.Role === "developer") {
-      const postRepoName = userPosts
-        .filter((post) => post.githubRepoName)
-        .map((post) => post.githubRepoName);
-      const githubUsername = user?.GithubUsername;
-      if (!githubUsername || postRepoName.length === 0) {
-        setRepoDetails([]);
-        return;
-      }
-
-      async function fetchSpecificRepos() {
-        try {
-          const promises = postRepoName.map((name) =>
-            axios.get(`${githubReposApiUrl}${githubUsername}/${name}`),
-          );
-          const results = await Promise.all(promises);
-          const repoDetails = results.map((r) => r.data);
-          setRepoDetails(repoDetails);
-        } catch (err) {
-          console.error("Error fetching repos:", err);
-        }
-      }
-
-      fetchSpecificRepos();
+    if (user?.Role !== "developer" || !user?.GithubUsername || !repoNamesKey) {
+      setRepoDetails([]);
+      return;
     }
-  }, [githubReposApiUrl, user?.GithubUsername, posts, userPosts]);
+
+    let cancelled = false;
+    fetchGithubRepos(githubReposApiUrl, user.GithubUsername, repoNamesKey.split(","))
+      .then((repos) => {
+        if (!cancelled) setRepoDetails(repos);
+      })
+      .catch((err) => {
+        if (!cancelled) console.error("Error fetching repos:", err);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [githubReposApiUrl, user?.GithubUsername, user?.Role, repoNamesKey]);
 
   useEffect(() => {
     dispatch(fetchPosts());
   }, [dispatch]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    axios
+      .get(`${apiBaseUrl}/follow-record`, { withCredentials: true })
+      .then((response) => {
+        if (!cancelled) {
+          setFollowRecord(
+            response.data?.data || {
+              followerRecord: [],
+              followingRecord: [],
+            },
+          );
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error("Error fetching follow record:", err);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBaseUrl]);
 
   return (
     <ErrorBoundary>
@@ -128,13 +164,25 @@ function Dashboard() {
             </div>
 
             {/* Profile Info */}
-            <div className="mt-16 sm:mt-20 px-4 sm:px-6 text-white">
-              <h1 className="text-2xl sm:text-3xl font-bold">
-                {user.username}
-              </h1>
-              <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mt-2">
-                {user.Bio}
-              </p>
+            <div className="mt-16 sm:mt-20 px-4 sm:px-6 text-white flex">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold">
+                  {user.username}
+                </h1>
+                <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mt-2">
+                  {user.Bio}
+                </p>
+              </div>
+              <div className="flex  mt-2 ml-56">
+                <span className="flex flex-col mr-10">
+                  <span className="text-slate-200 text-2xl">Followers</span>
+                  <span>{followRecord.followerRecord.length}</span>
+                </span>
+                <span className="flex flex-col">
+                  <span className="text-slate-200 text-2xl">Following</span>
+                  <span>{followRecord.followingRecord.length}</span>
+                </span>
+              </div>
             </div>
 
             {/* Tabs */}

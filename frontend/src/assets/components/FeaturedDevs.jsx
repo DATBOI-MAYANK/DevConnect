@@ -29,7 +29,6 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
       try {
         const response = await axios.get(`${apiBaseUrl}/featured`);
         const devs = response.data.data;
-        console.log("Devs", devs)
         setFeaturedDevs(pickFeaturedDevs(devs, 3));
       } catch (error) {
         console.error("Error fetching featured devs", error?.message);
@@ -38,7 +37,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
     fetchFeatured();
   }, []);
 
- 
+
 
 
   useEffect(() => {
@@ -55,7 +54,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
     allDevs();
   }, []);
 
- 
+
   const trendingTopics = [
     { name: "React 18", posts: 1234 },
     { name: "TypeScript", posts: 987 },
@@ -112,7 +111,7 @@ export default function FeaturedDevs({ isOpen = false, onClose = () => {}} ) {
                     alt="Profile"
                     className="h-12 w-12 rounded-full object-cover border-2 border-slate-600/50 group-hover:border-blue-400/50 transition-colors duration-300"
                   />
-                
+
                 </div>
                 <div className="flex-1 min-w-0">
                   <Link

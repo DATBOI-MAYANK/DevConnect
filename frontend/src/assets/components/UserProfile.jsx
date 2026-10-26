@@ -36,9 +36,6 @@ const UserProfile = () => {
   const [githubRepos, setGithubRepos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [currentUser] = useState(
-  //   JSON.parse(localStorage.getItem("user") || "null"),
-  // );
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentImages, setCurrentImages] = useState([]);
@@ -49,6 +46,10 @@ const UserProfile = () => {
 
   // Tab state
   const [activeTab, setActiveTab] = useState("posts");
+  const [followRecord, setFollowRecord] = useState({
+    followerRecord: [],
+    followingRecord: [],
+  });
 
   useEffect(() => {
     fetchUserProfile();
@@ -60,6 +61,34 @@ const UserProfile = () => {
       fetchGithubRepos();
     }
   }, [userProfile]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    axios
+      .get(`${apiBaseUrl}/user-follow-record/${userId}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (!cancelled) {
+          setFollowRecord(
+            response.data?.data || {
+              followerRecord: [],
+              followingRecord: [],
+            },
+          );
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error("Error fetching follow record:", err);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBaseUrl, userId]);
 
   const fetchUserProfile = async () => {
     try {
@@ -126,12 +155,6 @@ const UserProfile = () => {
     return "grid-cols-2";
   };
 
-  // Filter functions for different content types
-  // const getTextPosts = () =>
-  //   userPosts.filter(
-  //     (post) =>
-  //       !post.images?.length && !post.videos?.length && !post.githubRepoName,
-  //   );
   const getMediaPosts = () =>
     userPosts.filter(
       (post) => post.images?.length > 0 || post.videos?.length > 0,
@@ -180,8 +203,21 @@ const UserProfile = () => {
         {posts.map((post) => (
           <article
             key={post._id}
-            className="bg-gray-950 w-[80%] backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
+            className="bg-gray-950 w-full sm:w-[80%] backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 hover:border-slate-600/50 transition-all duration-300"
           >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <img
+                  src={userProfile?.AvatarImage || "/default-avatar.png"}
+                  alt={userProfile?.username || "Profile"}
+                  className="h-12 w-12 rounded-full object-cover border-2 border-slate-600/50"
+                />
+                <strong className="text-white font-semibold">
+                  {userProfile?.username || "Unknown"}
+                </strong>
+              </div>
+            </div>
+
             <div className="prose prose-invert leading-relaxed max-w-none">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
@@ -194,7 +230,7 @@ const UserProfile = () => {
             {/* Images */}
             {post.images && post.images.length > 0 && (
               <div
-                className={`grid ${getGridClass(post.images.length)} gap-2 mb-4 max-w-2xl`}
+                className={`grid ${getGridClass(post.images.length)} gap-2 mb-4 w-full sm:ml-14 sm:w-[calc(100%-3.5rem)] sm:max-w-2xl`}
               >
                 {post.images.map((img, index) => (
                   <div
@@ -227,7 +263,7 @@ const UserProfile = () => {
             {/* Videos */}
             {post.videos && post.videos.length > 0 && (
               <div
-                className={`grid ${getGridClass(post.videos.length)} gap-2 mb-4 max-w-2xl`}
+                className={`grid ${getGridClass(post.videos.length)} gap-2 mb-4 w-full sm:ml-14 sm:w-[calc(100%-3.5rem)] sm:max-w-2xl`}
               >
                 {post.videos.map((vid) => (
                   <video
@@ -242,7 +278,7 @@ const UserProfile = () => {
 
             {/* GitHub Repo Info */}
             {post.githubRepoName && (
-              <div className="bg-gray-950 w-[80%] backdrop-blur-sm border border-slate-600/40 rounded-xl p-5 mb-4 hover:bg-slate-700/40 transition-all duration-300">
+              <div className="bg-slate-800/60 border border-slate-600/50 rounded-xl p-5 mb-4 w-full sm:ml-14 sm:w-[calc(100%-3.5rem)] sm:max-w-2xl">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-3">
                     <Github className="w-6 h-6 text-slate-400" />
@@ -461,6 +497,7 @@ const UserProfile = () => {
     </div>
   );
 
+
   if (loading) {
     return (
       <>
@@ -492,10 +529,10 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen w-full bg-black">
       {/* Header with Cover Image */}
       <div className="relative">
-        <div className="h-80 bg-gradient-to-r from-blue-600 to-purple-600 relative overflow-hidden">
+        <div className="h-[28vh] sm:h-[40vh] bg-gradient-to-r from-blue-900/50 to-slate-800/50 border-b border-slate-700/50 relative overflow-hidden">
           {userProfile?.CoverImage && (
             <img
               src={userProfile.CoverImage}
@@ -507,42 +544,47 @@ const UserProfile = () => {
 
           <Link
             to="/"
-            className="absolute top-6 left-6 flex items-center space-x-2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-black/70 transition-all duration-200"
+            className="absolute top-4 left-4 z-10 inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-900/70 text-white hover:bg-slate-800/90 border border-slate-700/60 transition-colors"
+            aria-label="Back to home"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span>Back</span>
           </Link>
         </div>
 
         {/* Profile Info */}
-        <div className="max-w-6xl mx-auto px-6 -mt-20 relative z-10">
-          <div className="flex flex-col md:flex-row items-start md:items-end space-y-4 md:space-y-0 md:space-x-6">
-            <div className="relative">
-              <img
-                src={userProfile?.AvatarImage || "/default-avatar.png"}
-                alt={userProfile?.username}
-                className="w-32 h-32 rounded-full border-4 border-gray-950 shadow-xl object-cover"
-              />
-            </div>
-
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-white mb-2">
-                {userProfile?.username}
-              </h1>
-              {userProfile?.Bio && (
-                <p className="text-slate-300 mb-4 max-w-2xl">
-                  {userProfile.Bio}
-                </p>
-              )}
-            </div>
-            <FollowBtn userId={userId} currentUserId={currentUser?._id} />
+        <div className="relative">
+          <div className="absolute bottom-0 left-4 sm:left-6 translate-y-1/2">
+            <img
+              src={userProfile?.AvatarImage || "/default-avatar.png"}
+              alt={userProfile?.username}
+              className="rounded-full w-24 h-24 sm:w-36 sm:h-36 object-cover border-4 border-slate-900"
+            />
           </div>
         </div>
       </div>
 
+      <div className="mt-16 sm:mt-20 px-4 sm:px-6 text-white flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold">
+            {userProfile?.username}
+          </h1>
+          {userProfile?.Bio && (
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mt-2">
+              {userProfile.Bio}
+            </p>
+          )}
+          <div className="flex  mt-2">
+            <span className="flex flex-col mr-4 text-slate-200 text-xl "><p>Followers</p>   <p>{ followRecord.followerRecord.length}</p> </span>
+            <span className="flex flex-col text-slate-200 text-xl "><p>Following</p>   <p>{ followRecord.followingRecord.length}</p> </span>
+          </div>
+        </div>
+        <FollowBtn userId={userId} currentUserId={currentUser?._id} />
+
+      </div>
+
       {/* Tabs */}
-      <div className="max-w-6xl mx-auto px-6 mt-8">
-        <div className="flex space-x-1 bg-gray-950  border-slate-700/50 rounded-lg p-1 mb-8">
+      <div className="mt-8 px-4 sm:px-6 border-b border-slate-700/50">
+        <div className="flex overflow-x-auto">
           {[
             { id: "posts", label: "All Posts", icon: Activity },
             { id: "media", label: "Media", icon: Image },
@@ -552,26 +594,26 @@ const UserProfile = () => {
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`flex items-center space-x-2 px-6 py-3 rounded-md font-medium transition-all duration-200 ${
+              className={`flex items-center space-x-2 text-white font-semibold px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-lg transition-all duration-300 border-b-2 hover:text-blue-400 ${
                 activeTab === id
-                  ? "bg-slate-700 text-white shadow-lg"
-                  : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                  ? "text-blue-400 border-blue-400"
+                  : "text-white border-transparent hover:border-slate-600"
               }`}
             >
               <Icon className="w-5 h-5" />
               <span>{label}</span>
               {id === "posts" && (
-                <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded-full text-xs">
+                <span className="text-xs text-slate-400">
                   {userPosts.length}
                 </span>
               )}
               {id === "media" && (
-                <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded-full text-xs">
+                <span className="text-xs text-slate-400">
                   {getMediaPosts().length}
                 </span>
               )}
               {id === "github" && (
-                <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded-full text-xs">
+                <span className="text-xs text-slate-400">
                   {getGithubPosts().length + githubRepos.length}
                 </span>
               )}
@@ -580,7 +622,9 @@ const UserProfile = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="pb-8">{renderTabContent()}</div>
+        <div className="Data h-auto relative w-full py-6 mt-6 pb-8">
+          {renderTabContent()}
+        </div>
       </div>
 
       {/* Image Modal */}

@@ -12,6 +12,7 @@ import {
   followUserController,
   unfollowUserController,
   getFollowRecord,
+  getUserFollowRecord,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -31,53 +32,29 @@ router.route("/api/v1/register").post(
   ]),
   registerUser,
 );
-router.route("/register").post(
-  upload.fields([
-    {
-      name: "avatarImage",
-      maxCount: 1,
-    },
-    {
-      name: "coverImage",
-      maxCount: 1,
-    },
-  ]),
-  registerUser,
-);
 
-router.route("/login").post(loginUser);
 router.route("/api/v1/login").post(loginUser);
 
-router.route("/me").get(verifyJwt, getCurrentUserProfile);
 router.route("/api/v1/me").get(verifyJwt, getCurrentUserProfile);
 
-router.route("/profile/:userId").get(getProfile);
 router.route("/api/v1/profile/:userId").get(getProfile);
 
-router.route("/featured").get(getFeaturedDevs);
 router.route("/api/v1/featured").get(getFeaturedDevs);
 
-router.route("/devs").get(getAllDevs);
 router.route("/api/v1/devs").get(getAllDevs);
 
-router.route("/logout").post(verifyJwt, logoutUser);
 router.route("/api/v1/logout").post(verifyJwt, logoutUser);
 
-router.route("/delete-account").delete(verifyJwt, deleteCurrentUser);
 router.route("/api/v1/delete-account").delete(verifyJwt, deleteCurrentUser);
 
-router.route("/refresh-Token").post(refreshAccessToken);
 router.route("/api/v1/refresh-Token").post(refreshAccessToken);
 
-router.route("/follow/:userId").post(verifyJwt, followUserController);
 router.route("/api/v1/follow/:userId").post(verifyJwt, followUserController);
 
-router.route("/unfollow/:userId").delete(verifyJwt, unfollowUserController);
-router
-  .route("/api/v1/unfollow/:userId")
-  .delete(verifyJwt, unfollowUserController);
+router.route("/api/v1/unfollow/:userId").delete(verifyJwt, unfollowUserController);
 
-router.route("/follow-record").get(verifyJwt, getFollowRecord);
 router.route("/api/v1/follow-record").get(verifyJwt, getFollowRecord);
+
+router.route("/api/v1/user-follow-record/:userId").get(verifyJwt, getUserFollowRecord);
 
 export default router;

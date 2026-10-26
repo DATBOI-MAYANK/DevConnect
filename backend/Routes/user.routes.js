@@ -55,6 +55,6 @@ router.route("/api/v1/unfollow/:userId").delete(verifyJwt, unfollowUserControlle
 
 router.route("/api/v1/follow-record").get(verifyJwt, getFollowRecord);
 
-router.route("/api/v1/user-follow-record/:userId").get(verifyJwt, getUserFollowRecord);
+router.route("/api/v1/user-follow-record/:userId").get(getUserFollowRecord);
 
 export default router;

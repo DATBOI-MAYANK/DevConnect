@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
+initCronJob();
+
 const allowedOrigins =  process.env.CORS_ORIGIN;
 
 app.use(
@@ -34,6 +36,7 @@ app.use("/users", postRouter);
 app.use("/admin", adminRouter);
 
 import errorHandler from "./middlewares/errorHandler.middleware.js";
+import initCronJob from "./jobs/syncCronJob.js";
 app.use(errorHandler);
 
 export { app };

@@ -32,9 +32,8 @@ const generateAccessAndRefereshTokens = async (userId) => {
 
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
-
   const { username, password, email, GithubUsername, Bio, Role } = req.body;
-  // console.log(username, password, email);
+ 
 
   //Validation -- Not empty
   if (
@@ -45,6 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!email.trim().toLowerCase().endsWith("@gmail.com")) {
     throw new ApiError(400, "Ivalid Email");
   }
+
   // Password Edgecases
   const maxBytes = 72;
   const passwordByteLength = Buffer.from(password).length;
@@ -101,7 +101,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   const coverImage = await uploadOnCloudinary(coverLocalPath);
-  // console.log("cloudAvatr----", avatar);
+  
 
   if (!avatar) {
     throw new ApiError(400, "Avatar File is required!");
@@ -154,8 +154,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  // console.log(email , password);
-
+  
   if (!email && !password) {
     throw new ApiError(400, "All Fields are required. !!");
   }
@@ -167,8 +166,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const isPasswordValid = await user.isPasswordCorrect(password);
-  // console.log("password----" , isPasswordValid);
-
+ 
   if (!isPasswordValid) {
     throw new ApiError(401, "Password incorrect. !");
   }
@@ -279,7 +277,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 const getAllDevs = asyncHandler(async (req, res) => {
   try {
     const allDevs = await User.find({});
-    // console.log("Devs", allDevs);
     return res.json(new ApiResponse(200, allDevs));
   } catch (error) {
     throw new ApiError(400, "Could not fetch devs.");
@@ -298,7 +295,7 @@ const getFeaturedDevs = asyncHandler(async (req, res) => {
   }
 });
 
-const getProfile = asyncHandler(async (req, res) => {
+const getProfile = asyncHandler(async (req, res) => { // get profile of any user 
   try {
     const { userId } = req.params;
     const user = await User.findById(userId).select(
@@ -312,7 +309,7 @@ const getProfile = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Could not fetch user.");
   }
 });
-const getCurrentUserProfile = asyncHandler(async (req, res) => {
+const getCurrentUserProfile = asyncHandler(async (req, res) => { // get profile for current user logged in
   try {
     const user = await User.findById(req.user._id).select(
       "-password -refreshToken",
